@@ -1,1654 +1,1384 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Телефонний довідник — ПДАА</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #f5f2ed;
-  --surface: #fdfcfa;
-  --ink: #1a1814;
-  --ink2: #4a4640;
-  --ink3: #8a8480;
-  --accent: #2d5016;
-  --accent2: #8b3a0f;
-  --gold: #b8922a;
-  --border: #d8d4ce;
-  --border2: #ece9e3;
-  --card: #ffffff;
-  --tag-bg: #eef3e8;
-  --tag-c: #2d5016;
-  --radius: 6px;
-  --shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
-}
-
-*{box-sizing:border-box;margin:0;padding:0}
-
-body {
-  font-family: 'IBM Plex Sans', sans-serif;
-  background: var(--bg);
-  color: var(--ink);
-  min-height: 100vh;
-  font-size: 15px;
-  line-height: 1.6;
-}
-
-/* ── HEADER ── */
-header {
-  background: var(--accent);
-  color: #fff;
-  padding: 2rem 1.5rem 1.5rem;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  border-bottom: 3px solid var(--gold);
-}
-.header-top {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  max-width: 900px;
-  margin: 0 auto 1rem;
-}
-.logo-block {
-  flex-shrink: 0;
-}
-.logo-emblem {
-  width: 48px;
-  height: 48px;
-  border: 2px solid rgba(255,255,255,0.4);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Playfair Display', serif;
-  font-size: 18px;
-  color: var(--gold);
-}
-.header-titles {
-  flex: 1;
-}
-.header-titles h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(16px, 4vw, 22px);
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  line-height: 1.2;
-}
-.header-titles p {
-  font-size: 12px;
-  opacity: 0.7;
-  font-weight: 300;
-  margin-top: 3px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.search-bar {
-  max-width: 900px;
-  margin: 0 auto;
-  position: relative;
-}
-.search-bar input {
-  width: 100%;
-  padding: 10px 16px 10px 42px;
-  border-radius: var(--radius);
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.12);
-  color: #fff;
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 15px;
-  outline: none;
-  transition: background .2s, border-color .2s;
-}
-.search-bar input::placeholder { color: rgba(255,255,255,0.5); }
-.search-bar input:focus { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); }
-.search-icon {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  opacity: 0.6;
-  font-size: 16px;
-  pointer-events: none;
-}
-.result-count {
-  max-width: 900px;
-  margin: 6px auto 0;
-  font-size: 12px;
-  color: rgba(255,255,255,0.55);
-  font-family: 'IBM Plex Mono', monospace;
-}
-
-/* ── TABS ── */
-.tabs-wrap {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 90;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.tabs-wrap::-webkit-scrollbar { display: none; }
-.tabs {
-  display: flex;
-  max-width: 900px;
-  margin: 0 auto;
-  gap: 0;
-}
-.tab {
-  padding: 10px 14px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--ink3);
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  white-space: nowrap;
-  transition: color .2s, border-color .2s;
-  letter-spacing: 0.02em;
-  flex-shrink: 0;
-}
-.tab:hover { color: var(--accent); }
-.tab.active { color: var(--accent); border-bottom-color: var(--gold); }
-
-/* ── MAIN ── */
-main {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 1.5rem 1rem 4rem;
-}
-
-/* ── SECTION TITLE ── */
-.section-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 2rem 0 1rem;
-  animation: fadeUp .4s ease both;
-}
-.section-head:first-child { margin-top: 0; }
-.section-label {
-  font-family: 'Playfair Display', serif;
-  font-size: 13px;
-  font-weight: 400;
-  color: var(--ink3);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.section-line {
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-.section-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--gold);
-  flex-shrink: 0;
-}
-
-/* ── DEPT HEADER ── */
-.dept-header {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--accent);
-  border-radius: var(--radius);
-  padding: .75rem 1rem;
-  margin-bottom: .5rem;
-  animation: fadeUp .35s ease both;
-}
-.dept-header h3 {
-  font-family: 'Playfair Display', serif;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--accent);
-}
-.dept-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 5px;
-}
-.dept-phone, .dept-email {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: var(--ink3);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* ── CONTACT CARD ── */
-.contact-card {
-  background: var(--card);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  padding: .7rem 1rem;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  transition: transform .15s, box-shadow .15s, border-color .15s;
-  animation: fadeUp .3s ease both;
-}
-.contact-card:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow);
-  border-color: var(--border);
-}
-.avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 500;
-  flex-shrink: 0;
-  font-family: 'IBM Plex Mono', monospace;
-}
-.contact-info { flex: 1; min-width: 0; }
-.contact-name {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.contact-role {
-  font-size: 12px;
-  color: var(--ink3);
-  margin-top: 1px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.contact-phones {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 3px;
-  flex-shrink: 0;
-}
-.phone-tag {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  color: var(--accent);
-  background: var(--tag-bg);
-  padding: 2px 8px;
-  border-radius: 99px;
-  white-space: nowrap;
-}
-.phone-tag a {
-  color: inherit;
-  text-decoration: none;
-}
-.phone-tag.inner {
-  color: var(--accent2);
-  background: #f9ede8;
-}
-.phone-tag.email-tag {
-  color: var(--ink3);
-  background: var(--border2);
-  max-width: 160px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* ── DEPT ONLY CARD (no person) ── */
-.dept-only {
-  background: var(--card);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  padding: .7rem 1rem;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  animation: fadeUp .3s ease both;
-  transition: border-color .15s;
-}
-.dept-only:hover { border-color: var(--border); }
-.dept-only-name {
-  flex: 1;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--ink);
-}
-
-/* ── EMPTY ── */
-.empty {
-  text-align: center;
-  padding: 4rem 1rem;
-  color: var(--ink3);
-}
-.empty-glyph {
-  font-size: 40px;
-  margin-bottom: 1rem;
-  opacity: .4;
-}
-.empty p { font-size: 15px; }
-
-/* ── ANIMATIONS ── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ── FOOTER ── */
-footer {
-  text-align: center;
-  padding: 2rem 1rem;
-  color: var(--ink3);
-  font-size: 12px;
-  border-top: 1px solid var(--border);
-  margin-top: 2rem;
-}
-footer strong { color: var(--accent); }
-
-/* ── RESPONSIVE ── */
-@media(max-width: 540px) {
-  .contact-card { flex-wrap: wrap; }
-  .contact-phones { align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
-  .phone-tag.email-tag { display: none; }
-}
-</style>
+<html lang="uk"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Телефонний довідник — ПДАУ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f2ed;
+      --surface: #fdfcfa;
+      --ink: #1a1814;
+      --ink2: #4a4640;
+      --ink3: #8a8480;
+      --accent: #2d5016;
+      --accent2: #8b3a0f;
+      --gold: #b8922a;
+      --border: #d8d4ce;
+      --border2: #ece9e3;
+      --card: #ffffff;
+      --tag-bg: #eef3e8;
+      --tag-c: #2d5016;
+      --radius: 6px;
+      --shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+      --admin-accent: #1e40af;
+      --admin-danger: #b91c1c;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+    header {
+      background: var(--accent);
+      color: #fff;
+      padding: 1.5rem 1.5rem 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 3px solid var(--gold);
+    }
+    .header-inner { max-width: 960px; margin: 0 auto; text-align: center; }
+    .header-top { display: flex; align-items: center; gap: 1rem; margin-bottom: .75rem; justify-content: center; }
+    .logo-emblem { display: none; }
+    .header-titles h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(18px, 4vw, 24px);
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    .header-sub {
+      font-size: 12px; opacity: .8;
+      text-transform: uppercase; letter-spacing: .07em; margin-top: 4px;
+    }
+    .header-controls { display: flex; align-items: center; gap: .75rem; justify-content: center; flex-wrap: wrap; }
+    .search-wrap { position: relative; flex: 1; max-width: 500px; min-width: 200px; }
+    .search-wrap .search-icon {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      font-size: 15px; opacity: .6; pointer-events: none;
+    }
+    #searchInput {
+      width: 100%; padding: 8px 12px 8px 36px;
+      background: rgba(255,255,255,0.13);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 20px;
+      color: #fff; font-size: 14px;
+      font-family: 'IBM Plex Sans', sans-serif;
+      outline: none; transition: background .2s, border-color .2s;
+    }
+    #searchInput::placeholder { color: rgba(255,255,255,0.5); }
+    #searchInput:focus { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); }
+    .header-right { display: flex; align-items: center; gap: .75rem; }
+    #resCount {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px; color: rgba(255,255,255,0.55);
+      white-space: nowrap;
+    }
+    #adminBtn, #exportBtn, #printBtn, #csvBtn {
+      padding: 5px 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.12); color: #fff; font-size: 11px;
+      font-family: 'IBM Plex Sans', sans-serif; cursor: pointer; white-space: nowrap;
+      transition: background .2s;
+    }
+    #adminBtn:hover, #exportBtn:hover, #printBtn:hover { background: rgba(255,255,255,0.22); }
+    #adminBtn.active {
+      background: var(--gold); border-color: var(--gold); color: #1a1814; font-weight: 600;
+    }
+    .tabs-wrap {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs-wrap::-webkit-scrollbar { display: none; }
+    .tabs { display: flex; max-width: 960px; margin: 0 auto; }
+    .tab {
+      padding: 10px 14px; font-size: 12px; font-weight: 500;
+      color: var(--ink3); cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap; flex-shrink: 0;
+      transition: color .2s, border-color .2s;
+      letter-spacing: .02em; display: flex; align-items: center; gap: 6px;
+    }
+    .tab:hover { color: var(--accent); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--gold); }
+    .tab-add {
+      padding: 10px 14px; font-size: 18px; color: var(--gold);
+      cursor: pointer; display: none; align-items: center;
+    }
+    body.admin-mode .tab-add { display: flex; }
+    main { max-width: 960px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+    .dept-header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: .75rem 1rem;
+      margin-bottom: .5rem;
+      animation: fadeUp .35s ease both;
+      position: relative;
+    }
+    .dept-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px; font-weight: 600; color: var(--accent);
+    }
+    .dept-meta { display: flex; gap: 1rem; margin-top: 4px; flex-wrap: wrap; }
+    .dept-phone, .dept-email {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px; color: var(--ink3);
+    }
+    .dept-section { margin-bottom: 1.5rem; }
+    .contact-card {
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      padding: .65rem 1rem;
+      margin-bottom: 6px;
+      display: flex; align-items: center; gap: 12px;
+      transition: transform .15s, box-shadow .15s, border-color .15s;
+      animation: fadeUp .3s ease both;
+      position: relative;
+    }
+    .contact-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow);
+      border-color: var(--border);
+    }
+    .avatar {
+      width: 38px; height: 38px; flex-shrink: 0;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px; font-weight: 500;
+    }
+    .contact-info { flex: 1; min-width: 0; }
+    .contact-name {
+      font-size: 14px; font-weight: 500; color: var(--ink);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .contact-role {
+      font-size: 12px; color: var(--ink3);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .contact-phones { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+    .phone-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px; color: var(--tag-c);
+      background: var(--tag-bg);
+      padding: 2px 8px; border-radius: 99px; white-space: nowrap;
+    }
+    .phone-tag.inner { color: var(--accent2); background: #f9ede8; }
+    .phone-tag.email-tag {
+      color: var(--ink3); background: var(--border2);
+      max-width: 160px; overflow: hidden; text-overflow: ellipsis;
+    }
+    .section-head {
+      display: flex; align-items: center; gap: 10px;
+      margin: 1.25rem 0 .6rem;
+    }
+    .section-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+    .section-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink2);
+    }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+    .empty { text-align: center; padding: 4rem 2rem; color: var(--ink3); }
+    .empty-glyph { font-size: 3rem; margin-bottom: .5rem; opacity: .4; }
+    .empty p { font-size: 14px; }
+    .admin-actions { display: none; gap: 4px; flex-shrink: 0; }
+    body.admin-mode .admin-actions { display: flex; }
+    .btn-icon {
+      width: 28px; height: 28px; border-radius: 6px; border: none;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 13px; transition: background .15s;
+    }
+    .btn-edit { background: #eff6ff; color: var(--admin-accent); }
+    .btn-edit:hover { background: #dbeafe; }
+    .btn-del { background: #fef2f2; color: var(--admin-danger); }
+    .btn-del:hover { background: #fee2e2; }
+    .btn-add-person {
+      display: none; width: 100%; margin-top: 4px;
+      padding: 7px; border: 1px dashed var(--border);
+      background: transparent; border-radius: var(--radius);
+      color: var(--ink3); font-size: 12px; cursor: pointer;
+      transition: all .15s; font-family: 'IBM Plex Sans', sans-serif;
+    }
+    .btn-add-person:hover { background: var(--tag-bg); color: var(--accent); border-color: var(--accent); }
+    body.admin-mode .btn-add-person { display: block; }
+    .dept-admin-actions {
+      display: none; position: absolute; top: .6rem; right: .75rem; gap: 4px;
+    }
+    body.admin-mode .dept-admin-actions { display: flex; }
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45); z-index: 1000;
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface); border-radius: 12px;
+      padding: 1.75rem; width: 100%; max-width: 480px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      animation: fadeUp .25s ease;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; font-weight: 600; margin-bottom: 1.25rem;
+      color: var(--accent);
+    }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label {
+      display: block; font-size: 12px; font-weight: 500;
+      color: var(--ink3); margin-bottom: 4px; letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+    .form-group input, .form-group select {
+      width: 100%; padding: 9px 12px;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--card); color: var(--ink);
+      font-size: 14px; font-family: 'IBM Plex Sans', sans-serif;
+      outline: none; transition: border-color .2s;
+    }
+    .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+    .modal-actions { display: flex; gap: .75rem; margin-top: 1.5rem; justify-content: flex-end; }
+    .btn-primary {
+      padding: 9px 20px; background: var(--accent); color: #fff;
+      border: none; border-radius: var(--radius); font-size: 14px;
+      font-family: 'IBM Plex Sans', sans-serif; cursor: pointer;
+      font-weight: 500; transition: opacity .15s;
+    }
+    .btn-primary:hover { opacity: .88; }
+    .btn-secondary {
+      padding: 9px 20px; background: transparent; color: var(--ink3);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      font-size: 14px; font-family: 'IBM Plex Sans', sans-serif;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-secondary:hover { background: var(--border2); }
+    .btn-danger {
+      padding: 9px 20px; background: var(--admin-danger); color: #fff;
+      border: none; border-radius: var(--radius); font-size: 14px;
+      font-family: 'IBM Plex Sans', sans-serif; cursor: pointer;
+      margin-right: auto; transition: opacity .15s;
+    }
+    .btn-danger:hover { opacity: .85; }
+    .login-modal { max-width: 340px; text-align: center; }
+    .login-modal .lock-icon { font-size: 2.5rem; margin-bottom: .75rem; }
+    .login-modal h2 { margin-bottom: .25rem; }
+    .login-sub { font-size: 13px; color: var(--ink3); margin-bottom: 1.25rem; }
+    .error-msg {
+      background: #fef2f2; color: var(--admin-danger);
+      border: 1px solid #fecaca; border-radius: var(--radius);
+      padding: 8px 12px; font-size: 13px; display: none; margin-top: .5rem;
+    }
+    .admin-banner {
+      display: none; background: var(--admin-accent); color: #fff;
+      text-align: center; padding: 7px; font-size: 12px; letter-spacing: .04em;
+    }
+    body.admin-mode .admin-banner { display: block; }
+    footer {
+      background: var(--ink); color: rgba(255,255,255,0.6);
+      padding: 1.5rem; text-align: center; font-size: 12px; line-height: 1.7;
+    }
+    footer strong { color: rgba(255,255,255,0.9); display: block; margin-bottom: 4px; font-family: 'Playfair Display', serif; font-size: 14px; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 560px) {
+      .phone-tag.email-tag { display: none; }
+      header { padding: 1rem; }
+      .header-top { gap: .75rem; }
+      main { padding: 1rem .75rem 2rem; }
+      .header-controls { flex-direction: column; }
+      .search-wrap { max-width: 100%; }
+    }
+    @media print {
+      @page { margin: 25mm 10mm 20mm 10mm; size: A4; }
+      body {
+        background: #fff !important; color: #000 !important;
+        font-size: 11pt !important; line-height: 1.4 !important;
+        margin: 0 !important; padding: 0 !important;
+      }
+      header, .tabs-wrap, .admin-banner, .admin-actions, .dept-admin-actions,
+      .btn-add-person, .btn-icon, #adminBtn, #exportBtn, #printBtn, #csvBtn,
+      .search-wrap, .modal-overlay, footer, body::before { display: none !important; }
+      .avatar, .phone-tag { display: none !important; }
+      .contact-card {
+        border: none !important; padding: 2pt 0 !important; margin: 0 !important;
+        box-shadow: none !important; background: transparent !important;
+        display: block !important; page-break-inside: avoid;
+      }
+      .contact-info { display: block !important; margin-bottom: 2pt !important; }
+      .contact-name { font-weight: 600 !important; font-size: 10pt !important; color: #000 !important; }
+      .contact-role { font-size: 9pt !important; color: #333 !important; margin: 1pt 0 !important; }
+      .contact-phones { display: block !important; text-align: left !important; margin-top: 2pt !important; }
+      .contact-phones span { display: inline !important; margin-right: 12pt !important; font-size: 9pt !important; color: #000 !important; background: none !important; padding: 0 !important; }
+      .dept-header {
+        border: none !important; border-left: none !important;
+        padding: 6pt 0 3pt !important; margin: 10pt 0 3pt !important;
+        page-break-after: avoid; page-break-inside: avoid; background: transparent !important;
+      }
+      .dept-header h3 {
+        font-size: 11pt !important; font-weight: 700 !important; color: #000 !important;
+        border: none !important; padding: 0 !important; margin: 0 !important; display: block !important;
+      }
+      .dept-meta { display: block !important; margin-top: 2pt !important; font-size: 9pt !important; color: #333 !important; }
+      .dept-meta span { margin-right: 15pt !important; display: inline-block !important; }
+      .section-head {
+        display: block !important; margin: 18pt 0 6pt !important;
+        page-break-before: always; page-break-after: avoid;
+      }
+      .section-head:first-child { page-break-before: auto !important; }
+      .section-label {
+        display: block !important; font-size: 12pt !important; font-weight: 700 !important;
+        color: #000 !important; text-transform: none !important; letter-spacing: 0 !important;
+        margin: 0 !important; padding: 0 !important; border: none !important;
+      }
+      .section-dot, .section-line { display: none !important; }
+      body::after {
+        content: "Сторінка " counter(page) " з " counter(pages) " | www.pdau.edu.ua";
+        display: block; font-size: 8pt; text-align: center;
+        position: fixed; bottom: 0; left: 0; right: 0;
+        border: none !important; padding: 0 !important; margin: 10pt 0 0 0 !important;
+      }
+      .dept-section { page-break-inside: avoid; margin-bottom: 6pt !important; }
+      * { color: #000 !important; background: transparent !important; }
+      a { text-decoration: none !important; color: #000 !important; }
+    }
+  </style>
 </head>
-<body>
-
+<body class="">
+<div class="admin-banner">⚙ Режим адміністратора — редагування увімкнено - Created by Віталій Грек, 2026</div>
 <header>
-  <div class="header-top">
-    <div class="logo-block">
+  <div class="header-inner">
+    <div class="header-top">
       <div class="logo-emblem">П</div>
+      <div class="header-titles">
+        <h1>Полтавський державний аграрний університет</h1>
+        <div class="header-sub">Телефонний довідник</div>
+      </div>
     </div>
-    <div class="header-titles">
-      <h1>Полтавська державна аграрна академія</h1>
-      <p>Телефонний довідник · 2016</p>
+    <div class="header-controls">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="searchInput" placeholder="Пошук за ім'ям, посадою, телефоном, назвою підрозділу…" oninput="doSearch()">
+      </div>
+      <div class="header-right">
+        <span id="resCount">0 осіб</span>
+        <button id="adminBtn" onclick="toggleAdminPanel()" class="">🔒 Адмін</button>
+        <button id="exportBtn" onclick="exportToFile()" title="Зберегти зміни у файл" style="display: none; margin-left: 8px;">💾 Експорт</button>
+        <button id="printBtn" onclick="window.print()" title="Друкувати довідник" style="display:inline-block;margin-left:8px;">🖨️ Друк</button>
+        <button id="csvBtn" onclick="exportToCSV()" title="Експорт у CSV для Excel" style="display: none; margin-left: 8px;">📊 CSV</button>
+      </div>
     </div>
   </div>
-  <div class="search-bar">
-    <span class="search-icon">⌕</span>
-    <input type="text" id="searchInput" placeholder="Пошук за іменем, посадою, підрозділом або телефоном..." autocomplete="off" oninput="doSearch()">
-  </div>
-  <div class="result-count" id="resCount"></div>
 </header>
-
 <div class="tabs-wrap">
-  <div class="tabs" id="tabsRow"></div>
+  <div class="tabs" id="tabsRow"><div class="tab" onclick="setTab('management')">
+      КЕРІВНИЦТВО
+      <span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('management')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
+    </div><div class="tab" onclick="setTab('administration')">
+      АДМІНІСТРАЦІЯ
+      <span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('administration')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
+    </div><div class="tab" onclick="setTab('infrastructure')">
+      ІНФРАСТРУКТУРА
+      <span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('infrastructure')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
+    </div><div class="tab active" onclick="setTab('faculties')">
+      ІНСТИТУТИ ТА ФАКУЛЬТЕТИ
+      <span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('faculties')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
+    </div><div class="tab" onclick="setTab('colleges')">
+      КОЛЕДЖІ
+      <span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('colleges')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
+    </div><div class="tab" onclick="setTab('tab_1777358716801')">
+      .
+      <span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('tab_1777358716801')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
+    </div><div class="tab-add" onclick="openAddTab()" title="Додати вкладку">＋</div></div>
 </div>
-
-<main id="mainContent"></main>
-
+<main id="mainContent"><div class="dept-section"><div class="dept-header" style="animation-delay:0s">
+    <h3>ННІ агротехнологій, селекції та екології</h3><div class="dept-meta"><span class="dept-phone">📞 56-58-01 · вн. 5-36</span><span class="dept-email">✉ agro@pdau.edu.ua</span></div><div class="dept-admin-actions">
+    <button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('faculties',0)">✎</button>
+    <button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('faculties',0)">✕</button>
+  </div></div><button class="btn-add-person" onclick="openAddPerson('faculties',0)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.05s">
+    <h3>Інженерно-технологічний факультет</h3><div class="dept-meta"><span class="dept-phone">📞 56-96-87 · вн. 3-67</span><span class="dept-email">✉ dekmex@pdau.edu.ua</span></div><div class="dept-admin-actions">
+    <button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('faculties',1)">✎</button>
+    <button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('faculties',1)">✕</button>
+  </div></div><button class="btn-add-person" onclick="openAddPerson('faculties',1)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.1s">
+    <h3>Факультет ветеринарної медицини</h3><div class="dept-meta"><span class="dept-phone">📞 56-96-08 · вн. 3-33</span><span class="dept-email">✉ dekvetmed@pdaa.edu.ua</span></div><div class="dept-admin-actions">
+    <button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('faculties',2)">✎</button>
+    <button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('faculties',2)">✕</button>
+  </div></div><button class="btn-add-person" onclick="openAddPerson('faculties',2)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.15000000000000002s">
+    <h3>Факультет технологій тваринництва та продовольства</h3><div class="dept-meta"><span class="dept-phone">📞 56-51-87 · вн. 5-49</span><span class="dept-email">✉ dektvppt@pdau.edu.ua</span></div><div class="dept-admin-actions">
+    <button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('faculties',3)">✎</button>
+    <button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('faculties',3)">✕</button>
+  </div></div><button class="btn-add-person" onclick="openAddPerson('faculties',3)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.2s">
+    <h3>ННІ економіки, управління, права та ІТ</h3><div class="dept-meta"><span class="dept-phone">📞 56-96-14 · вн. 5-31</span><span class="dept-email">✉ dekeconom@pdau.edu.ua</span></div><div class="dept-admin-actions">
+    <button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('faculties',4)">✎</button>
+    <button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('faculties',4)">✕</button>
+  </div></div><button class="btn-add-person" onclick="openAddPerson('faculties',4)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.25s">
+    <h3>Факультет обліку та фінансів</h3><div class="dept-meta"><span class="dept-phone">📞 50-24-79 · вн. 5-88</span><span class="dept-email">✉ dekfof@pdau.edu.ua</span></div><div class="dept-admin-actions">
+    <button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('faculties',5)">✎</button>
+    <button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('faculties',5)">✕</button>
+  </div></div><button class="btn-add-person" onclick="openAddPerson('faculties',5)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.3s">
+    <h3>Відділ із забезпечення освіти дорослих та інноваційного розвитку</h3><div class="dept-meta"><span class="dept-phone">📞 57-30-79, (066) 467-19-18</span><span class="dept-email">✉ od@pdau.edu.ua</span></div><div class="dept-admin-actions">
+    <button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('faculties',6)">✎</button>
+    <button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('faculties',6)">✕</button>
+  </div></div><button class="btn-add-person" onclick="openAddPerson('faculties',6)">＋ Додати працівника</button></div></main>
 <footer>
-  <strong>ПДАА</strong> · 36003 м. Полтава, вул. Сковороди, 1/3 · тел./факс (0532) 500273 · pdaa@pdaa.edu.ua
+  <strong>Полтавський державний аграрний університет</strong>
+  вул. Сковороди, 1/3, м. Полтава, 36003, Україна<br>
+  📞 (0532) 50-02-73 &nbsp;|&nbsp; ✉ pdau@pdau.edu.ua &nbsp;|&nbsp; 🌐 www.pdau.edu.ua<br>
+  <em style="opacity:.7">Останнє оновлення: <span id="lastUpdated">28.04.2026</span></em>
 </footer>
 
+<!-- MODALS -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal login-modal">
+    <div class="lock-icon">🔐</div>
+    <h2>Вхід для адміністратора</h2>
+    <p class="login-sub">Введіть пароль для доступу до режиму редагування</p>
+    <div class="form-group">
+      <label>Пароль</label>
+      <input type="password" id="loginPassword" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="error-msg" id="loginError" style="display: none;">Невірний пароль. Спробуйте ще раз.</div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('loginModal')">Скасувати</button>
+      <button class="btn-primary" onclick="doLogin()">Увійти</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="personModal">
+  <div class="modal">
+    <h2 id="personModalTitle">Редагувати працівника</h2>
+    <input type="hidden" id="pTabId" value="management"><input type="hidden" id="pSecIdx" value="0"><input type="hidden" id="pPersonIdx" value="5">
+    <div class="form-group"><label>ПІБ</label><input type="text" id="pName" placeholder="Прізвище Ім'я По-батькові"></div>
+    <div class="form-group"><label>Посада</label><input type="text" id="pRole" placeholder="Посада"></div>
+    <div class="form-group"><label>Міський / мобільний телефон</label><input type="text" id="pCity" placeholder="(0532) 50-02-73"></div>
+    <div class="form-group"><label>Внутрішній телефон</label><input type="text" id="pInner" placeholder="5-80"></div>
+    <div class="form-group"><label>E-mail</label><input type="email" id="pEmail" placeholder="example@pdau.edu.ua"></div>
+    <div class="modal-actions" id="personModalActions"><button class="btn-danger">Видалити</button>
+      <button class="btn-secondary" onclick="closeModal('personModal')">Скасувати</button>
+      <button class="btn-primary" onclick="savePerson()">Зберегти</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="sectionModal">
+  <div class="modal">
+    <h2 id="sectionModalTitle">Редагувати підрозділ</h2>
+    <input type="hidden" id="sTabId" value="faculties"><input type="hidden" id="sSecIdx" value="6">
+    <div class="form-group"><label>Назва підрозділу / кафедри</label><input type="text" id="sTitle" placeholder="Назва підрозділу"></div>
+    <div class="form-group"><label>Телефон підрозділу</label><input type="text" id="sDeptPhone" placeholder="(0532) 50-XX-XX"></div>
+    <div class="form-group"><label>Внутрішній телефон підрозділу</label><input type="text" id="sDeptInner" placeholder="5-XX"></div>
+    <div class="form-group"><label>E-mail підрозділу</label><input type="email" id="sDeptEmail" placeholder="dept@pdau.edu.ua"></div>
+    <div class="modal-actions" id="sectionModalActions"><button class="btn-danger">Видалити</button>
+      <button class="btn-secondary" onclick="closeModal('sectionModal')">Скасувати</button>
+      <button class="btn-primary" onclick="saveSection()">Зберегти</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="tabModal">
+  <div class="modal" style="max-width:360px">
+    <h2 id="tabModalTitle">Редагувати вкладку</h2>
+    <input type="hidden" id="tTabId" value="tab_1777358716801">
+    <div class="form-group"><label>Назва вкладки</label><input type="text" id="tTabName" placeholder="Назва вкладки / підрозділу"></div>
+    <div class="modal-actions" id="tabModalActions"><button class="btn-danger">Видалити</button>
+      <button class="btn-secondary" onclick="closeModal('tabModal')">Скасувати</button>
+      <button class="btn-primary" onclick="saveTab()">Зберегти</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal" style="max-width:360px;text-align:center">
+    <h2 style="color:var(--admin-danger)">Підтвердіть видалення</h2>
+    <p style="font-size:14px;color:var(--ink3);margin:.75rem 0 1.5rem" id="confirmText">Видалити «Шевніков Микола Янаєвич»?</p>
+    <div class="modal-actions" style="justify-content:center;gap:1rem">
+      <button class="btn-secondary" onclick="closeModal('confirmModal')">Скасувати</button>
+      <button class="btn-primary" style="background:var(--admin-danger)" id="confirmOk">Видалити</button>
+    </div>
+  </div>
+</div>
+
 <script>
-/* ══════════════════════════════════════════════════════════
-   DATA
-══════════════════════════════════════════════════════════ */
-const DATA = [
-  {
-    id: 'management',
-    tab: 'Керівництво',
-    sections: [
-      {
-        title: 'Керівництво академії',
-        people: [
-          { name:'Аранчій Валентина Іванівна', role:'Ректор', city:'50-02-73', inner:'5-80', email:'pdaa@pdaa.edu.ua' },
-          { name:'Писаренко Павло Вікторович', role:'Перший проректор', city:'2-29-57', inner:'5-90', email:'pysarena@mail.ru' },
-          { name:'Костенко Олена Михайлівна', role:'Проректор з науково-педагогічної роботи', city:'7-36-93', inner:'5-96', email:'kostenko@pdaa.edu.ua' },
-          { name:'Горб Олег Олександрович', role:'Проректор з науково-педагогічної, наукової роботи', city:'50-03-74', inner:'5-46', email:'gorb@pdaa.edu.ua' },
-          { name:'Чуга Василь Миколайович', role:'Проректор з АГР', city:'7-30-01', inner:'5-66' },
-          { name:'Опара Микола Миколайович', role:'Помічник ректора', inner:'2-29-53', email:'opara_m_m@mail.ru' },
-          { name:'Бардіна Тетяна Олегівна', role:'Помічник ректора', city:'моб. 0666271679', email:'bardinatan@gmail.com' },
-          { name:'Іллічова Наталія Вадимівна', role:'Референт приймальної ректора', city:'50-02-73', inner:'5-30', email:'pdaa@pdaa.edu.ua' },
-        ]
-      },
-      {
-        title: 'Бухгалтерія',
-        deptPhone: '2-26-31; 7-46-13; 2-28-40', deptInner:'5-44; 3-75',
-        people: [
-          { name:'Лінська Світлана Павлівна', role:'Головний бухгалтер', city:'2-28-40' },
-          { name:'Палій Наталія Миколаївна', role:'Заступник головного бухгалтера', city:'2-26-31', inner:'3-75', email:'paliy-pdaa@rambler.ru' },
-          { name:'Горбунова Ірина Володимирівна', role:'Заступник головного бухгалтера з економічної роботи', city:'2-26-31', inner:'5-44' },
-          { name:'Івашенко Валентина Василівна', role:'Бухгалтер 1 категорії', city:'7-46-13', inner:'5-44' },
-          { name:'Бурля Зоряна Іванівна', role:'Бухгалтер', city:'7-46-13', inner:'5-44' },
-          { name:'Гуржій Оксана Миколаївна', role:'Бухгалтер 2 категорії', city:'7-46-13', inner:'5-44' },
-          { name:'Іщенко Марина Вячеславівна', role:'Бухгалтер', city:'7-46-13', inner:'5-44' },
-          { name:'Лук\'яненко Євгенія Йосипівна', role:'Бухгалтер 1 категорії', city:'7-46-13', inner:'5-44' },
-          { name:'Мерко Людмила Іванівна', role:'Бухгалтер-касир', city:'7-46-13', inner:'5-44' },
-          { name:'Остапець Вікторія Вікторівна', role:'Бухгалтер 2 категорії', city:'7-46-13', inner:'5-44' },
-          { name:'Тимошенко Наталія Миколаївна', role:'Бухгалтер', city:'7-46-13', inner:'5-44' },
-          { name:'Харак Наталія Сергіївна', role:'Бухгалтер 2 категорії', city:'7-46-13', inner:'5-44' },
-          { name:'Шатохіна Ольга Юріївна', role:'Бухгалтер 1 категорії', city:'7-46-13', inner:'5-44' },
-          { name:'Януш Любов Федорівна', role:'Бухгалтер 2 категорії', city:'7-46-13', inner:'5-44' },
-          { name:'Данчевська Юлія Станіславівна', role:'Провідний економіст', city:'2-26-31' },
-          { name:'Ліпська Олена Володимирівна', role:'Провідний економіст' },
-        ]
-      },
-      {
-        title: 'Відділ кадрів',
-        deptPhone:'2-28-01', deptInner:'5-24', deptEmail:'kadry@pdaa.edu.ua',
-        people: [
-          { name:'Овчарук Олена Михайлівна', role:'Начальник відділу кадрів', city:'2-28-01', inner:'5-24', email:'kadry@pdaa.edu.ua' },
-          { name:'Литовченко Олеся Валентинівна', role:'Ст. інспектор з кадрів', city:'2-28-01', inner:'5-24' },
-          { name:'Стоянова Олена Іванівна', role:'Ст. інспектор з кадрів' },
-          { name:'Хохлова Оксана Володимирівна', role:'Інспектор з кадрів' },
-          { name:'Піхуля Олена Григорівна', role:'Інспектор з кадрів' },
-          { name:'Рубан Юлія Михайлівна', role:'Інспектор з кадрів' },
-        ]
-      },
-      {
-        title: 'Канцелярія',
-        deptPhone:'2-27-12', deptInner:'3-72',
-        people: [
-          { name:'Кусова Світлана Володимирівна', role:'Завідувач канцелярією', city:'2-27-12', inner:'3-72' },
-          { name:'Шевченко Наталія Іванівна', role:'Діловод' },
-          { name:'Тарасюк Наталія Миколаївна', role:'Завідувач архівом, відповідальна за військовий облік', inner:'3-80' },
-        ]
-      },
-      {
-        title: 'Відділ міжнародних зв\'язків',
-        deptPhone:'56-54-14', deptEmail:'anna.taranenko@pdaa.edu.ua',
-        people: [
-          { name:'Тараненко Анна Олексіївна', role:'Начальник відділу', city:'56-54-14', email:'anna.taranenko@pdaa.edu.ua' },
-          { name:'Капіталова Тетяна Ігорівна', role:'Фахівець', city:'56-54-14' },
-          { name:'Кощенко Олена Миколаївна', role:'Фахівець', city:'56-54-14' },
-        ]
-      },
-      {
-        title: 'Відділ сприяння працевлаштуванню студентів і випускників',
-        deptPhone:'50-25-14', deptInner:'3-86', deptEmail:'vpp@pdaa.edu.ua',
-        people: [
-          { name:'Петренко Наталія Вікторівна', role:'Керівник відділу', city:'50-25-14', inner:'3-86', email:'vpp@pdaa.edu.ua' },
-          { name:'Гришко Людмила Василівна', role:'Оператор ЕОМ', city:'50-25-14', inner:'3-86' },
-        ]
-      },
-      {
-        title: 'Юридичний відділ',
-        deptPhone:'2-29-53', deptEmail:'kolyadenko.zoya@mail.ru',
-        people: [
-          { name:'Коляденко Зоя Іванівна', role:'Начальник відділу', city:'2-29-53', email:'kolyadenko.zoya@mail.ru' },
-          { name:'Бубирь Оксана Володимирівна', role:'Провідний юрисконсульт', city:'2-29-53' },
-        ]
-      },
-      {
-        title: 'Навчальний відділ',
-        deptPhone:'2-28-39', deptInner:'3-86', deptEmail:'nav_vid@pdaa.edu.ua',
-        people: [
-          { name:'Шульга Людмила Володимирівна', role:'Керівник відділу', city:'2-28-39', inner:'3-86', email:'nav_vid@pdaa.edu.ua' },
-          { name:'Петренко Максим Олександрович', role:'Керівник виробничої практики', city:'2-28-39', inner:'3-86' },
-          { name:'Колесніченко Ірина Анатоліївна', role:'Методист' },
-          { name:'Лавріненко Інна Вікторівна', role:'Методист' },
-          { name:'Луценко Лілія Володимирівна', role:'Методист' },
-          { name:'Папірник Ірина Володимирівна', role:'Методист' },
-          { name:'Стрюк Віта Володимирівна', role:'Методист' },
-          { name:'Калита Діана Андріївна', role:'Диспетчер' },
-          { name:'Костоглод Андрій Костянтинович', role:'Диспетчер' },
-          { name:'Браславець Тетяна Миколаївна', role:'Секретар' },
-          { name:'Дзябко Андрій Миронович', role:'Адміністратор бази даних', city:'2-29-57', inner:'5-90' },
-          { name:'Весна Юлія Анатоліївна', role:'Оператор ЕОМ', city:'61-26-63' },
-          { name:'Сук Юлія Сергіївна', role:'Статистик' },
-        ]
-      },
-      {
-        title: 'Редакційно-видавничий відділ',
-        deptPhone:'7-40-97', deptInner:'3-45; 3-41; 5-92', deptEmail:'rvv@edu.ua',
-        people: [
-          { name:'Невідничий Олег Станіславович', role:'Начальник відділу', inner:'3-45' },
-          { name:'Єщенко Інна Володимирівна', role:'Редактор', inner:'3-41; 5-92' },
-          { name:'Хрипко Юлія Анатоліївна', role:'Редактор' },
-          { name:'Жукова Вікторія Костянтинівна', role:'Редактор літературний' },
-          { name:'Колеснікова Оксана Леонідівна', role:'Редактор відповідальний', city:'7-40-97' },
-          { name:'Засельська Наталія Володимирівна', role:'Секретар відповідальний' },
-          { name:'Савенкова Людмила Олександрівна', role:'Коректор' },
-          { name:'Лифар Олександр Віталійович', role:'Оператор копіювальних машин' },
-          { name:'Скриль Олег Олександрович', role:'Оператор копіювальних машин', inner:'3-45' },
-        ]
-      },
-      {
-        title: 'Гуманітарний відділ',
-        deptPhone:'7-34-46', deptEmail:'sz.pdaa.edu@gmail.com',
-        people: [
-          { name:'Савенкова Олена Олександрівна', role:'Керівник', city:'7-34-46', email:'sz.pdaa.edu@gmail.com' },
-          { name:'Горохова Яна Сергіївна', role:'Фахівець із знанням іноземної мови', city:'7-34-46' },
-          { name:'Жорник Ірина Іванівна', role:'Фахівець із знанням іноземної мови' },
-          { name:'Лифар Алла Анатоліївна', role:'Фахівець' },
-          { name:'Лотош Моніка', role:'Фахівець' },
-        ]
-      },
-      {
-        title: 'Приймальна комісія',
-        deptPhone:'61-26-63', deptInner:'3-25', deptEmail:'priyom@pdaa.edu.ua',
-        people: [
-          { name:'Мороз Олег Григорович', role:'Відповідальний секретар', city:'61-26-63', inner:'3-25', email:'priyom@pdaa.edu.ua' },
-          { name:'Осташова Валерія Олександрівна', role:'Заступник відповідального секретаря', city:'61-26-63', inner:'3-25' },
-          { name:'Ольшанська Тетяна Іванівна', role:'Секретар', city:'2-29-94' },
-        ]
-      },
-      {
-        title: 'Профком',
-        deptPhone:'69-43-74', deptInner:'5-23',
-        people: [
-          { name:'Матюха Віктор Володимирович', role:'Голова профкому', city:'69-43-74', inner:'5-23' },
-          { name:'Безхлібна Тетяна Сергіївна', role:'Бухгалтер', city:'69-43-74', inner:'5-23' },
-        ]
-      },
-      {
-        title: 'Бібліотека',
-        deptPhone:'2-29-91', deptInner:'5-93; 5-19', deptEmail:'snitkola@gmail.com',
-        people: [
-          { name:'Снітко Людмила Олександрівна', role:'Директор', city:'2-29-91', inner:'5-93; 5-19', email:'snitkola@gmail.com' },
-          { name:'Пащенко Любов Дмитрівна', role:'Завідувач відділу', city:'2-29-91', inner:'5-93' },
-          { name:'Очередько Ольга Євгеніївна', role:'Завідувач відділу' },
-          { name:'Морєва Тетяна Володимирівна', role:'Завідувач відділу' },
-        ]
-      },
-      {
-        title: 'Підрозділ з організації виховної роботи',
-        deptPhone:'50-25-14', deptInner:'5-91', deptEmail:'radochina@mail.ru',
-        people: [
-          { name:'Радочіна Юлія Ігорівна', role:'Керівник', city:'50-25-14', inner:'5-91' },
-          { name:'Кочерга Анатолій Андрійович', role:'Заступник', city:'50-25-14', inner:'5-91' },
-        ]
-      },
-      {
-        title: 'Відділ культурно-освітньої діяльності',
-        people: [
-          { name:'Курбацька Світлана Вікторівна', role:'Художній керівник відділу', city:'моб. 0501963162' },
-          { name:'Заболотна Олена Володимирівна', role:'Керівник служби з гуманітарної та виховної роботи' },
-          { name:'Лобачевський Микола Вікторович', role:'Керівник гуртка' },
-          { name:'Троян Микола Дмитрович', role:'Керівник гуртка' },
-          { name:'Мартиненко Руслан Анатолійович', role:'Керівник гуртка' },
-          { name:'Супрун Яна Вікторівна', role:'Керівник гуртка' },
-          { name:'Сергієнко Олександр Васильович', role:'Керівник гуртка' },
-        ]
-      },
-      {
-        title: 'Наукова частина та інтелектуальна власність',
-        deptPhone:'50-03-74; 2-29-53', deptInner:'5-46', deptEmail:'bulakh@pdaa.edu.ua',
-        people: [
-          { name:'Булах Тетяна Вікторівна', role:'Завідувач відділу ІВ', city:'2-29-53', email:'bulakh@pdaa.edu.ua' },
-          { name:'Прасолов Євген Якович', role:'Фахівець', inner:'3-36' },
-          { name:'Бєловол Світлана Анатоліївна', role:'Фахівець', inner:'3-36' },
-          { name:'Бєловол Юрій Юрійович', role:'Інженер', inner:'3-36' },
-          { name:'Яснолоб Ілона Олександрівна', role:'Лаборант', city:'50-03-74', inner:'5-46', email:'1-ka@ukr.net' },
-          { name:'Сіренко Олена Вікторівна', role:'Завідувач аспірантурою', city:'50-03-74', inner:'5-46' },
-        ]
-      },
-    ]
-  },
-  {
-    id: 'aho',
-    tab: 'АГЧ',
-    sections: [
-      {
-        title: 'Адміністративно-господарська частина',
-        people: [
-          { name:'Мельник Вадим Васильович', role:'Керівник відділу автослужби', city:'2-24-11' },
-          { name:'Гаркуль Віталій Валерійович', role:'Начальник відділу з охорони праці', city:'моб. 0958897277' },
-          { name:'Коломієць Валерій Миколайович', role:'Керівник відділу теплопостачання', city:'2-26-04' },
-          { name:'Микитенко Микола Степанович', role:'Керівник відділу енергопостачання', inner:'5-66' },
-          { name:'Жданов-Неділько Андрій Миколайович', role:'Керівник відділу ремонту та експлуатації будівель', city:'2-26-47' },
-          { name:'Дудник Володимир Васильович', role:'Начальник штабу цивільного захисту', city:'7-34-94' },
-          { name:'Янковський Юрій Георгійович', role:'Директор студмістечка', city:'2-27-54' },
-          { name:'Карамушко Олексій Борисович', role:'Начальник відділу матеріально-технічного постачання', city:'2-87-02' },
-          { name:'Пучкова Лариса Борисівна', role:'Завідувач господарством' },
-          { name:'Куц Наталія Анатоліївна', role:'Інженер КВПіА', city:'2-87-02' },
-          { name:'Васін Станіслав Олексійович', role:'Технік АТС ІІ категорії', city:'2-26-04', inner:'5-08' },
-          { name:'Кубрак Іван Олександрович', role:'Технік АТС' },
-          { name:'Пензева Світлана Миколаївна', role:'Інженер з ремонту та експлуатації будівель', city:'2-87-02' },
-          { name:'Вацька Ганна Олексіївна', role:'Керівник їдальні', city:'2-24-11' },
-          { name:'Карамушко Валентина Сергіївна', role:'Паспортист', city:'7-30-01', inner:'5-66' },
-          { name:'Коне Ольга Вікторівна', role:'Паспортист' },
-        ]
-      },
-      {
-        title: 'Гуртожитки',
-        people: [
-          { name:'Лазоренко Алла Леонідівна', role:'Зав. гуртожитком №1', city:'2-88-60' },
-          { name:'Обревко Валерій Володимирович', role:'Зав. гуртожитками №2, 3', city:'2-27-97' },
-          { name:'Пархоменко Ольга Михайлівна', role:'Зав. гуртожитком №4а', city:'7-53-26' },
-          { name:'Аксьонова Тамара Михайлівна', role:'Зав. гуртожитком №4б', city:'7-53-26' },
-          { name:'Крот Євдокія Василівна', role:'Зав. гуртожитком №5', city:'2-27-46' },
-        ]
-      },
-      {
-        title: 'Коменданти навчальних корпусів',
-        people: [
-          { name:'Янковський Юрій Георгійович', role:'Комендант навч. корпусу №1', city:'2-27-54' },
-          { name:'Лисенко Наталія Костянтинівна', role:'Комендант навч. корпусу №2', city:'7-33-07' },
-          { name:'Мелешко Ірина Богданівна', role:'Комендант навч. корпусу №3', city:'2-27-42' },
-          { name:'Науменко Олена Вікторівна', role:'Комендант навч. корпусу №4', city:'2-29-94' },
-          { name:'Павленко Володимир Андрійович', role:'Комендант навч. корпусу №5' },
-        ]
-      },
-      {
-        title: 'Навчально-виробничий підрозділ із селекції та насінництва',
-        deptPhone:'50-23-51', deptInner:'5-39',
-        people: [
-          { name:'Тищенко Володимир Миколайович', role:'Керівник' },
-          { name:'Баташова Марія Євгенівна', role:'Провідний фахівець із селекції' },
-          { name:'Дриженко Людмила Михайлівна', role:'Провідний фахівець із селекції' },
-          { name:'Котелевський Юрій Олександрович', role:'Провідний фахівець із селекції' },
-          { name:'Кривенко Юлія Михайлівна', role:'Провідний фахівець із селекції' },
-          { name:'Лаврінець Григорій Семенович', role:'Провідний фахівець із селекції' },
-          { name:'Снитко Валерій Якович', role:'Провідний фахівець із селекції' },
-          { name:'Шапочка Ольга Миколаївна', role:'Провідний фахівець із селекції' },
-          { name:'Снитко Світлана Василівна', role:'Провідний фахівець із насінництва' },
-          { name:'Семергей Наталія Олексіївна', role:'Провідний фахівець із насінництва' },
-          { name:'Данелюк Віталій Дмитрович', role:'Фахівець І категорії із селекції' },
-          { name:'Дінець Ольга Миколаївна', role:'Фахівець І категорії із селекції' },
-          { name:'Діянова Анна Олександрівна', role:'Фахівець ІІ категорії із селекції' },
-          { name:'Суденко Богдан Васильович', role:'Фахівець І категорії із селекції' },
-          { name:'Шакалій Світлана Миколаївна', role:'Фахівець ІІ категорії лабораторії якості зерна' },
-          { name:'Молчан Сергій Семенович', role:'Завідувач дослідним полем' },
-          { name:'Демиденко Галина Олексіївна', role:'Лаборант' },
-          { name:'Ландарь Яніна Леонідівна', role:'Лаборант' },
-        ]
-      },
-    ]
-  },
-  {
-    id: 'ipod',
-    tab: 'ІПО',
-    sections: [
-      {
-        title: 'Інститут післядипломної освіти',
-        deptPhone:'57-30-79', deptInner:'5-48', deptEmail:'ipod_agro@ukr.net',
-        people: [
-          { name:'Капаєва Людмила Миколаївна', role:'Директор', email:'klm@pdaa.edu.ua' },
-          { name:'М\'яка Світлана Іванівна', role:'Керівник навчально-методичного відділу', city:'57-30-79', inner:'5-48' },
-          { name:'Трофименко Інна Миколаївна', role:'Фахівець' },
-          { name:'Пастрома Людмила Іванівна', role:'Фахівець' },
-          { name:'Писаренко Юлія Григорівна', role:'Завідувач відділом перепідготовки', city:'2-26-21', inner:'5-40' },
-          { name:'Левченко Юлія Миколаївна', role:'Методист відділу перепідготовки' },
-          { name:'Ландар Анатолій Олексійович', role:'Завідувач відділом навчання незайнятого населення', city:'57-30-79', inner:'5-48' },
-          { name:'Давидова Юлія Семенівна', role:'Лаборант' },
-          { name:'Пономаренко Тетяна Василівна', role:'Завідувач відділом підвищення кваліфікації', city:'2-26-21', inner:'5-40' },
-        ]
-      },
-    ]
-  },
-  {
-    id: 'innit',
-    tab: 'ІТ-інститут',
-    sections: [
-      {
-        title: 'НН інститут інформаційних та інноваційних технологій',
-        deptEmail:'sergiy.pustovit@pdaa.edu.ua',
-        people: [
-          { name:'Пустовіт Сергій Віталійович', role:'Керівник', email:'sergiy.pustovit@pdaa.edu.ua' },
-        ]
-      },
-      {
-        title: 'Відділ розробки та впровадження програмного забезпечення',
-        deptEmail:'semyy@pdaa.edu.ua',
-        people: [
-          { name:'Семенов Юрій Юрійович', role:'Керівник', email:'semyy@pdaa.edu.ua' },
-          { name:'Злосчастьєва Тетяна Альбертівна', role:'Програміст' },
-          { name:'Горбань Катерина Владиславівна', role:'Програміст' },
-        ]
-      },
-      {
-        title: 'Навчальний центр інформаційно-комунікаційного обслуговування',
-        deptInner:'5-94', deptEmail:'sergey.marchenko@pdaa.edu.ua',
-        people: [
-          { name:'Марченко Сергій Олександрович', role:'Начальник', email:'sergey.marchenko@pdaa.edu.ua' },
-          { name:'Дейкун Владислав Леонідович', role:'Інженер-програміст' },
-          { name:'Дупак Олександр Сергійович', role:'Інженер-програміст' },
-          { name:'Іванюта Михайло Васильович', role:'Інженер-програміст' },
-          { name:'Калініченко Антон Юрійович', role:'Інженер-програміст' },
-          { name:'Ковальчук Руслан Ігорович', role:'Інженер-програміст' },
-          { name:'Кондратенко Дмитро Юрійович', role:'Інженер-електронік' },
-          { name:'Радочін Віктор Вікторович', role:'Інженер-програміст' },
-          { name:'Сіренко Богдан Сергійович', role:'Оператор ЕОМ' },
-          { name:'Щербак Володимир Іванович', role:'Інженер-програміст' },
-        ]
-      },
-      {
-        title: 'Відділ інноваційних технологій та комп\'ютерного забезпечення',
-        deptPhone:'2-88-60', deptEmail:'ivan.svyrydenko@pdaa.edu.ua',
-        people: [
-          { name:'Свириденко Іван Анатолійович', role:'Керівник', city:'моб. 0950017188', email:'ivan.svyrydenko@pdaa.edu.ua' },
-          { name:'Колков Роман Юрійович', role:'Провідний інженер-програміст', city:'моб. 0990524835' },
-          { name:'Рябенко Наталія Миколаївна', role:'Інженер', city:'моб. 0668609648' },
-          { name:'Сазонова Наталія Анатоліївна', role:'Програміст', city:'моб. 0669666752' },
-        ]
-      },
-    ]
-  },
-  {
-    id: 'agro',
-    tab: 'Агро-інженерний',
-    sections: [
-      {
-        title: 'НН Аграрно-інженерний інститут',
-        deptPhone:'2-29-57', deptInner:'5-90',
-        people: [
-          { name:'Писаренко Павло Вікторович', role:'Директор' },
-          { name:'Сакало Віктор Миколайович', role:'Заступник директора' },
-        ]
-      },
-      {
-        title: 'Деканат факультету агротехнологій та екології',
-        deptPhone:'56-58-01', deptInner:'5-36', deptEmail:'dekanatagro@ukr.net',
-        people: [
-          { name:'Маренич Микола Миколайович', role:'Декан, доцент', city:'56-58-01', inner:'5-36' },
-          { name:'Ляшенко Віктор Васильович', role:'Заступник декана, доцент' },
-          { name:'Шокало Наталія Сергіївна', role:'Заступник декана, доцент' },
-          { name:'Філоненко Людмила Миколаївна', role:'Методист' },
-          { name:'Петренко Наталія Олександрівна', role:'Методист' },
-          { name:'Мокієнко Ольга Віталіївна', role:'Секретар' },
-          { name:'Березницька Тетяна Іванівна', role:'Секретар' },
-        ]
-      },
-      {
-        title: 'Кафедра екології та охорони навколишнього середовища',
-        deptPhone:'2-27-93', deptInner:'3-89', deptEmail:'kaf.ekol.pdaa@mail.ru',
-        people: [
-          { name:'Писаренко Віктор Микитович', role:'Завідувач кафедри, професор' },
-          { name:'Горб Олег Олександрович', role:'Професор' },
-          { name:'Коваленко Нінель Павлівна', role:'Доцент' },
-          { name:'Піщаленко Марина Анатоліївна', role:'Доцент' },
-          { name:'Поспєлова Ганна Дмитрівна', role:'Доцент' },
-          { name:'Самородов Віктор Миколайович', role:'Доцент' },
-          { name:'Пономаренко Сергій Володимирович', role:'Ст. викладач' },
-          { name:'Шерстюк Олена Леонідівна', role:'Асистент' },
-          { name:'Ожуг Вікторія Анатоліївна', role:'Ст. лаборант' },
-          { name:'Шелудько Анастасія Олександрівна', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра загальної та біологічної хімії',
-        deptInner:'3-84; 3-42', deptEmail:'himiya.pdaa@gmail.com',
-        people: [
-          { name:'Крикунова Валентина Юхимівна', role:'Завідувач кафедри, доцент' },
-          { name:'Короткова Ірина Валентинівна', role:'Доцент' },
-          { name:'Ромашко Таміла Петрівна', role:'Доцент' },
-          { name:'Плаксієнко Ірина Леонідівна', role:'Доцент' },
-          { name:'Колєснікова Лариса Анатоліївна', role:'Ст. викладач' },
-          { name:'Тимоха Світлана Сергіївна', role:'Ст. викладач' },
-          { name:'Бережна Галина Василівна', role:'Ст. лаборант' },
-          { name:'Чаган Валентина Григорівна', role:'Лаборант' },
-          { name:'Галицька Марина Анатоліївна', role:'Завідувач ННЛ хімічного аналізу' },
-        ]
-      },
-      {
-        title: 'Кафедра землеробства і агрохімії',
-        deptPhone:'2-27-93', deptInner:'3-17; 3-85',
-        people: [
-          { name:'Міщенко Олег Вікторович', role:'Завідувач кафедри, доцент' },
-          { name:'Писаренко Павло Вікторович', role:'Професор' },
-          { name:'Поспєлов Сергій Вікторович', role:'Професор' },
-          { name:'Опара Микола Миколайович', role:'Професор' },
-          { name:'Ласло Оксана Олександрівна', role:'Доцент' },
-          { name:'Нагорна Світлана Вікторівна', role:'Доцент' },
-          { name:'Тараненко Сергій Володимирович', role:'Доцент' },
-          { name:'Чайка Тетяна Олександрівна', role:'Доцент' },
-          { name:'Шокало Наталія Сергіївна', role:'Доцент' },
-          { name:'Біленко Оксана Павлівна', role:'Ст. викладач' },
-          { name:'Гордєєва Олена Федорівна', role:'Ст. викладач' },
-          { name:'Диченко Оксана Юріївна', role:'Ст. викладач' },
-          { name:'Тараненко Анна Олексіївна', role:'Ст. викладач' },
-          { name:'Воропіна Віра Олексіївна', role:'Асистент' },
-          { name:'Коваленко Зоя Володимирівна', role:'Ст. лаборант' },
-          { name:'Татаренко Ганна Борисівна', role:'Ст. лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра рослинництва',
-        deptPhone:'2-26-33', deptInner:'3-23; 3-21; 3-30', deptEmail:'roslinnistvo@mail.ru',
-        people: [
-          { name:'Шевніков Микола Янаєвич', role:'Завідувач кафедри, професор' },
-          { name:'Жемела Григорій Пимонович', role:'Професор' },
-          { name:'Куценко Олександр Михайлович', role:'Професор' },
-          { name:'Пипко Олександр Сергійович', role:'Професор' },
-          { name:'Антонець Олександр Анатолійович', role:'Доцент' },
-          { name:'Бараболя Ольга Валеріївна', role:'Доцент' },
-          { name:'Бєлова Тамара Олексіївна', role:'Доцент' },
-          { name:'Кочерга Анатолій Андрійович', role:'Доцент' },
-          { name:'Ляшенко Віктор Васильович', role:'Доцент' },
-          { name:'Філоненко Сергій Васильович', role:'Доцент' },
-          { name:'Міленко Ольга Григорівна', role:'Асистент' },
-          { name:'Шакалій Світлана Миколаївна', role:'Асистент' },
-          { name:'Злобенець Тетяна Василівна', role:'Ст. лаборант' },
-          { name:'Костенко Валентина Володимирівна', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра селекції, насінництва і генетики',
-        deptPhone:'50-23-51', deptInner:'5-72', deptEmail:'selection_56@mail.ru',
-        people: [
-          { name:'Тищенко Володимир Миколайович', role:'Завідувач кафедри, професор' },
-          { name:'Білявська Людмила Григорівна', role:'Професор' },
-          { name:'Баган Алла Василівна', role:'Доцент' },
-          { name:'Барат Юрій Михайлович', role:'Доцент' },
-          { name:'Баташова Марія Євгеніївна', role:'Доцент' },
-          { name:'Колісник Анатолій Володимирович', role:'Доцент' },
-          { name:'Кулик Максим Іванович', role:'Доцент' },
-          { name:'Маренич Микола Миколайович', role:'Доцент' },
-          { name:'Юрченко Світлана Олександрівна', role:'Доцент' },
-          { name:'Дриженко Людмила Михайлівна', role:'Асистент' },
-          { name:'Паламарчук Марина Юріївна', role:'Ст. лаборант' },
-          { name:'Єщенко Вікторія Миколаївна', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Деканат інженерно-технологічного факультету',
-        deptPhone:'2-29-81', deptInner:'3-67', deptEmail:'mech@pdaa.edu.ua',
-        people: [
-          { name:'Дудніков Ігор Анатолійович', role:'Декан, професор' },
-          { name:'Канівець Олександр Васильович', role:'Заступник декана, доцент' },
-          { name:'Лавренко Володимир Васильович', role:'Заступник декана, ст. викладач' },
-          { name:'Бондар Зоя Іванівна', role:'Методист' },
-          { name:'Прілєпо Наталія Володимирівна', role:'Методист' },
-          { name:'Дударь Марина Сергіївна', role:'Секретар' },
-        ]
-      },
-      {
-        title: 'Кафедра безпеки життєдіяльності',
-        deptPhone:'7-34-94', deptInner:'3-69', deptEmail:'kafedra_bgd@ukr.net',
-        people: [
-          { name:'Лапенко Тарас Григорович', role:'Завідувач кафедри, доцент' },
-          { name:'Прасолов Євген Якович', role:'Професор' },
-          { name:'Костенко Олена Михайлівна', role:'Професор' },
-          { name:'Опара Надія Миколаївна', role:'Доцент' },
-          { name:'Дрожчана Ольга Урешівна', role:'Ст. викладач' },
-          { name:'Дудник Володимир Васильович', role:'Ст. викладач' },
-          { name:'Бєловол Світлана Анатоліївна', role:'Ст. викладач' },
-          { name:'Дударь Ніна Іванівна', role:'Зав. лабораторією' },
-          { name:'Зливко Світлана Костянтинівна', role:'Ст. лаборант' },
-          { name:'Вовк Вячеслав Олексійович', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра вищої математики, логіки та фізики',
-        deptInner:'3-36; 3-66; 3-68', deptEmail:'vm.pdaa@gmail.com',
-        people: [
-          { name:'Шенгерій Людмила Миколаївна', role:'Завідувач кафедри, професор', inner:'3-68' },
-          { name:'Флегантов Леонід Олексійович', role:'Професор' },
-          { name:'Антонець Анатолій Вікторович', role:'Доцент' },
-          { name:'Горда Ірина Михайлівна', role:'Доцент' },
-          { name:'Овсієнко Юлія Іванівна', role:'Доцент' },
-          { name:'Негребецький Ігор Станіславович', role:'Ст. викладач', inner:'3-66' },
-          { name:'Рижкова Тетяна Юріївна', role:'Ст. викладач', inner:'3-66' },
-          { name:'Зевако Ірина Володимирівна', role:'Ст. лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра загальнотехнічних дисциплін',
-        deptInner:'5-85', deptEmail:'ztd@pdaa.edu.ua',
-        people: [
-          { name:'Горик Олексій Володимирович', role:'Завідувач кафедри, професор' },
-          { name:'Дудніков Ігор Анатолійович', role:'Професор' },
-          { name:'Біловод Олександра Іванівна', role:'Доцент' },
-          { name:'Бурлака Олексій Анатолійович', role:'Доцент' },
-          { name:'Канівець Олександр Васильович', role:'Доцент' },
-          { name:'Яхін Сергій Валерійович', role:'Доцент' },
-          { name:'Ковальчук Станіслав Богданович', role:'Ст. викладач' },
-          { name:'Брикун Олександр Миколайович', role:'Асистент' },
-          { name:'Щербак Володимир Васильович', role:'Асистент, оператор класу' },
-          { name:'Косинський Сергій Михайлович', role:'Завідувач навчальної лабораторії' },
-          { name:'Замурей Валентина Вікторівна', role:'Ст. лаборант' },
-          { name:'Левченко Костянтин Ілліч', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра машини та обладнання АПВ',
-        deptInner:'5-41; 3-60', deptEmail:'apv@pdaa.edu.ua',
-        people: [
-          { name:'Арендаренко Володимир Миколайович', role:'Завідувач кафедри, професор' },
-          { name:'Дмитриков Валерій Павлович', role:'Професор', inner:'5-41' },
-          { name:'Запорожець Микола Іванович', role:'Доцент' },
-          { name:'Іванов Олег Миколайович', role:'Доцент' },
-          { name:'Іванюта Михайло Васильович', role:'Доцент' },
-          { name:'Назаренко Олексій Олексійович', role:'Доцент' },
-          { name:'Левчук Віталій Іванович', role:'Доцент' },
-          { name:'Харак Руслан Миколайович', role:'Доцент' },
-          { name:'Лавренко Володимир Васильович', role:'Ст. викладач' },
-          { name:'Бєловол Світлана Анатоліївна', role:'Ст. викладач' },
-          { name:'Гловацький Іван Васильович', role:'Зав. лабораторією' },
-          { name:'Назаренко Василь Іванович', role:'Ст. лаборант, майстер вир. навчання' },
-          { name:'Литвиненко Юлія Борисівна', role:'Ст. лаборант, майстер вир. навчання' },
-          { name:'Кривонос Станіслав Михайлович', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра машиновикористання і виробничого навчання',
-        deptInner:'3-93', deptEmail:'mvivn@pdaa.edu.ua',
-        people: [
-          { name:'Сакало Віктор Миколайович', role:'Завідувач кафедри, доцент' },
-          { name:'Калініченко Антоніна Володимирівна', role:'Професор' },
-          { name:'Велит Ірина Анатоліївна', role:'Доцент' },
-          { name:'Калініченко Володимир Миколайович', role:'Доцент' },
-          { name:'Ляшенко Сергій Васильович', role:'Доцент' },
-          { name:'Падалка Вячеслав Вікторович', role:'Доцент' },
-          { name:'Тимошенко Вячеслав Михайлович', role:'Доцент' },
-          { name:'Дорошенко Сергій Володимирович', role:'Ст. викладач' },
-          { name:'Сівцов Олександр Володимирович', role:'Ст. викладач' },
-          { name:'Мірошніченко Володимир Миколайович', role:'Асистент' },
-          { name:'Гончаренко Сергій Васильович', role:'Майстер вир. навчання' },
-          { name:'Логвиненко Вадим Васильович', role:'Майстер вир. навчання' },
-          { name:'Лютий Тарас Григорович', role:'Майстер вир. навчання' },
-          { name:'Коваленко Олександр Миколайович', role:'Майстер вир. навчання' },
-          { name:'Сипало Сергій Васильович', role:'Майстер вир. навчання' },
-          { name:'Сівцов Юрій Володимирович', role:'Зав. лабораторією' },
-          { name:'Зачепило Сергій Володимирович', role:'Зав. навчально-виробничої майстерні' },
-          { name:'Кобзиста Інна Леонідівна', role:'Ст. лаборант' },
-          { name:'Загорулько Анна Андріївна', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра ремонту машин і технології конструкційних матеріалів',
-        deptInner:'3-34; 3-87', deptEmail:'zmtkm@pdaa.edu.ua',
-        people: [
-          { name:'Дудніков Анатолій Андрійович', role:'Завідувач кафедри, професор' },
-          { name:'Лапенко Григорій Олександрович', role:'Професор' },
-          { name:'Горбенко Олександр Вікторович', role:'Доцент' },
-          { name:'Іванкова Олена Володимирівна', role:'Доцент' },
-          { name:'Лоєнко Василь Васильович', role:'Доцент' },
-          { name:'Келемеш Антон Олександрович', role:'Ст. викладач' },
-          { name:'Тесленко Леонід Іванович', role:'Зав. лабораторією', inner:'3-34' },
-          { name:'Погребняк Андрій Анатолійович', role:'Майстер вир. навчання', inner:'3-34' },
-          { name:'Яроха Віктор Іванович', role:'Майстер вир. навчання', inner:'3-34' },
-          { name:'Чумак Марина Василівна', role:'Лаборант' },
-        ]
-      },
-    ]
-  },
-  {
-    id: 'vet',
-    tab: 'Тваринництво і вет.',
-    sections: [
-      {
-        title: 'НН Інститут тваринництва і ветеринарної медицини',
-        people: [
-          { name:'Поліщук Анатолій Анатолійович', role:'Директор' },
-          { name:'Слинько Віктор Григорович', role:'Заст. директора' },
-          { name:'Ульянко Сергій Олексійович', role:'Заст. директора' },
-          { name:'Кручиненко Олег Вікторович', role:'Заст. директора з наукової роботи' },
-        ]
-      },
-      {
-        title: 'Деканат факультету ветеринарної медицини',
-        deptPhone:'2-28-93', deptInner:'3-33', deptEmail:'fvmpoltava@ukr.net',
-        people: [
-          { name:'Передера Сергій Борисович', role:'Декан, доцент' },
-          { name:'Клименко Олександр Сергійович', role:'Заступник декана, доцент' },
-          { name:'Кручиненко Олег Вікторович', role:'Заступник декана, доцент' },
-          { name:'Завора Віта Миколаївна', role:'Методист' },
-          { name:'Дорошенко Юлія Миколаївна', role:'Секретар' },
-        ]
-      },
-      {
-        title: 'Кафедра анатомії та фізіології тварин',
-        deptInner:'3-16; 3-71; 5-68', deptEmail:'anatomiapdaa@gmail.com',
-        people: [
-          { name:'Бердник Василь Петрович', role:'Завідувач кафедри, професор' },
-          { name:'Бердник Ірина Юріївна', role:'Доцент' },
-          { name:'Бублик Оксана Олександрівна', role:'Доцент' },
-          { name:'Киричко Олена Борисівна', role:'Доцент' },
-          { name:'Омельченко Ганна Олексіївна', role:'Доцент' },
-          { name:'Шерстюк Любов Миколаївна', role:'Ст. викладач' },
-          { name:'Щербак Володимир Іванович', role:'Ст. викладач' },
-          { name:'П\'ятак Тетяна Миколаївна', role:'Завідувач проблемною НДЛ' },
-          { name:'Лещенко Ірина Миколаївна', role:'Ст. лаборант' },
-          { name:'Мовчан Костянтин Володимирович', role:'Лаборант' },
-          { name:'Ремесніков Михайло Михайлович', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра паразитології та ветеринарно-санітарної експертизи',
-        deptInner:'3-39', deptEmail:'Parazitologia@pdaa.edu.ua',
-        people: [
-          { name:'Євстаф\'єва Валентина Олександрівна', role:'Завідувач кафедри, професор' },
-          { name:'Передера Жанна Олександрівна', role:'Професор' },
-          { name:'Клименко Олександр Сергійович', role:'Доцент' },
-          { name:'Кручиненко Олег Вікторович', role:'Доцент' },
-          { name:'Сорокова Вікторія Василівна', role:'Доцент' },
-          { name:'Щербакова Наталія Сергіївна', role:'Доцент' },
-          { name:'Корчан Леонід Миколайович', role:'Ст. викладач' },
-          { name:'Михайлютенко Світлана Миколаївна', role:'Ст. викладач' },
-          { name:'Мельничук Віталій Васильович', role:'Завідувач ННЛ паразитології' },
-          { name:'Худар Олександра Григорівна', role:'Ст. лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра патологічної анатомії та інфекційної патології',
-        deptPhone:'7-49-08', deptInner:'3-40; 3-38; 3-43', deptEmail:'Patanatomia@pdaa.edu.ua',
-        people: [
-          { name:'Скрипка Марина Вікторівна', role:'Завідувач кафедри, професор' },
-          { name:'Замазій Андрій Анатолійович', role:'Професор' },
-          { name:'Панікар Ігор Ігорович', role:'Професор' },
-          { name:'Передера Сергій Борисович', role:'Професор' },
-          { name:'Дмитренко Надія Іванівна', role:'Доцент' },
-          { name:'Коне Мохамед Сумана', role:'Доцент' },
-          { name:'Лавріненко Інна Вікторівна', role:'Доцент' },
-          { name:'Передера Олена Олександрівна', role:'Доцент' },
-          { name:'Тітаренко Олена Вікторівна', role:'Доцент' },
-          { name:'Жерносік Ігор Анатолійович', role:'Ст. викладач' },
-          { name:'Туль Олександра Іванівна', role:'Завідувач ННЛ' },
-          { name:'Коваленко Світлана Михайлівна', role:'Ст. лаборант' },
-          { name:'Удовиченко Олена Володимирівна', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра терапії',
-        deptPhone:'2-89-11', deptEmail:'terapia@pdaa.edu.ua',
-        people: [
-          { name:'Локес Петро Іванович', role:'Завідувач кафедри, професор' },
-          { name:'Шатохін Павло Прохорович', role:'Професор' },
-          { name:'Кравченко Сергій Олександрович', role:'Доцент' },
-          { name:'Корчан Микола Іванович', role:'Доцент' },
-          { name:'Курман Андрій Федорович', role:'Доцент' },
-          { name:'Супруненко Костянтин Володимирович', role:'Доцент' },
-          { name:'Каришева Людмила Павлівна', role:'Ст. викладач' },
-          { name:'Локес-Крупка Терезія Петрівна', role:'Асистент' },
-          { name:'Бурда Тетяна Леонідівна', role:'Завідувач ННЛ терапії' },
-          { name:'Іщенко Маргарита Сергіївна', role:'Ст. лаборант' },
-          { name:'Канівець Наталія Сергіївна', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра хірургії та акушерства',
-        deptPhone:'2-27-54', deptEmail:'kaf.chir@ukr.net',
-        people: [
-          { name:'Киричко Борис Павлович', role:'Завідувач кафедри, професор' },
-          { name:'Кулинич Сергій Миколайович', role:'Професор' },
-          { name:'Довгопол Володимир Федорович', role:'Доцент' },
-          { name:'Панасова Тетяна Георгіївна', role:'Доцент' },
-          { name:'Передера Роман Вікторович', role:'Доцент' },
-          { name:'Звенігородська Таміла Владиславівна', role:'Ст. викладач' },
-          { name:'Слюсар Геннадій Вікторович', role:'Асистент' },
-          { name:'Скриль Вікторія Юріївна', role:'Асистент' },
-          { name:'Собчишина Тетяна Миколаївна', role:'Завідувач ННЛ' },
-          { name:'Брикун Катерина Миколаївна', role:'Ст. лаборант' },
-          { name:'Локошко Світлана Михайлівна', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Деканат факультету ТВППТ',
-        deptPhone:'2-27-91', deptInner:'5-49', deptEmail:'dektvppt@pdaa.edu.ua',
-        people: [
-          { name:'Поліщук Анатолій Анатолійович', role:'Декан, професор' },
-          { name:'Слинько Віктор Григорович', role:'Заступник декана, доцент' },
-          { name:'Ульянко Сергій Олексійович', role:'Заступник декана, доцент' },
-          { name:'Коваленко Вікторія Григорівна', role:'Методист' },
-          { name:'Сухопар Світлана Миколаївна', role:'Методист' },
-        ]
-      },
-      {
-        title: 'Кафедра годівлі та зоогігієни сільськогосподарських тварин',
-        deptInner:'5-75', deptEmail:'godivla@rambler.ru',
-        people: [
-          { name:'Ульянко Сергій Олексійович', role:'Завідувач кафедри, доцент' },
-          { name:'Поліщук Анатолій Анатолійович', role:'Професор' },
-          { name:'Мироненко Олена Іванівна', role:'Доцент' },
-          { name:'Рак Тетяна Михайлівна', role:'Доцент' },
-          { name:'Коробка Анатолій Вікторович', role:'Ст. викладач' },
-          { name:'Матюха Віктор Володимирович', role:'Ст. викладач' },
-          { name:'Чижанська Наталія Василівна', role:'Ст. викладач' },
-          { name:'Курман Марія Йосипівна', role:'Ст. лаборант' },
-          { name:'Матюха Вікторія Вікторівна', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра розведення і генетики сільськогосподарських тварин',
-        deptInner:'5-74; 5-95', deptEmail:'rozvedennia@pdaa.edu.ua',
-        people: [
-          { name:'Войтенко Світлана Леонідівна', role:'Завідувач кафедри, професор', inner:'5-95' },
-          { name:'Васильєва Ольга Олександрівна', role:'Професор' },
-          { name:'Вацький Віктор Федорович', role:'Доцент' },
-          { name:'Бейдик Наталія Миколаївна', role:'Ст. викладач' },
-          { name:'Желізняк Іван Миколайович', role:'Ст. викладач' },
-          { name:'Шаферівський Богдан Сергійович', role:'Ст. викладач' },
-          { name:'Петренко Максим Олександрович', role:'Асистент' },
-          { name:'Еткало Юлія Анатоліївна', role:'Ст. лаборант' },
-          { name:'Войтенко Анна Михайлівна', role:'Лаборант' },
-          { name:'Тараненко Лариса Анатоліївна', role:'Оператор комп. класу' },
-        ]
-      },
-      {
-        title: 'Кафедра технології виробництва продукції тваринництва',
-        deptInner:'5-81', deptEmail:'Yaroslav_ds@mail.ru',
-        people: [
-          { name:'Нагаєвич Віталій Михайлович', role:'Завідувач кафедри, професор' },
-          { name:'Слинько Віктор Григорович', role:'Професор' },
-          { name:'Бондаренко Олена Миколаївна', role:'Доцент' },
-          { name:'Ломако Дмитро Володимирович', role:'Доцент' },
-          { name:'Мороз Олег Григорович', role:'Доцент' },
-          { name:'Усачова Валентина Євгенівна', role:'Доцент' },
-          { name:'Березницький Віктор Іванович', role:'Ст. викладач' },
-          { name:'Чухліб Євгеній Володимирович', role:'Ст. викладач' },
-          { name:'Горбатюк Людмила Михайлівна', role:'Ст. лаборант' },
-          { name:'Дудник Ярослав Сергійович', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра технології переробки продукції тваринництва',
-        deptInner:'3-10', deptEmail:'tppt@ukr.net',
-        people: [
-          { name:'Тендітник Володимир Сергійович', role:'Завідувач кафедри, професор' },
-          { name:'Кравченко Оксана Іванівна', role:'Професор' },
-          { name:'Ножечкіна Галина Миколаївна', role:'Професор' },
-          { name:'Юхно Віктор Миколайович', role:'Доцент' },
-          { name:'Кузьменко Лариса Михайлівна', role:'Доцент' },
-          { name:'Чуб Олег Анатолійович', role:'Доцент' },
-          { name:'Кодак Тетяна Степанівна', role:'Ст. викладач' },
-          { name:'Мартусь Валентина Василівна', role:'Ст. лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра фізичного виховання та спорту',
-        deptPhone:'2-27-81', deptInner:'5-10', deptEmail:'kfvts@mail.ru',
-        people: [
-          { name:'Літвінов Петро Юрійович', role:'Завідувач кафедри, викладач' },
-          { name:'Ніжніченко Дмитро Олександрович', role:'Доцент' },
-          { name:'Бондаренко Віктор Петрович', role:'Ст. викладач' },
-          { name:'Сукач Олександр Володимирович', role:'Ст. викладач' },
-          { name:'Явтушенко Микола Миколайович', role:'Викладач' },
-          { name:'Гапоненко Оксана Сергіївна', role:'Керівник спортклубу', city:'2-28-23' },
-          { name:'Дубина Вадим Миколайович', role:'Ст. лаборант' },
-          { name:'Кобиляшневий Віталій Вікторович', role:'Лаборант' },
-          { name:'Голик Белла Григорівна', role:'Лаборант' },
-        ]
-      },
-    ]
-  },
-  {
-    id: 'econ',
-    tab: 'Економіка і бізнес',
-    sections: [
-      {
-        title: 'НН Інститут економіки і бізнесу',
-        deptPhone:'61-21-10',
-        people: [
-          { name:'Галич Олександр Анатолійович', role:'Директор', city:'61-21-10' },
-          { name:'Дорогань-Писаренко Людмила Олександрівна', role:'Заст. директора' },
-          { name:'Вакуленко Юлія Валентинівна', role:'Заст. директора' },
-          { name:'Писаренко Володимир Вікторович', role:'Заст. директора' },
-          { name:'Терещенко Іван Олексійович', role:'Заст. директора' },
-        ]
-      },
-      {
-        title: 'Деканат факультету економіки та менеджменту',
-        deptPhone:'2-29-71', deptInner:'5-31', deptEmail:'fem@pdaa.edu.ua',
-        people: [
-          { name:'Галич Олександр Анатолійович', role:'Декан, доцент' },
-          { name:'Воронько-Невіднича Тетяна Вікторівна', role:'Заступник декана, доцент' },
-          { name:'Хурдей Вікторія Дмитрівна', role:'Заступник декана, доцент' },
-          { name:'Бондаренко Марина Олександрівна', role:'Методист' },
-          { name:'Вольнова Олена Миколаївна', role:'Методист' },
-          { name:'Чухліб Надія Дмитрівна', role:'Методист' },
-          { name:'Шевченко Юлія Володимирівна', role:'Секретар' },
-        ]
-      },
-      {
-        title: 'Кафедра бізнес-адміністрування та права',
-        deptPhone:'2-28-07', deptInner:'3-99', deptEmail:'kaf_batap_pdaa@ukr.net',
-        people: [
-          { name:'Махмудов Ханлар Зейнал огли', role:'Завідувач кафедри, професор' },
-          { name:'Дем\'яненко Наталія Василівна', role:'Доцент' },
-          { name:'Михайлова Олена Сергіївна', role:'Доцент' },
-          { name:'Світлична Алла Василівна', role:'Доцент' },
-          { name:'Осташова Валерія Олександрівна', role:'Доцент' },
-          { name:'Сьомич Микола Іванович', role:'Доцент' },
-          { name:'Щетініна Тетяна Олексіївна', role:'Доцент' },
-          { name:'Шведенко Павло Юрійович', role:'Ст. викладач' },
-          { name:'Павленко Сергій Іванович', role:'Асистент' },
-          { name:'Бурлака Олена Павлівна', role:'Ст. лаборант' },
-          { name:'Плескач Катерина Сергіївна', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра економіки підприємства',
-        deptPhone:'2-27-64', deptInner:'3-90', deptEmail:'economika@pdaa.edu.ua',
-        people: [
-          { name:'Макаренко Петро Миколайович', role:'Завідувач кафедри, професор', city:'2-76-46', inner:'5-89' },
-          { name:'Березіна Людмила Михайлівна', role:'Професор' },
-          { name:'Сосновська Ольга Олександрівна', role:'Професор' },
-          { name:'Дядик Тетяна Василівна', role:'Доцент' },
-          { name:'Демиденко Леся Миколаївна', role:'Доцент' },
-          { name:'Дивнич Ольга Дмитрівна', role:'Доцент' },
-          { name:'Калініченко Олександр Володимирович', role:'Доцент' },
-          { name:'Коваленко Марина Вікторівна', role:'Доцент' },
-          { name:'Миколенко Інна Григорівна', role:'Доцент' },
-          { name:'Писаренко Світлана Валеріївна', role:'Доцент' },
-          { name:'Помаз Юлія Володимирівна', role:'Доцент' },
-          { name:'Самойлик Юлія Василівна', role:'Доцент' },
-          { name:'Загребельна Ірина Леонідівна', role:'Ст. викладач' },
-          { name:'Олійник Євген Олегович', role:'Ст. викладач' },
-          { name:'Литвин Алла Станіславівна', role:'Ст. лаборант' },
-          { name:'Галич Юлія Анатоліївна', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра іноземних мов та українознавства',
-        deptInner:'3-31', deptEmail:'kim_458@mail.ru',
-        people: [
-          { name:'Шаравара Тамара Олексіївна', role:'Завідувач кафедри, професор' },
-          { name:'Ніколаєнко Юлія Олександрівна', role:'Доцент' },
-          { name:'Тагільцева Яніна Михайлівна', role:'Доцент' },
-          { name:'Сизоненко Наталія Миколаївна', role:'Доцент' },
-          { name:'Дедухно Алла Володимирівна', role:'Ст. викладач' },
-          { name:'Жорник Ірина Іванівна', role:'Ст. викладач' },
-          { name:'Савенкова Олена Олександрівна', role:'Ст. викладач' },
-          { name:'Сахарова Людмила Миколаївна', role:'Ст. викладач' },
-          { name:'Лифар Алла Анатоліївна', role:'Викладач' },
-          { name:'Коломієць Світлана Анатоліївна', role:'Викладач' },
-          { name:'Сільчук Олеся Василівна', role:'Викладач' },
-          { name:'Васюта Вікторія Вікторівна', role:'Ст. лаборант' },
-          { name:'Дудник Яна Миколаївна', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра економічної кібернетики та інформаційних технологій',
-        deptPhone:'7-33-07', deptInner:'3-97', deptEmail:'informac@pdaa.edu.ua',
-        people: [
-          { name:'Вакуленко Юлія Валентинівна', role:'Завідувач кафедри, доцент' },
-          { name:'Галич Олександр Анатолійович', role:'Професор' },
-          { name:'Калініченко Антоніна Володимирівна', role:'Професор' },
-          { name:'Костоглод Костянтин Данилович', role:'Професор' },
-          { name:'Копішинська Олена Петрівна', role:'Доцент' },
-          { name:'Протас Надія Михайлівна', role:'Доцент' },
-          { name:'Уткін Юрій Вікторович', role:'Доцент' },
-          { name:'Балдінська Надія Олександрівна', role:'Ст. викладач' },
-          { name:'Малинська Лідія Володимирівна', role:'Ст. викладач' },
-          { name:'Чехлатий Олександр Миколайович', role:'Ст. викладач' },
-          { name:'Мінькова Ольга Григорівна', role:'Асистент' },
-          { name:'Неділько Тетяна Михайлівна', role:'Асистент' },
-          { name:'Сазонова Наталія Анатоліївна', role:'Асистент' },
-          { name:'Соколик Наталія Сергіївна', role:'Ст. лаборант' },
-          { name:'Рябенко Наталія Миколаївна', role:'Лаборант' },
-          { name:'Байганова Світлана Глібовна', role:'Оператор' },
-          { name:'Дубина Анатолій Володимирович', role:'Оператор' },
-        ]
-      },
-      {
-        title: 'Кафедра маркетингу',
-        deptPhone:'2-27-64', deptInner:'5-16', deptEmail:'marketing@pdaa.edu.ua',
-        people: [
-          { name:'Писаренко Володимир Вікторович', role:'Завідувач кафедри, професор' },
-          { name:'Даниленко Вікторія Іванівна', role:'Доцент' },
-          { name:'Комаріст Олена Іванівна', role:'Доцент' },
-          { name:'Решетнікова Ольга Валеріївна', role:'Доцент' },
-          { name:'Терещенко Іван Олексійович', role:'Доцент' },
-          { name:'Хурдей Вікторія Дмитрівна', role:'Доцент' },
-          { name:'Шульга Людмила Володимирівна', role:'Доцент' },
-          { name:'Калюжна Юлія Петрівна', role:'Ст. викладач' },
-          { name:'Кошова Лариса Михайлівна', role:'Асистент' },
-          { name:'Яснолоб Ілона Олександрівна', role:'Асистент' },
-          { name:'Моргун Марина Вікторівна', role:'Ст. лаборант' },
-          { name:'Грінчишина Вероніка Олексіївна', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра менеджменту',
-        deptPhone:'50-25-22', deptInner:'5-17; 3-44', deptEmail:'management@pdaa.edu.ua',
-        people: [
-          { name:'Лозинська Тамара Миколаївна', role:'Завідувач кафедри, професор' },
-          { name:'Дорофеєв Олександр Вікторович', role:'Професор' },
-          { name:'Писаренко В\'ячеслав Петрович', role:'Професор' },
-          { name:'Сердюк Ольга Іванівна', role:'Професор' },
-          { name:'Воронько-Невіднича Тетяна Вікторівна', role:'Доцент' },
-          { name:'Мирна Ольга Володимирівна', role:'Доцент' },
-          { name:'Помаз Олександр Михайлович', role:'Доцент' },
-          { name:'Сазонова Тетяна Олександрівна', role:'Доцент' },
-          { name:'Федірець Олег Володимирович', role:'Доцент' },
-          { name:'Шульженко Ірина Вадимівна', role:'Доцент' },
-          { name:'Шупта Ірина Миколаївна', role:'Доцент' },
-          { name:'Браславець Тетяна Миколаївна', role:'Асистент' },
-          { name:'Горбатюк Людмила Михайлівна', role:'Асистент' },
-          { name:'Верещака Світлана Геннадіївна', role:'Ст. лаборант' },
-          { name:'Обревко Тетяна Олексіївна', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Деканат факультету обліку та фінансів',
-        deptPhone:'50-24-79', deptInner:'5-88', deptEmail:'pdaa_fof@ukr.net',
-        people: [
-          { name:'Дорогань-Писаренко Людмила Олександрівна', role:'Декан, доцент' },
-          { name:'Безкровний Олександр Валентинович', role:'Заступник декана, доцент' },
-          { name:'Канцедал Наталія Анатоліївна', role:'Заступник декана, доцент' },
-          { name:'Ватуля Іван Данилович', role:'Заступник декана, доцент' },
-          { name:'Сорокотяга Сергій Миколайович', role:'Завідувач лабораторії інноваційних технологій' },
-          { name:'Пивовар Любов Олексіївна', role:'Методист' },
-          { name:'Прокопенко Тетяна Петрівна', role:'Методист' },
-          { name:'Потапенко Вікторія Василівна', role:'Методист' },
-          { name:'Ковальчук Алла Олександрівна', role:'Секретар' },
-        ]
-      },
-      {
-        title: 'Кафедра бухгалтерського обліку',
-        deptInner:'3-37', deptEmail:'kl777777@ukr.net',
-        people: [
-          { name:'Плаксієнко Валерій Якович', role:'Завідувач кафедри, професор' },
-          { name:'Єрмолаєва Марина Валентинівна', role:'Професор' },
-          { name:'Грибовська Юлія Миколаївна', role:'Доцент' },
-          { name:'Канцедал Наталія Анатоліївна', role:'Доцент' },
-          { name:'Лега Ольга Василівна', role:'Доцент' },
-          { name:'Ліпський Роман Вікторович', role:'Доцент' },
-          { name:'Мокієнко Тетяна Володимирівна', role:'Доцент' },
-          { name:'Остапенко Тетяна Миколаївна', role:'Доцент' },
-          { name:'Пономаренко Оксана Григорівна', role:'Доцент' },
-          { name:'Скиданенко Юрій Дмитрович', role:'Доцент' },
-          { name:'Черненко Ксенія Володимирівна', role:'Ст. викладач' },
-          { name:'Яловега Людмила Василівна', role:'Ст. викладач' },
-          { name:'Трушина Анастасія Юріївна', role:'Асистент' },
-          { name:'Гирява Олена Яківна', role:'Ст. лаборант' },
-          { name:'Прийдак Тетяна Борисівна', role:'Лаборант, асистент' },
-          { name:'Кулинич Людмила Валентинівна', role:'Лаборант' },
-          { name:'Тіщенко Тетяна Олексіївна', role:'Оператор комп\'ютерного класу' },
-        ]
-      },
-      {
-        title: 'Кафедра економічної теорії та економічних досліджень',
-        deptPhone:'2-29-91; 2-87-02', deptInner:'5-86; 3-95', deptEmail:'kaf-eted.pdaa@ukr.net',
-        people: [
-          { name:'Рудич Алла Іванівна', role:'Завідувач кафедри, доцент' },
-          { name:'Дорогань-Писаренко Людмила Олександрівна', role:'Професор' },
-          { name:'Тютюнник Юрій Михайлович', role:'Професор' },
-          { name:'Дорошенко Андрій Петрович', role:'Доцент' },
-          { name:'Єгорова Олена Володимирівна', role:'Доцент' },
-          { name:'Кононенко Жанна Андріївна', role:'Доцент' },
-          { name:'Кончаковський Євген Олегович', role:'Доцент' },
-          { name:'Литвин Олександр Юрійович', role:'Доцент' },
-          { name:'Песцова-Світалка Оксана Станіславівна', role:'Доцент' },
-          { name:'Чіп Людмила Олександрівна', role:'Доцент' },
-          { name:'Шупик Ірина Іванівна', role:'Доцент' },
-          { name:'Собакар Валентина Володимирівна', role:'Ст. лаборант' },
-          { name:'Майборода Ірина Володимирівна', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра організації обліку та аудиту',
-        deptPhone:'2-87-48', deptInner:'5-18; 5-71', deptEmail:'fadeeva_1976@mail.ru',
-        people: [
-          { name:'Левченко Зоя Михайлівна', role:'Завідувач кафедри, професор' },
-          { name:'Ватуля Іван Данилович', role:'Доцент' },
-          { name:'Дугар Тетяна Євгеніївна', role:'Доцент' },
-          { name:'Карпенко Ніна Григорівна', role:'Доцент' },
-          { name:'Красота Олена Григорівна', role:'Доцент' },
-          { name:'Мац Тетяна Павлівна', role:'Доцент' },
-          { name:'Нездойминога Олена Євгеніївна', role:'Доцент' },
-          { name:'Пилипенко Катерина Анатоліївна', role:'Доцент' },
-          { name:'Романченко Юлія Олександрівна', role:'Доцент' },
-          { name:'Сіренко Олена Вікторівна', role:'Доцент' },
-          { name:'Тютюнник Світлана Василівна', role:'Доцент' },
-          { name:'Ходаківська Лілія Олександрівна', role:'Доцент' },
-          { name:'Гринь Валентина Іванівна', role:'Ст. викладач' },
-          { name:'Філоненко Людмила Вікторівна', role:'Ст. лаборант' },
-          { name:'Фадеєва Анна Володимирівна', role:'Лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра філософії, історії та педагогіки',
-        deptInner:'3-22', deptEmail:'filosofia.pdaa@mail.ru',
-        people: [
-          { name:'Шейко Сергій Володимирович', role:'Завідувач кафедри, професор' },
-          { name:'Кальян Сергій Євгенович', role:'Професор' },
-          { name:'Якименко Микола Андрійович', role:'Професор' },
-          { name:'Антонець Марина Олексіївна', role:'Доцент' },
-          { name:'Ільченко Алла Михайлівна', role:'Доцент' },
-          { name:'Киричок Олександр Борисович', role:'Доцент' },
-          { name:'Макарець Світлана Володимирівна', role:'Доцент' },
-          { name:'Подлєсна Ганна Володимирівна', role:'Доцент' },
-          { name:'Якубенко Олена Павлівна', role:'Доцент' },
-          { name:'Васько Катерина Сергіївна', role:'Ст. викладач' },
-          { name:'Колодій Олена Сергіївна', role:'Ст. викладач' },
-          { name:'Фастівець Неля Петрівна', role:'Ст. лаборант' },
-        ]
-      },
-      {
-        title: 'Кафедра фінансів і кредиту',
-        deptPhone:'2-87-48', deptInner:'5-82', deptEmail:'fikpdaa@ukr.net',
-        people: [
-          { name:'Чумак Валентина Дмитрівна', role:'Завідувач кафедри, професор' },
-          { name:'Аранчій Валентина Іванівна', role:'Професор' },
-          { name:'Бойко Лариса Миколаївна', role:'Професор' },
-          { name:'Капаєва Людмила Миколаївна', role:'Професор' },
-          { name:'Писаренко В\'ячеслав Петрович', role:'Професор' },
-          { name:'Безкровний Олександр Валентинович', role:'Доцент' },
-          { name:'Березницький Євгеній Вікторович', role:'Доцент' },
-          { name:'Борисова Ірина Сергіївна', role:'Доцент' },
-          { name:'Галінська Тетяна Станіславівна', role:'Доцент' },
-          { name:'Глущенко Юлія Анатоліївна', role:'Доцент' },
-          { name:'Дорошенко Ольга Олександрівна', role:'Доцент' },
-          { name:'Дроботя Яна Анатоліївна', role:'Доцент' },
-          { name:'Зоря Олексій Петрович', role:'Доцент' },
-          { name:'Зоря Світлана Петрівна', role:'Доцент' },
-          { name:'Краснікова Оксана Миколаївна', role:'Доцент' },
-          { name:'Лелюк Юлія Миколаївна', role:'Доцент' },
-          { name:'Мисник Тетяна Григорівна', role:'Доцент' },
-          { name:'Некрасенко Лариса Анатоліївна', role:'Доцент' },
-          { name:'Остапенко Ольга Миколаївна', role:'Доцент' },
-          { name:'Смолянська Олена Юріївна', role:'Доцент' },
-          { name:'Собчишин Віталій Миколайович', role:'Доцент' },
-          { name:'Томілін Олексій Олександрович', role:'Доцент' },
-          { name:'Лихопій Вікторія Іванівна', role:'Ст. викладач' },
-          { name:'Радочіна Юлія Ігорівна', role:'Ст. викладач' },
-          { name:'Литвиненко Наталія Олександрівна', role:'Ст. лаборант' },
-          { name:'Воронько Катерина Сергіївна', role:'Лаборант' },
-        ]
-      },
-    ]
-  },
-  {
-    id: 'foreign',
-    tab: 'Іноземні громадяни',
-    sections: [
-      {
-        title: 'Деканат факультету підготовки іноземних громадян',
-        deptPhone:'2-86-86', deptInner:'5-69', deptEmail:'pdaa@i.ua',
-        people: [
-          { name:'Токуєва Наталія Володимирівна', role:'Декан факультету' },
-          { name:'Скиданенко Юрій Дмитрович', role:'Заступник декана' },
-          { name:'Новохацька Олена Олегівна', role:'Паспортист' },
-          { name:'Теслюк Яна Григорівна', role:'Паспортист' },
-        ]
-      },
-      {
-        title: 'Кафедра російської та української мов',
-        deptPhone:'2-86-86', deptInner:'5-69', deptEmail:'pdaa@i.ua',
-        people: [
-          { name:'Скиданенко Юрій Дмитрович', role:'Завідувач кафедри, доцент' },
-          { name:'Токуєва Наталія Володимирівна', role:'Ст. викладач' },
-        ]
-      },
-      {
-        title: 'Кафедра загальноосвітніх дисциплін',
-        deptPhone:'2-86-86', deptInner:'5-69', deptEmail:'pdaa@i.ua',
-        people: [
-          { name:'Чекмарьова Ірина Іллівна', role:'Завідувач кафедри (гром. засади), ст. викладач' },
-          { name:'Стрижак Марина Володимирівна', role:'Викладач' },
-          { name:'Дупак Олександр Сергійович', role:'Лаборант' },
-        ]
-      },
-    ]
-  },
-  {
-    id: 'colleges',
-    tab: 'Коледжі',
-    sections: [
-      {
-        title: 'Директора коледжів і технікумів',
-        people: [
-          { name:'Шевніков Микола Янаєвич', role:'Директор аграрно-економічного коледжу', city:'(05322) 7-30-12; 2-05-67', email:'agrokoledg@ukr.net' },
-          { name:'Козаченко Олена Михайлівна', role:'Директор аграрного коледжу управління і права', city:'(05322) 2-48-05; 2-95-32', email:'acup@ukr.net' },
-          { name:'Гузик Ростислав Тарасович', role:'Директор Хорольського агропромислового коледжу', city:'(05362) 32-1-01; 33-5-06', email:'xapkpdaa@ukr.net' },
-          { name:'Литовченко Алла Георгіївна', role:'В. о. директора Лубенського фінансово-економічного коледжу', city:'(05361) 7-26-00; 5-26-06; 7-75-35', email:'lubny-fek@yandex.ua' },
-          { name:'Корнієнко Віктор Миколайович', role:'Директор Лохвицького технологічного технікуму', city:'(05356) 3-54-46; 3-54-58', email:'lttpdaa@ukr.net' },
-          { name:'Шинкаренко Сергій Васильович', role:'Директор Хомутецького ветеринарно-зоотехнічного технікуму', city:'(05355) 3-55-66; 3-55-89', email:'hvzt_pdaa@mail.ru' },
-          { name:'Краснюк Василь Миколайович', role:'Директор Березоворудського технікуму', city:'(05358) 6-61-17; 6-61-10', email:'bt-pdaa@ukr.net' },
-        ]
-      }
-    ]
-  }
-];
+/* ══════════════════════════════════════════
+   DATA — СТРУКТУРОВАНИЙ ДОВІДНИК
+   ══════════════════════════════════════════ */
+let DATA = {
+  "lastUpdated": "28.04.2026",
+  "sections": [
+    {
+      "id": "management",
+      "tab": "КЕРІВНИЦТВО",
+      "sections": [
+        {
+          "title": "Керівництво університету",
+          "deptPhone": "(0532) 50-02-73",
+          "deptEmail": "pdau@pdau.edu.ua",
+          "people": [
+            {
+              "name": "Галич Олександр Анатолійович",
+              "role": "Ректор",
+              "city": "50-02-73",
+              "inner": "5-80",
+              "email": "galych@pdau.edu.ua"
+            },
+            {
+              "name": "Аранчій Валентина Іванівна",
+              "role": "Перший проректор",
+              "city": "60-74-24",
+              "inner": "5-90",
+              "email": "valentyna.aranchii@pdau.edu.ua"
+            },
+            {
+              "name": "Дорошенко Андрій Петрович",
+              "role": "проректор з науково-педагогічної роботи",
+              "city": "60-82-28",
+              "email": "andrii.doroshenko@pdau.edu.ua"
+            },
+            {
+              "name": "Горб Олег Олександрович",
+              "role": "проректор з науково-педагогічної роботи та міжнародних зв'язків",
+              "city": "50-03-74",
+              "inner": "5-46",
+              "email": "gorb@pdau.edu.ua"
+            },
+            {
+              "name": "Шостя Анатолій Михайлович",
+              "role": "проректор з науково-педагогічної, наукової роботи",
+              "inner": "5-66",
+              "email": "anatoliy.shostya@pdau.edu.ua"
+            },
+            {
+              "name": "Вовк Вячеслав Олексійович",
+              "role": "проректор з економіки та інфраструктури",
+              "city": "60-82-30",
+              "email": "viacheslav.vovk@pdau.edu.ua"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "administration",
+      "tab": "АДМІНІСТРАЦІЯ",
+      "sections": [
+        {
+          "title": "Бухгалтерія",
+          "deptPhone": "60-82-29",
+          "deptInner": "5-44; 3-75",
+          "people": [
+            {
+              "name": "Лінська Світлана Павлівна",
+              "role": "Головний бухгалтер",
+              "city": "57-32-45"
+            },
+            {
+              "name": "Палій Наталія Миколаївна",
+              "role": "Заступник головного бухгалтера",
+              "city": "60-74-67",
+              "inner": "3-75",
+              "email": "paliy@pdau.edu.ua"
+            },
+            {
+              "name": "Горбунова Ірина Володимирівна",
+              "role": "Заступник головного бухгалтера з економічної роботи",
+              "city": "56-52-19",
+              "inner": "5-44"
+            }
+          ]
+        },
+        {
+          "title": "Відділ кадрів",
+          "deptPhone": "56-95-09",
+          "deptInner": "5-24",
+          "deptEmail": "kadry@pdau.edu.ua",
+          "people": []
+        },
+        {
+          "title": "Канцелярія",
+          "deptPhone": "56-98-39",
+          "deptInner": "3-72",
+          "people": []
+        },
+        {
+          "title": "Відділ міжнародних зв'язків",
+          "deptPhone": "56-54-14",
+          "people": []
+        },
+        {
+          "title": "Юридичний відділ",
+          "deptPhone": "56-99-23",
+          "people": []
+        },
+        {
+          "title": "Навчальний відділ",
+          "deptPhone": "56-95-91",
+          "deptInner": "3-86",
+          "people": []
+        },
+        {
+          "title": "Приймальна комісія",
+          "deptPhone": "60-73-94, (095) 059-44-39, (096) 175-63-21",
+          "deptEmail": "vstup@pdau.edu.ua",
+          "people": []
+        },
+        {
+          "title": "Адміністративно-господарська частина",
+          "deptPhone": "60-82-30",
+          "deptInner": "5-66",
+          "people": [
+            {
+              "name": "Студентське містечко",
+              "role": "",
+              "city": "56-94-09"
+            }
+          ]
+        },
+        {
+          "title": "Профком",
+          "deptPhone": "50-25-14",
+          "people": []
+        },
+        {
+          "title": "Наукова частина",
+          "deptPhone": "50-03-74",
+          "deptInner": "5-46",
+          "people": []
+        }
+      ]
+    },
+    {
+      "id": "infrastructure",
+      "tab": "ІНФРАСТРУКТУРА",
+      "sections": [
+        {
+          "title": "Гуртожитки",
+          "people": [
+            {
+              "name": "Гуртожиток №1",
+              "role": "Прохідна",
+              "city": "56-52-51"
+            },
+            {
+              "name": "Гуртожиток №2",
+              "role": "Прохідна",
+              "city": "57-32-02"
+            },
+            {
+              "name": "Гуртожиток №3",
+              "role": "Прохідна",
+              "city": "60-82-27"
+            },
+            {
+              "name": "Гуртожиток №4а",
+              "role": "Прохідна",
+              "city": "56-97-47"
+            },
+            {
+              "name": "Гуртожиток №4б",
+              "role": "Прохідна",
+              "city": "60-92-96"
+            },
+            {
+              "name": "Гуртожиток №5",
+              "role": "Прохідна",
+              "city": "52-27-46"
+            }
+          ]
+        },
+        {
+          "title": "Навчальні корпуси",
+          "people": [
+            {
+              "name": "Корпус № 1",
+              "role": "Прохідна",
+              "city": "60-74-51"
+            }
+          ]
+        },
+        {
+          "title": "Прохідна №1 охорона",
+          "deptPhone": "56-94-78",
+          "people": []
+        },
+        {
+          "title": "Котельня",
+          "deptPhone": "56-91-98",
+          "people": []
+        }
+      ]
+    },
+    {
+      "id": "faculties",
+      "tab": "ІНСТИТУТИ ТА ФАКУЛЬТЕТИ",
+      "sections": [
+        {
+          "title": "ННІ агротехнологій, селекції та екології",
+          "deptPhone": "56-58-01",
+          "deptInner": "5-36",
+          "deptEmail": "agro@pdau.edu.ua",
+          "people": []
+        },
+        {
+          "title": "Інженерно-технологічний факультет",
+          "deptPhone": "56-96-87",
+          "deptInner": "3-67",
+          "deptEmail": "dekmex@pdau.edu.ua",
+          "people": []
+        },
+        {
+          "title": "Факультет ветеринарної медицини",
+          "deptPhone": "56-96-08",
+          "deptInner": "3-33",
+          "deptEmail": "dekvetmed@pdaa.edu.ua",
+          "people": []
+        },
+        {
+          "title": "Факультет технологій тваринництва та продовольства",
+          "deptPhone": "56-51-87",
+          "deptInner": "5-49",
+          "deptEmail": "dektvppt@pdau.edu.ua",
+          "people": []
+        },
+        {
+          "title": "ННІ економіки, управління, права та ІТ",
+          "deptPhone": "56-96-14",
+          "deptInner": "5-31",
+          "deptEmail": "dekeconom@pdau.edu.ua",
+          "people": []
+        },
+        {
+          "title": "Факультет обліку та фінансів",
+          "deptPhone": "50-24-79",
+          "deptInner": "5-88",
+          "deptEmail": "dekfof@pdau.edu.ua",
+          "people": []
+        },
+        {
+          "title": "Відділ із забезпечення освіти дорослих та інноваційного розвитку",
+          "deptPhone": "57-30-79, (066) 467-19-18",
+          "deptEmail": "od@pdau.edu.ua",
+          "people": []
+        }
+      ]
+    },
+    {
+      "id": "colleges",
+      "tab": "КОЛЕДЖІ",
+      "sections": [
+        {
+          "title": "Коледжі у м. Полтава",
+          "people": [
+            {
+              "name": "Аграрно-економічний фаховий коледж",
+              "role": "вул. Сковороди, 18",
+              "city": "(0532) 60-79-93",
+              "email": "agrokoledg@ukr.net"
+            },
+            {
+              "name": "Фаховий коледж управління, економіки і права",
+              "role": "проспект Віталія Грицаєнка, 10",
+              "city": "(0532) 56-90-87",
+              "email": "acup@ukr.net"
+            }
+          ]
+        },
+        {
+          "title": "Коледжі у Полтавській області",
+          "people": [
+            {
+              "name": "Березоворудський фаховий коледж",
+              "role": "с. Березова Рудка, вул. Паркова, 1",
+              "city": "(05358) 6 61 10, (05358) 6 61 17, (096) 789 17 16",
+              "email": "bt-pdaa@ukr.net"
+            },
+            {
+              "name": "Лубенський фінансово-економічний фаховий коледж",
+              "role": "м. Лубни, вул. Ярослава Мудрого, 23/1",
+              "city": "(05361) 72-600",
+              "email": "lubnyfekpdaa@gmail.com"
+            },
+            {
+              "name": "Хорольський агропромисловий фаховий коледж",
+              "role": "місто Хорол, вулиця Небесної Сотні, 73",
+              "city": "0994903124",
+              "email": "xapkpdaa@ukr.net"
+            },
+            {
+              "name": "Лохвицький механіко-технологічний фаховий коледж",
+              "role": "м. Заводське",
+              "city": "(05356) 3-54-44",
+              "email": "lmtpc@ukr.net"
+            },
+            {
+              "name": "Хомутецький фаховий коледж",
+              "role": "",
+              "city": "05355-35-5-66, Факс: 05355-35-5-80,  05355-35-5-89",
+              "email": "hvzt@pdaa.edu.ua"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tab_1777358716801",
+      "tab": ".",
+      "sections": []
+    }
+  ]
+};
 
-/* ══════════════════════════════════════════════════════════
-   AVATAR COLORS
-══════════════════════════════════════════════════════════ */
-const palettes = [
-  {bg:'#eef3e8',c:'#2d5016'},{bg:'#e8f0ee',c:'#1a4a38'},{bg:'#f3eee8',c:'#5a3210'},
-  {bg:'#eee8f0',c:'#3a1a5a'},{bg:'#e8eef3',c:'#10385a'},{bg:'#f0f3e8',c:'#3a5a10'},
-  {bg:'#f3e8ee',c:'#5a1038'},{bg:'#e8f3f0',c:'#105a4a'},
-];
-function palette(name){return palettes[name.charCodeAt(0)%palettes.length]}
-function initials(name){
-  const p=name.trim().split(' ');
-  return(p[0]?p[0][0]:'')+(p[1]?p[1][0]:'');
-}
-
-/* ══════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════
    STATE
-══════════════════════════════════════════════════════════ */
-let activeTab = DATA[0].id;
+   ══════════════════════════════════════════ */
+let activeTab = DATA.sections[0].id;
 let query = '';
+let isAdmin = false;
+const ADMIN_PASS = '123456';
+let dataChanged = false;
 
-/* ══════════════════════════════════════════════════════════
+/* ══════════════════════════════════════════
+   AVATAR COLORS
+   ══════════════════════════════════════════ */
+const colors = [
+  {bg:'#E6F1FB', c:'#185FA5'},
+  {bg:'#E1F5EE', c:'#0F6E56'},
+  {bg:'#FAEEDA', c:'#854F0B'},
+  {bg:'#FBEAF0', c:'#993556'},
+  {bg:'#EEEDFE', c:'#534AB7'},
+  {bg:'#FAECE7', c:'#993C1D'},
+];
+function colorFor(name) { return colors[name.charCodeAt(0) % colors.length]; }
+function initials(name) {
+  const p = name.trim().split(' ');
+  return ((p[0]||'')[0]||'') + ((p[1]||'')[0]||'');
+}
+
+/* ══════════════════════════════════════════
    RENDER
-══════════════════════════════════════════════════════════ */
-function buildTabs(){
-  const row=document.getElementById('tabsRow');
-  row.innerHTML=DATA.map(g=>`
-    <div class="tab${g.id===activeTab?' active':''}" onclick="setTab('${g.id}')">${g.tab}</div>
-  `).join('');
-}
-
-function setTab(id){
-  activeTab=id;
-  query='';
-  document.getElementById('searchInput').value='';
-  buildTabs();
-  render();
-}
-
-function doSearch(){
-  query=document.getElementById('searchInput').value.toLowerCase().trim();
-  buildTabs();
-  renderAll();
-}
-
-function phoneTag(p, inner){
-  if(!p) return '';
-  const cls = inner ? 'phone-tag inner' : 'phone-tag';
-  const prefix = inner ? 'вн.' : '';
-  return `<span class="${cls}">${prefix}${p}</span>`;
-}
-
-function emailTag(e){
-  if(!e)return'';
-  const short = e.length>22 ? e.slice(0,22)+'…' : e;
-  return `<span class="phone-tag email-tag" title="${e}">${short}</span>`;
-}
-
-function renderPerson(p, delay){
-  const col=palette(p.name);
-  const ini=initials(p.name);
-  const phones=[phoneTag(p.city,false), phoneTag(p.inner,true), emailTag(p.email)].filter(Boolean).join('');
-  return `
-    <div class="contact-card" style="animation-delay:${delay}s">
-      <div class="avatar" style="background:${col.bg};color:${col.c}">${ini.toUpperCase()}</div>
-      <div class="contact-info">
-        <div class="contact-name">${p.name}</div>
-        <div class="contact-role">${p.role}</div>
-      </div>
-      <div class="contact-phones">${phones||''}</div>
-    </div>`;
-}
-
-function renderSection(sec, baseDelay){
-  let html=`<div class="dept-header" style="animation-delay:${baseDelay}s">
-    <h3>${sec.title}</h3>`;
-  const meta=[];
-  if(sec.deptPhone||sec.deptInner){
-    const ph=[sec.deptPhone?`📞 ${sec.deptPhone}`:'', sec.deptInner?`вн. ${sec.deptInner}`:''].filter(Boolean).join(' · ');
-    meta.push(`<span class="dept-phone">${ph}</span>`);
+   ══════════════════════════════════════════ */
+function buildTabs() {
+  const row = document.getElementById('tabsRow');
+  let html = DATA.sections.map(g =>
+    `<div class="tab${g.id===activeTab?' active':''}" onclick="setTab('${g.id}')">
+      ${g.tab}
+      <span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('${g.id}')" 
+        style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
+    </div>`
+  ).join('');
+  html += `<div class="tab-add" onclick="openAddTab()" title="Додати вкладку">＋</div>`;
+  row.innerHTML = html;
+  if(isAdmin) {
+    row.querySelectorAll('.tab-edit-btn').forEach(el => el.style.display = 'inline');
   }
-  if(sec.deptEmail) meta.push(`<span class="dept-email">✉ ${sec.deptEmail}</span>`);
-  if(meta.length) html+=`<div class="dept-meta">${meta.join('')}</div>`;
-  html+='</div>';
-  (sec.people||[]).forEach((p,i)=>{ html+=renderPerson(p, baseDelay+0.02+i*0.025); });
+}
+
+function setTab(id) {
+  activeTab = id; query = '';
+  document.getElementById('searchInput').value = '';
+  buildTabs(); render();
+}
+
+function renderPerson(p, tabId, secIdx, personIdx, delay) {
+  const col = colorFor(p.name);
+  const ini = initials(p.name).toUpperCase();
+  const phones = [
+    p.city  ? `<span class="phone-tag">${p.city}</span>` : '',
+    p.inner ? `<span class="phone-tag inner">вн.&nbsp;${p.inner}</span>` : '',
+    p.email ? `<span class="phone-tag email-tag">${p.email}</span>` : ''
+  ].filter(Boolean).join('');
+  const adminAct = `<div class="admin-actions">
+    <button class="btn-icon btn-edit" title="Редагувати" onclick="openEditPerson('${tabId}',${secIdx},${personIdx})">✎</button>
+    <button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('${tabId}',${secIdx},${personIdx})">✕</button>
+  </div>`;
+  return `<div class="contact-card" style="animation-delay:${delay}s">
+    <div class="avatar" style="background:${col.bg};color:${col.c}">${ini}</div>
+    <div class="contact-info">
+      <div class="contact-name">${p.name}</div>
+      <div class="contact-role">${p.role}</div>
+    </div>
+    <div class="contact-phones">${phones}</div>
+    ${adminAct}
+  </div>`;
+}
+
+function renderSection(sec, tabId, secIdx, baseDelay) {
+  const adminActSec = `<div class="dept-admin-actions">
+    <button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('${tabId}',${secIdx})">✎</button>
+    <button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('${tabId}',${secIdx})">✕</button>
+  </div>`;
+  let html = `<div class="dept-section"><div class="dept-header" style="animation-delay:${baseDelay}s">
+    <h3>${sec.title}</h3>`;
+  const metaParts = [];
+  if(sec.deptPhone) metaParts.push(`📞 ${sec.deptPhone}`);
+  if(sec.deptInner) metaParts.push(`вн. ${sec.deptInner}`);
+  if(metaParts.length || sec.deptEmail) {
+    html += `<div class="dept-meta">`;
+    if(metaParts.length) html += `<span class="dept-phone">${metaParts.join(' · ')}</span>`;
+    if(sec.deptEmail) html += `<span class="dept-email">✉ ${sec.deptEmail}</span>`;
+    html += `</div>`;
+  }
+  html += adminActSec + `</div>`;
+  (sec.people||[]).forEach((p, i) => {
+    html += renderPerson(p, tabId, secIdx, i, baseDelay + 0.02 + i * 0.025);
+  });
+  html += `<button class="btn-add-person" onclick="openAddPerson('${tabId}',${secIdx})">＋ Додати працівника</button>`;
+  html += `</div>`;
   return html;
 }
 
-function render(){
-  const group=DATA.find(g=>g.id===activeTab);
-  if(!group){mainContent.innerHTML='';return;}
-  let html='';
-  let delay=0;
-  group.sections.forEach(sec=>{
-    html+=renderSection(sec, delay);
-    delay+=0.05;
-  });
-  document.getElementById('mainContent').innerHTML=html;
-  const total=group.sections.reduce((a,s)=>a+(s.people||[]).length,0);
-  document.getElementById('resCount').textContent=`${total} осіб`;
+function render() {
+  const group = DATA.sections.find(g => g.id === activeTab);
+  if(!group) return;
+  let html = '', delay = 0;
+  if(group.sections.length === 0) {
+    html = `<div class="empty"><div class="empty-glyph">📖</div><p>Довідник порожній. Увійдіть в режим адміністратора, щоб додати підрозділи та контакти.</p></div>`;
+  } else {
+    group.sections.forEach((sec, i) => {
+      html += renderSection(sec, group.id, i, delay);
+      delay += 0.05;
+    });
+  }
+  if(isAdmin) {
+    html += `<button onclick="openAddSection('${group.id}')" style="
+      display:block;width:100%;margin-top:1rem;padding:10px;
+      border:1px dashed var(--gold);background:transparent;
+      border-radius:var(--radius);color:var(--gold);font-size:13px;
+      cursor:pointer;font-family:'IBM Plex Sans',sans-serif;
+      transition:all .15s;" 
+      onmouseover="this.style.background='#fdf6e3'" 
+      onmouseout="this.style.background='transparent'">
+      ＋ Додати підрозділ
+    </button>`;
+  }
+  document.getElementById('mainContent').innerHTML = html;
+  const total = group.sections.reduce((a,s) => a+(s.people||[]).length, 0);
+  document.getElementById('resCount').textContent = `${total} осіб`;
 }
 
-function renderAll(){
-  // Search mode — show across all tabs
-  const q=query;
-  if(!q){render();buildTabs();return;}
-
-  let html='';
-  let total=0;
-  let delay=0;
-
-  DATA.forEach(group=>{
-    let groupHtml='';
-    group.sections.forEach(sec=>{
-      const matches=(sec.people||[]).filter(p=>
-        p.name.toLowerCase().includes(q)||
-        p.role.toLowerCase().includes(q)||
-        (p.city||'').includes(q)||
-        (p.inner||'').includes(q)||
-        (p.email||'').toLowerCase().includes(q)||
-        sec.title.toLowerCase().includes(q)
+/* ══════════════════════════════════════════
+   SEARCH — :по всьому довіднику
+   ══════════════════════════════════════════ */
+function doSearch() {
+  query = document.getElementById('searchInput').value.toLowerCase().trim();
+  if(!query) { render(); buildTabs(); return; }
+  
+  let html = '', total = 0, delay = 0;
+  
+  // 
+  DATA.sections.forEach(group => {
+    let tabHtml = '';
+    let tabHasResults = false;
+    
+    group.sections.forEach((sec, si) => {
+      //  збіг по назві підрозділу
+      const titleMatches = sec.title.toLowerCase().includes(query);
+      
+      // збіг по людям (ім'я, посада, телефон, email)
+      const matchedPeople = (sec.people||[]).filter(p =>
+        p.name.toLowerCase().includes(query) ||
+        p.role.toLowerCase().includes(query) ||
+        (p.city||'').toLowerCase().includes(query) ||
+        (p.inner||'').toLowerCase().includes(query) ||
+        (p.email||'').toLowerCase().includes(query)
       );
-      if(!matches.length) return;
-      groupHtml+=`<div class="dept-header" style="animation-delay:${delay}s">
-        <h3>${sec.title}</h3>`;
-      if(sec.deptPhone||sec.deptInner){
-        const ph=[sec.deptPhone?`📞 ${sec.deptPhone}`:'', sec.deptInner?`вн. ${sec.deptInner}`:''].filter(Boolean).join(' · ');
-        groupHtml+=`<div class="dept-meta"><span class="dept-phone">${ph}</span>`;
-        if(sec.deptEmail) groupHtml+=`<span class="dept-email">✉ ${sec.deptEmail}</span>`;
-        groupHtml+=`</div>`;
-      }
-      groupHtml+='</div>';
-      matches.forEach((p,i)=>{ groupHtml+=renderPerson(p, delay+0.02+i*0.02); total++; });
-      delay+=0.04;
+      
+      // Якщо не збігаються — пропускаємо
+      if(!titleMatches && matchedPeople.length === 0) return;
+      
+      tabHasResults = true;
+      
+      // Якщо збігається назва підрозділу — показуємо всіх його співробітників
+      const peopleToShow = titleMatches ? (sec.people||[]) : matchedPeople;
+      
+      // заголовок підрозділу до результатів пошуку
+      tabHtml += `<div class="dept-section" style="margin-top:1.5rem; border-top:1px solid var(--border); padding-top:1rem;">
+        <div class="dept-header">
+          <h3>${sec.title}</h3>
+          ${sec.deptPhone || sec.deptInner || sec.deptEmail ? `<div class="dept-meta">${sec.deptPhone ? `<span class="dept-phone">📞 ${sec.deptPhone}</span>` : ''}${sec.deptInner ? `<span class="dept-phone">вн. ${sec.deptInner}</span>` : ''}${sec.deptEmail ? `<span class="dept-email">✉ ${sec.deptEmail}</span>` : ''}</div>` : ''}
+        </div>`;
+        
+      peopleToShow.forEach((p, i) => {
+        const pi = (sec.people||[]).indexOf(p);
+        tabHtml += renderPerson(p, group.id, si, pi, delay + 0.02 + i*0.02);
+        total++;
+      });
+      tabHtml += `</div>`;
+      delay += 0.05;
     });
-    if(groupHtml){
-      html+=`<div class="section-head" style="animation-delay:${delay}s">
+    
+    if(tabHasResults) {
+      html += `<div class="section-head" style="margin-top:2rem;">
         <span class="section-dot"></span>
         <span class="section-label">${group.tab}</span>
         <span class="section-line"></span>
-      </div>${groupHtml}`;
+      </div>${tabHtml}`;
     }
   });
-
-  if(!html) html=`<div class="empty">
-    <div class="empty-glyph">⌕</div>
-    <p>За запитом «${query}» нічого не знайдено</p>
-  </div>`;
-
-  document.getElementById('mainContent').innerHTML=html;
-  document.getElementById('resCount').textContent=total?`${total} результатів`:'';
+  
+  if(!html) html = `<div class="empty"><div class="empty-glyph">⌕</div><p>Нічого не знайдено за запитом «${query}»</p></div>`;
+  
+  document.getElementById('mainContent').innerHTML = html;
+  document.getElementById('resCount').textContent = `${total} результатів`;
 }
 
-// Init
+/* ══════════════════════════════════════════
+   ADMIN AUTH
+   ══════════════════════════════════════════ */
+function toggleAdminPanel() {
+  if(isAdmin) {
+    if(dataChanged && !confirm('⚠️ У вас є незбережені зміни!\nНатисніть «💾 Експорт», щоб зберегти їх у файл.\nПродовжити без збереження?')) {
+      return;
+    }
+    isAdmin = false;
+    document.body.classList.remove('admin-mode');
+    document.getElementById('adminBtn').textContent = '🔒 Адмін';
+    document.getElementById('adminBtn').classList.remove('active');
+    document.getElementById('exportBtn').style.display = 'inline-block';
+    document.getElementById('csvBtn').style.display = 'none';
+    dataChanged = false;
+    buildTabs(); render();
+  } else {
+    document.getElementById('exportBtn').style.display = 'none';
+    document.getElementById('csvBtn').style.display = 'none';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginError').style.display = 'none';
+    openModal('loginModal');
+  }
+}
+
+function doLogin() {
+  const pw = document.getElementById('loginPassword').value;
+  if(pw === ADMIN_PASS) {
+    closeModal('loginModal');
+    isAdmin = true;
+    document.body.classList.add('admin-mode');
+    document.getElementById('adminBtn').textContent = '🔓 Вийти';
+    document.getElementById('adminBtn').classList.add('active');
+    document.getElementById('exportBtn').style.display = 'inline-block';
+    document.getElementById('csvBtn').style.display = 'inline-block';
+    buildTabs(); render();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginPassword').focus();
+  }
+}
+
+/* ══════════════════════════════════════════
+   MODAL HELPERS
+   ══════════════════════════════════════════ */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if(e.target===el) el.classList.remove('open'); });
+});
+
+/* ══════════════════════════════════════════
+   PERSON CRUD
+   ══════════════════════════════════════════ */
+function openAddPerson(tabId, secIdx) {
+  document.getElementById('personModalTitle').textContent = 'Додати працівника';
+  document.getElementById('pTabId').value = tabId;
+  document.getElementById('pSecIdx').value = secIdx;
+  document.getElementById('pPersonIdx').value = '-1';
+  ['pName','pRole','pCity','pInner','pEmail'].forEach(id => document.getElementById(id).value = '');
+  const acts = document.getElementById('personModalActions');
+  const delBtn = acts.querySelector('.btn-danger');
+  if(delBtn) delBtn.remove();
+  openModal('personModal');
+  setTimeout(() => document.getElementById('pName').focus(), 100);
+}
+
+function openEditPerson(tabId, secIdx, personIdx) {
+  const group = DATA.sections.find(g => g.id===tabId);
+  const p = group.sections[secIdx].people[personIdx];
+  document.getElementById('personModalTitle').textContent = 'Редагувати працівника';
+  document.getElementById('pTabId').value = tabId;
+  document.getElementById('pSecIdx').value = secIdx;
+  document.getElementById('pPersonIdx').value = personIdx;
+  document.getElementById('pName').value = p.name||'';
+  document.getElementById('pRole').value = p.role||'';
+  document.getElementById('pCity').value = p.city||'';
+  document.getElementById('pInner').value = p.inner||'';
+  document.getElementById('pEmail').value = p.email||'';
+  const acts = document.getElementById('personModalActions');
+  if(!acts.querySelector('.btn-danger')) {
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn-danger';
+    delBtn.textContent = 'Видалити';
+    delBtn.onclick = () => { closeModal('personModal'); confirmDeletePerson(tabId, +secIdx, +personIdx); };
+    acts.insertBefore(delBtn, acts.firstChild);
+  }
+  openModal('personModal');
+}
+
+function savePerson() {
+  const tabId = document.getElementById('pTabId').value;
+  const secIdx = +document.getElementById('pSecIdx').value;
+  const personIdx = +document.getElementById('pPersonIdx').value;
+  const name = document.getElementById('pName').value.trim();
+  if(!name) { document.getElementById('pName').focus(); return; }
+  const person = {
+    name,
+    role: document.getElementById('pRole').value.trim(),
+    city: document.getElementById('pCity').value.trim() || undefined,
+    inner: document.getElementById('pInner').value.trim() || undefined,
+    email: document.getElementById('pEmail').value.trim() || undefined
+  };
+  Object.keys(person).forEach(k => person[k]===undefined && delete person[k]);
+  const group = DATA.sections.find(g => g.id===tabId);
+  if(personIdx === -1) {
+    group.sections[secIdx].people.push(person);
+  } else {
+    group.sections[secIdx].people[personIdx] = person;
+  }
+  closeModal('personModal');
+  if(query) doSearch(); else render();
+  dataChanged = true;
+}
+
+function confirmDeletePerson(tabId, secIdx, personIdx) {
+  const group = DATA.sections.find(g => g.id===tabId);
+  const p = group.sections[secIdx].people[personIdx];
+  document.getElementById('confirmText').textContent = `Видалити «${p.name}»?`;
+  document.getElementById('confirmOk').onclick = () => {
+    group.sections[secIdx].people.splice(personIdx, 1);
+    closeModal('confirmModal');
+    if(query) doSearch(); else render();
+    dataChanged = true;
+  };
+  openModal('confirmModal');
+}
+
+/* ══════════════════════════════════════════
+   SECTION CRUD
+   ══════════════════════════════════════════ */
+function openAddSection(tabId) {
+  document.getElementById('sectionModalTitle').textContent = 'Додати підрозділ';
+  document.getElementById('sTabId').value = tabId;
+  document.getElementById('sSecIdx').value = '-1';
+  ['sTitle','sDeptPhone','sDeptInner','sDeptEmail'].forEach(id => document.getElementById(id).value='');
+  const acts = document.getElementById('sectionModalActions');
+  const delBtn = acts.querySelector('.btn-danger');
+  if(delBtn) delBtn.remove();
+  openModal('sectionModal');
+  setTimeout(() => document.getElementById('sTitle').focus(), 100);
+}
+
+function openEditSection(tabId, secIdx) {
+  const group = DATA.sections.find(g => g.id===tabId);
+  const sec = group.sections[secIdx];
+  document.getElementById('sectionModalTitle').textContent = 'Редагувати підрозділ';
+  document.getElementById('sTabId').value = tabId;
+  document.getElementById('sSecIdx').value = secIdx;
+  document.getElementById('sTitle').value = sec.title||'';
+  document.getElementById('sDeptPhone').value = sec.deptPhone||'';
+  document.getElementById('sDeptInner').value = sec.deptInner||'';
+  document.getElementById('sDeptEmail').value = sec.deptEmail||'';
+  const acts = document.getElementById('sectionModalActions');
+  if(!acts.querySelector('.btn-danger')) {
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn-danger';
+    delBtn.textContent = 'Видалити';
+    delBtn.onclick = () => { closeModal('sectionModal'); confirmDeleteSection(tabId, +secIdx); };
+    acts.insertBefore(delBtn, acts.firstChild);
+  }
+  openModal('sectionModal');
+}
+
+function saveSection() {
+  const tabId = document.getElementById('sTabId').value;
+  const secIdx = +document.getElementById('sSecIdx').value;
+  const title = document.getElementById('sTitle').value.trim();
+  if(!title) { document.getElementById('sTitle').focus(); return; }
+  const sec = {
+    title,
+    deptPhone: document.getElementById('sDeptPhone').value.trim() || undefined,
+    deptInner: document.getElementById('sDeptInner').value.trim() || undefined,
+    deptEmail: document.getElementById('sDeptEmail').value.trim() || undefined,
+    people: []
+  };
+  Object.keys(sec).forEach(k => sec[k]===undefined && delete sec[k]);
+  const group = DATA.sections.find(g => g.id===tabId);
+  if(secIdx === -1) {
+    if(!sec.people) sec.people = [];
+    group.sections.push(sec);
+  } else {
+    sec.people = group.sections[secIdx].people || [];
+    group.sections[secIdx] = sec;
+  }
+  closeModal('sectionModal');
+  render();
+  dataChanged = true;
+}
+
+function confirmDeleteSection(tabId, secIdx) {
+  const group = DATA.sections.find(g => g.id===tabId);
+  const sec = group.sections[secIdx];
+  document.getElementById('confirmText').textContent = `Видалити підрозділ «${sec.title}»? Усіх (${(sec.people||[]).length}) працівників буде видалено.`;
+  document.getElementById('confirmOk').onclick = () => {
+    group.sections.splice(secIdx, 1);
+    closeModal('confirmModal');
+    render();
+    dataChanged = true;
+  };
+  openModal('confirmModal');
+}
+
+/* ══════════════════════════════════════════
+   TAB CRUD
+   ══════════════════════════════════════════ */
+function openAddTab() {
+  document.getElementById('tabModalTitle').textContent = 'Додати вкладку';
+  document.getElementById('tTabId').value = '';
+  document.getElementById('tTabName').value = '';
+  const acts = document.getElementById('tabModalActions');
+  const delBtn = acts.querySelector('.btn-danger');
+  if(delBtn) delBtn.remove();
+  openModal('tabModal');
+  setTimeout(() => document.getElementById('tTabName').focus(), 100);
+}
+
+function openEditTab(tabId) {
+  const group = DATA.sections.find(g => g.id===tabId);
+  document.getElementById('tabModalTitle').textContent = 'Редагувати вкладку';
+  document.getElementById('tTabId').value = tabId;
+  document.getElementById('tTabName').value = group.tab;
+  const acts = document.getElementById('tabModalActions');
+  if(!acts.querySelector('.btn-danger')) {
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn-danger';
+    delBtn.textContent = 'Видалити';
+    delBtn.onclick = () => { closeModal('tabModal'); confirmDeleteTab(tabId); };
+    acts.insertBefore(delBtn, acts.firstChild);
+  }
+  openModal('tabModal');
+}
+
+function saveTab() {
+  const tabId = document.getElementById('tTabId').value;
+  const name = document.getElementById('tTabName').value.trim();
+  if(!name) { document.getElementById('tTabName').focus(); return; }
+  if(!tabId) {
+    const newId = 'tab_' + Date.now();
+    DATA.sections.push({ id: newId, tab: name, sections: [] });
+    activeTab = newId;
+  } else {
+    const group = DATA.sections.find(g => g.id===tabId);
+    group.tab = name;
+  }
+  closeModal('tabModal');
+  buildTabs(); render();
+  dataChanged = true;
+}
+
+function confirmDeleteTab(tabId) {
+  const group = DATA.sections.find(g => g.id===tabId);
+  const count = group.sections.reduce((a,s)=>a+(s.people||[]).length,0);
+  document.getElementById('confirmText').textContent = `Видалити вкладку «${group.tab}»? У ній ${group.sections.length} підрозділів та ${count} працівників.`;
+  document.getElementById('confirmOk').onclick = () => {
+    const idx = DATA.sections.findIndex(g => g.id===tabId);
+    DATA.sections.splice(idx, 1);
+    activeTab = DATA.sections[0]?.id || '';
+    closeModal('confirmModal');
+    buildTabs(); render();
+    dataChanged = true;
+  };
+  openModal('confirmModal');
+}
+
+/* ══════════════════════════════════════════
+   KEYBOARD SHORTCUTS
+   ══════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(el => el.classList.remove('open'));
+  }
+  if((e.ctrlKey||e.metaKey) && e.key==='f') {
+    e.preventDefault();
+    document.getElementById('searchInput').focus();
+    document.getElementById('searchInput').select();
+  }
+});
+
+/* ══════════════════════════════════════════
+   EXPORT
+   ══════════════════════════════════════════ */
+function exportToFile() {
+  DATA.lastUpdated = new Date().toLocaleDateString('uk-UA');
+  document.getElementById('lastUpdated').textContent = DATA.lastUpdated;
+  const wasAdmin = document.body.classList.contains('admin-mode');
+  const exportBtn = document.getElementById('exportBtn');
+  const wasBtnVisible = exportBtn.style.display;
+  if (wasAdmin) document.body.classList.remove('admin-mode');
+  exportBtn.style.display = 'none';
+  const dataJSON = JSON.stringify(DATA, null, 2).replace(/<\/script>/g, '<\\/script>');
+  let html = document.documentElement.outerHTML;
+  if (wasAdmin) document.body.classList.add('admin-mode');
+  exportBtn.style.display = wasBtnVisible;
+  const dataStart = html.indexOf('let DATA = {');
+  const dataEnd = html.indexOf('};', dataStart) + 2;
+  if(dataStart !== -1 && dataEnd !== -1) {
+    const before = html.substring(0, dataStart);
+    const after = html.substring(dataEnd);
+    html = before + `let DATA = ${dataJSON};` + after;
+  }
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Довідник_ПДАУ.html';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  alert('✅ Файл завантажено!\n\nЗамініть старий файл на Довідник_ПДАУ.html — і всі зміни збережуться.');
+  dataChanged = false;
+}
+
+function exportToCSV() {
+  const headers = ['ПІБ', 'Посада', 'Міський телефон', 'Внутрішній', 'E-mail', 'Підрозділ', 'Вкладка'];
+  const rows = [headers.join(',')];
+  DATA.sections.forEach(tab => {
+    tab.sections.forEach(sec => {
+      sec.people.forEach(p => {
+        const row = [
+          `"${(p.name||'').replace(/"/g,'""')}"`,
+          `"${(p.role||'').replace(/"/g,'""')}"`,
+          `"${(p.city||'').replace(/"/g,'""')}"`,
+          `"${(p.inner||'').replace(/"/g,'""')}"`,
+          `"${(p.email||'').replace(/"/g,'""')}"`,
+          `"${(sec.title||'').replace(/"/g,'""')}"`,
+          `"${(tab.tab||'').replace(/"/g,'""')}"`
+        ];
+        rows.push(row.join(','));
+      });
+    });
+  });
+  const csv = '\uFEFF' + rows.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Довідник_ПДАУ_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* ══════════════════════════════════════════
+   INIT
+   ══════════════════════════════════════════ */
+document.getElementById('lastUpdated').textContent = DATA.lastUpdated || new Date().toLocaleDateString('uk-UA');
 buildTabs();
 render();
 </script>
-</body>
-</html>
+
+</body></html>
