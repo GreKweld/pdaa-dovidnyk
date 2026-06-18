@@ -1,487 +1,704 @@
 <html lang="uk"><head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Телефонний довідник — ПДАУ</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #f5f2ed;
-      --surface: #fdfcfa;
-      --ink: #1a1814;
-      --ink2: #4a4640;
-      --ink3: #8a8480;
-      --accent: #2d5016;
-      --accent2: #8b3a0f;
-      --gold: #b8922a;
-      --border: #d8d4ce;
-      --border2: #ece9e3;
-      --card: #ffffff;
-      --tag-bg: #eef3e8;
-      --tag-c: #2d5016;
-      --radius: 6px;
-      --shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
-      --admin-accent: #1e40af;
-      --admin-danger: #b91c1c;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'IBM Plex Sans', sans-serif;
-      background: var(--bg);
-      color: var(--ink);
-      min-height: 100vh;
-    }
-    header {
-      background: var(--accent);
-      color: #fff;
-      padding: 1.5rem 1.5rem 1rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      border-bottom: 3px solid var(--gold);
-    }
-    .header-inner { max-width: 960px; margin: 0 auto; text-align: center; }
-    .header-top { display: flex; align-items: center; gap: 1rem; margin-bottom: .75rem; justify-content: center; }
-    .logo-emblem { display: none; }
-    .header-titles h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(18px, 4vw, 24px);
-      font-weight: 600;
-      line-height: 1.2;
-    }
-    .header-sub {
-      font-size: 12px; opacity: .8;
-      text-transform: uppercase; letter-spacing: .07em; margin-top: 4px;
-    }
-    .header-controls { display: flex; align-items: center; gap: .75rem; justify-content: center; flex-wrap: wrap; }
-    .search-wrap { position: relative; flex: 1; max-width: 500px; min-width: 200px; }
-    .search-wrap .search-icon {
-      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-      font-size: 15px; opacity: .6; pointer-events: none;
-    }
-    #searchInput {
-      width: 100%; padding: 8px 12px 8px 36px;
-      background: rgba(255,255,255,0.13);
-      border: 1px solid rgba(255,255,255,0.22);
-      border-radius: 20px;
-      color: #fff; font-size: 14px;
-      font-family: 'IBM Plex Sans', sans-serif;
-      outline: none; transition: background .2s, border-color .2s;
-    }
-    #searchInput::placeholder { color: rgba(255,255,255,0.5); }
-    #searchInput:focus { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); }
-    .header-right { display: flex; align-items: center; gap: .75rem; }
-    #resCount {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px; color: rgba(255,255,255,0.55);
-      white-space: nowrap;
-    }
-    #adminBtn, #exportBtn, #printBtn, #csvBtn {
-      padding: 5px 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.35);
-      background: rgba(255,255,255,0.12); color: #fff; font-size: 11px;
-      font-family: 'IBM Plex Sans', sans-serif; cursor: pointer; white-space: nowrap;
-      transition: background .2s;
-    }
-    #adminBtn:hover, #exportBtn:hover, #printBtn:hover { background: rgba(255,255,255,0.22); }
-    #adminBtn.active {
-      background: var(--gold); border-color: var(--gold); color: #1a1814; font-weight: 600;
-    }
-    .tabs-wrap {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 90;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .tabs-wrap::-webkit-scrollbar { display: none; }
-    .tabs { display: flex; max-width: 960px; margin: 0 auto; }
-    .tab {
-      padding: 10px 14px; font-size: 12px; font-weight: 500;
-      color: var(--ink3); cursor: pointer;
-      border-bottom: 2px solid transparent;
-      white-space: nowrap; flex-shrink: 0;
-      transition: color .2s, border-color .2s;
-      letter-spacing: .02em; display: flex; align-items: center; gap: 6px;
-    }
-    .tab:hover { color: var(--accent); }
-    .tab.active { color: var(--accent); border-bottom-color: var(--gold); }
-    .tab-add {
-      padding: 10px 14px; font-size: 18px; color: var(--gold);
-      cursor: pointer; display: none; align-items: center;
-    }
-    body.admin-mode .tab-add { display: flex; }
-    main { max-width: 960px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
-    .dept-header {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--accent);
-      border-radius: var(--radius);
-      padding: .75rem 1rem;
-      margin-bottom: .5rem;
-      animation: fadeUp .35s ease both;
-      position: relative;
-    }
-    .dept-header h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 15px; font-weight: 600; color: var(--accent);
-    }
-    .dept-meta { display: flex; gap: 1rem; margin-top: 4px; flex-wrap: wrap; }
-    .dept-phone, .dept-email {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px; color: var(--ink3);
-    }
-    .dept-section { margin-bottom: 1.5rem; }
-    .contact-card {
-      background: var(--card);
-      border: 1px solid var(--border2);
-      border-radius: var(--radius);
-      padding: .65rem 1rem;
-      margin-bottom: 6px;
-      display: flex; align-items: center; gap: 12px;
-      transition: transform .15s, box-shadow .15s, border-color .15s;
-      animation: fadeUp .3s ease both;
-      position: relative;
-    }
-    .contact-card:hover {
-      transform: translateY(-1px);
-      box-shadow: var(--shadow);
-      border-color: var(--border);
-    }
-    .avatar {
-      width: 38px; height: 38px; flex-shrink: 0;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px; font-weight: 500;
-    }
-    .contact-info { flex: 1; min-width: 0; }
-    .contact-name {
-      font-size: 14px; font-weight: 500; color: var(--ink);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .contact-role {
-      font-size: 12px; color: var(--ink3);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .contact-phones { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
-    .phone-tag {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px; color: var(--tag-c);
-      background: var(--tag-bg);
-      padding: 2px 8px; border-radius: 99px; white-space: nowrap;
-    }
-    .phone-tag.inner { color: var(--accent2); background: #f9ede8; }
-    .phone-tag.email-tag {
-      color: var(--ink3); background: var(--border2);
-      max-width: 160px; overflow: hidden; text-overflow: ellipsis;
-    }
-    .section-head {
-      display: flex; align-items: center; gap: 10px;
-      margin: 1.25rem 0 .6rem;
-    }
-    .section-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
-    .section-label {
-      font-family: 'Playfair Display', serif;
-      font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink2);
-    }
-    .section-line { flex: 1; height: 1px; background: var(--border); }
-    .empty { text-align: center; padding: 4rem 2rem; color: var(--ink3); }
-    .empty-glyph { font-size: 3rem; margin-bottom: .5rem; opacity: .4; }
-    .empty p { font-size: 14px; }
-    .admin-actions { display: none; gap: 4px; flex-shrink: 0; }
-    body.admin-mode .admin-actions { display: flex; }
-    .btn-icon {
-      width: 28px; height: 28px; border-radius: 6px; border: none;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      font-size: 13px; transition: background .15s;
-    }
-    .btn-edit { background: #eff6ff; color: var(--admin-accent); }
-    .btn-edit:hover { background: #dbeafe; }
-    .btn-del { background: #fef2f2; color: var(--admin-danger); }
-    .btn-del:hover { background: #fee2e2; }
-    .btn-add-person {
-      display: none; width: 100%; margin-top: 4px;
-      padding: 7px; border: 1px dashed var(--border);
-      background: transparent; border-radius: var(--radius);
-      color: var(--ink3); font-size: 12px; cursor: pointer;
-      transition: all .15s; font-family: 'IBM Plex Sans', sans-serif;
-    }
-    .btn-add-person:hover { background: var(--tag-bg); color: var(--accent); border-color: var(--accent); }
-    body.admin-mode .btn-add-person { display: block; }
-    .dept-admin-actions {
-      display: none; position: absolute; top: .6rem; right: .75rem; gap: 4px;
-    }
-    body.admin-mode .dept-admin-actions { display: flex; }
-    .modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.45); z-index: 1000;
-      align-items: center; justify-content: center; padding: 1rem;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal {
-      background: var(--surface); border-radius: 12px;
-      padding: 1.75rem; width: 100%; max-width: 480px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-      animation: fadeUp .25s ease;
-      max-height: 90vh; overflow-y: auto;
-    }
-    .modal h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 18px; font-weight: 600; margin-bottom: 1.25rem;
-      color: var(--accent);
-    }
-    .form-group { margin-bottom: 1rem; }
-    .form-group label {
-      display: block; font-size: 12px; font-weight: 500;
-      color: var(--ink3); margin-bottom: 4px; letter-spacing: .03em;
-      text-transform: uppercase;
-    }
-    .form-group input, .form-group select {
-      width: 100%; padding: 9px 12px;
-      border: 1px solid var(--border); border-radius: var(--radius);
-      background: var(--card); color: var(--ink);
-      font-size: 14px; font-family: 'IBM Plex Sans', sans-serif;
-      outline: none; transition: border-color .2s;
-    }
-    .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
-    .modal-actions { display: flex; gap: .75rem; margin-top: 1.5rem; justify-content: flex-end; }
-    .btn-primary {
-      padding: 9px 20px; background: var(--accent); color: #fff;
-      border: none; border-radius: var(--radius); font-size: 14px;
-      font-family: 'IBM Plex Sans', sans-serif; cursor: pointer;
-      font-weight: 500; transition: opacity .15s;
-    }
-    .btn-primary:hover { opacity: .88; }
-    .btn-secondary {
-      padding: 9px 20px; background: transparent; color: var(--ink3);
-      border: 1px solid var(--border); border-radius: var(--radius);
-      font-size: 14px; font-family: 'IBM Plex Sans', sans-serif;
-      cursor: pointer; transition: background .15s;
-    }
-    .btn-secondary:hover { background: var(--border2); }
-    .btn-danger {
-      padding: 9px 20px; background: var(--admin-danger); color: #fff;
-      border: none; border-radius: var(--radius); font-size: 14px;
-      font-family: 'IBM Plex Sans', sans-serif; cursor: pointer;
-      margin-right: auto; transition: opacity .15s;
-    }
-    .btn-danger:hover { opacity: .85; }
-    .login-modal { max-width: 340px; text-align: center; }
-    .login-modal .lock-icon { font-size: 2.5rem; margin-bottom: .75rem; }
-    .login-modal h2 { margin-bottom: .25rem; }
-    .login-sub { font-size: 13px; color: var(--ink3); margin-bottom: 1.25rem; }
-    .error-msg {
-      background: #fef2f2; color: var(--admin-danger);
-      border: 1px solid #fecaca; border-radius: var(--radius);
-      padding: 8px 12px; font-size: 13px; display: none; margin-top: .5rem;
-    }
-    .admin-banner {
-      display: none; background: var(--admin-accent); color: #fff;
-      text-align: center; padding: 7px; font-size: 12px; letter-spacing: .04em;
-    }
-    body.admin-mode .admin-banner { display: block; }
-    footer {
-      background: var(--ink); color: rgba(255,255,255,0.6);
-      padding: 1.5rem; text-align: center; font-size: 12px; line-height: 1.7;
-    }
-    footer strong { color: rgba(255,255,255,0.9); display: block; margin-bottom: 4px; font-family: 'Playfair Display', serif; font-size: 14px; }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @media (max-width: 560px) {
-      .phone-tag.email-tag { display: none; }
-      header { padding: 1rem; }
-      .header-top { gap: .75rem; }
-      main { padding: 1rem .75rem 2rem; }
-      .header-controls { flex-direction: column; }
-      .search-wrap { max-width: 100%; }
-    }
-    @media print {
-      @page { margin: 25mm 10mm 20mm 10mm; size: A4; }
-      body {
-        background: #fff !important; color: #000 !important;
-        font-size: 11pt !important; line-height: 1.4 !important;
-        margin: 0 !important; padding: 0 !important;
-      }
-      header, .tabs-wrap, .admin-banner, .admin-actions, .dept-admin-actions,
-      .btn-add-person, .btn-icon, #adminBtn, #exportBtn, #printBtn, #csvBtn,
-      .search-wrap, .modal-overlay, footer, body::before { display: none !important; }
-      .avatar, .phone-tag { display: none !important; }
-      .contact-card {
-        border: none !important; padding: 2pt 0 !important; margin: 0 !important;
-        box-shadow: none !important; background: transparent !important;
-        display: block !important; page-break-inside: avoid;
-      }
-      .contact-info { display: block !important; margin-bottom: 2pt !important; }
-      .contact-name { font-weight: 600 !important; font-size: 10pt !important; color: #000 !important; }
-      .contact-role { font-size: 9pt !important; color: #333 !important; margin: 1pt 0 !important; }
-      .contact-phones { display: block !important; text-align: left !important; margin-top: 2pt !important; }
-      .contact-phones span { display: inline !important; margin-right: 12pt !important; font-size: 9pt !important; color: #000 !important; background: none !important; padding: 0 !important; }
-      .dept-header {
-        border: none !important; border-left: none !important;
-        padding: 6pt 0 3pt !important; margin: 10pt 0 3pt !important;
-        page-break-after: avoid; page-break-inside: avoid; background: transparent !important;
-      }
-      .dept-header h3 {
-        font-size: 11pt !important; font-weight: 700 !important; color: #000 !important;
-        border: none !important; padding: 0 !important; margin: 0 !important; display: block !important;
-      }
-      .dept-meta { display: block !important; margin-top: 2pt !important; font-size: 9pt !important; color: #333 !important; }
-      .dept-meta span { margin-right: 15pt !important; display: inline-block !important; }
-      .section-head {
-        display: block !important; margin: 18pt 0 6pt !important;
-        page-break-before: always; page-break-after: avoid;
-      }
-      .section-head:first-child { page-break-before: auto !important; }
-      .section-label {
-        display: block !important; font-size: 12pt !important; font-weight: 700 !important;
-        color: #000 !important; text-transform: none !important; letter-spacing: 0 !important;
-        margin: 0 !important; padding: 0 !important; border: none !important;
-      }
-      .section-dot, .section-line { display: none !important; }
-      body::after {
-        content: "Сторінка " counter(page) " з " counter(pages) " | www.pdau.edu.ua";
-        display: block; font-size: 8pt; text-align: center;
-        position: fixed; bottom: 0; left: 0; right: 0;
-        border: none !important; padding: 0 !important; margin: 10pt 0 0 0 !important;
-      }
-      .dept-section { page-break-inside: avoid; margin-bottom: 6pt !important; }
-      * { color: #000 !important; background: transparent !important; }
-      a { text-decoration: none !important; color: #000 !important; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Телефонний довідник — ПДАУ</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root {
+--bg: #f5f2ed;
+--surface: #fdfcfa;
+--ink: #1a1814;
+--ink2: #4a4640;
+--ink3: #8a8480;
+--accent: #2d5016;
+--accent2: #8b3a0f;
+--gold: #b8922a;
+--border: #d8d4ce;
+--border2: #ece9e3;
+--card: #ffffff;
+--tag-bg: #eef3e8;
+--tag-c: #2d5016;
+--radius: 6px;
+--shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+--admin-accent: #1e40af;
+--admin-danger: #b91c1c;
+--admin-move: #059669;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+font-family: 'IBM Plex Sans', sans-serif;
+background: var(--bg);
+color: var(--ink);
+min-height: 100vh;
+}
+header {
+background: var(--accent);
+color: #fff;
+padding: 1.5rem 1.5rem 1rem;
+position: sticky;
+top: 0;
+z-index: 100;
+border-bottom: 3px solid var(--gold);
+}
+.header-inner { max-width: 960px; margin: 0 auto; text-align: center; }
+.header-top { display: flex; align-items: center; gap: 1rem; margin-bottom: .75rem; justify-content: center; }
+.logo-emblem { display: none; }
+.header-titles h1 {
+font-family: 'Playfair Display', serif;
+font-size: clamp(18px, 4vw, 24px);
+font-weight: 600;
+line-height: 1.2;
+}
+.header-sub {
+font-size: 12px; opacity: .8;
+text-transform: uppercase; letter-spacing: .07em; margin-top: 4px;
+}
+.header-controls { display: flex; align-items: center; gap: .75rem; justify-content: center; flex-wrap: wrap; }
+.search-wrap { position: relative; flex: 1; max-width: 500px; min-width: 200px; }
+.search-wrap .search-icon {
+position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+font-size: 15px; opacity: .6; pointer-events: none;
+}
+#searchInput {
+width: 100%; padding: 8px 12px 8px 36px;
+background: rgba(255,255,255,0.13);
+border: 1px solid rgba(255,255,255,0.22);
+border-radius: 20px;
+color: #fff; font-size: 14px;
+font-family: 'IBM Plex Sans', sans-serif;
+outline: none; transition: background .2s, border-color .2s;
+}
+#searchInput::placeholder { color: rgba(255,255,255,0.5); }
+#searchInput:focus { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); }
+.header-right { display: flex; align-items: center; gap: .75rem; }
+#resCount {
+font-family: 'IBM Plex Mono', monospace;
+font-size: 11px; color: rgba(255,255,255,0.55);
+white-space: nowrap;
+}
+#adminBtn, #exportBtn, #printBtn, #csvBtn {
+padding: 5px 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.35);
+background: rgba(255,255,255,0.12); color: #fff; font-size: 11px;
+font-family: 'IBM Plex Sans', sans-serif; cursor: pointer; white-space: nowrap;
+transition: background .2s;
+}
+#adminBtn:hover, #exportBtn:hover, #printBtn:hover { background: rgba(255,255,255,0.22); }
+#adminBtn.active {
+background: var(--gold); border-color: var(--gold); color: #1a1814; font-weight: 600;
+}
+.tabs-wrap {
+background: var(--surface);
+border-bottom: 1px solid var(--border);
+position: sticky;
+top: 0;
+z-index: 90;
+overflow-x: auto;
+scrollbar-width: none;
+}
+.tabs-wrap::-webkit-scrollbar { display: none; }
+.tabs { display: flex; max-width: 960px; margin: 0 auto; }
+.tab {
+padding: 10px 14px; font-size: 12px; font-weight: 500;
+color: var(--ink3); cursor: pointer;
+border-bottom: 2px solid transparent;
+white-space: nowrap; flex-shrink: 0;
+transition: color .2s, border-color .2s;
+letter-spacing: .02em; display: flex; align-items: center; gap: 6px;
+position: relative;
+}
+.tab:hover { color: var(--accent); }
+.tab.active { color: var(--accent); border-bottom-color: var(--gold); }
+.tab-move-btns {
+display: none;
+gap: 2px;
+margin-left: 6px;
+}
+body.admin-mode .tab:hover .tab-move-btns { display: inline-flex; }
+.tab-move-btn {
+width: 16px; height: 16px; border-radius: 3px; border: none;
+background: var(--admin-move); color: #fff; font-size: 10px;
+cursor: pointer; display: flex; align-items: center; justify-content: center;
+opacity: 0.8; transition: opacity .15s;
+padding: 0; line-height: 1;
+}
+.tab-move-btn:hover { opacity: 1; }
+.tab-move-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.tab-add {
+padding: 10px 14px; font-size: 18px; color: var(--gold);
+cursor: pointer; display: none; align-items: center;
+}
+body.admin-mode .tab-add { display: flex; }
+main { max-width: 960px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+.dept-header {
+background: var(--surface);
+border: 1px solid var(--border);
+border-left: 3px solid var(--accent);
+border-radius: var(--radius);
+padding: .75rem 1rem;
+margin-bottom: .5rem;
+animation: fadeUp .35s ease both;
+position: relative;
+}
+.dept-header h3 {
+font-family: 'Playfair Display', serif;
+font-size: 15px; font-weight: 600; color: var(--accent);
+}
+.dept-meta { display: flex; gap: 1rem; margin-top: 4px; flex-wrap: wrap; }
+.dept-phone a, .dept-email a {
+color: inherit;
+text-decoration: none;
+cursor: pointer;
+transition: opacity .15s;
+}
+.dept-phone a:hover, .dept-email a:hover { opacity: 0.8; }
+.dept-phone, .dept-email {
+font-family: 'IBM Plex Mono', monospace;
+font-size: 12px; color: var(--ink3);
+}
+.dept-section { margin-bottom: 1.5rem; position: relative; }
+.contact-card {
+background: var(--card);
+border: 1px solid var(--border2);
+border-radius: var(--radius);
+padding: .65rem 1rem;
+margin-bottom: 6px;
+display: flex; align-items: center; gap: 12px;
+transition: transform .15s, box-shadow .15s, border-color .15s;
+animation: fadeUp .3s ease both;
+position: relative;
+}
+.contact-card:hover {
+transform: translateY(-1px);
+box-shadow: var(--shadow);
+border-color: var(--border);
+}
+.avatar {
+width: 38px; height: 38px; flex-shrink: 0;
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-family: 'IBM Plex Mono', monospace;
+font-size: 12px; font-weight: 500;
+}
+.contact-info { flex: 1; min-width: 0; }
+.contact-name {
+font-size: 14px; font-weight: 500; color: var(--ink);
+white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.contact-role {
+font-size: 12px; color: var(--ink3);
+white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.contact-phones { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0; }
+.phone-tag {
+font-family: 'IBM Plex Mono', monospace;
+font-size: 12px; color: var(--tag-c);
+background: var(--tag-bg);
+padding: 2px 8px; border-radius: 99px; white-space: nowrap;
+}
+a.phone-tag {
+color: inherit;
+text-decoration: none;
+cursor: pointer;
+display: inline-flex; align-items: center;
+transition: opacity .15s, transform .1s;
+}
+a.phone-tag:hover { opacity: 0.8; }
+a.phone-tag:active { transform: scale(0.98); }
+.phone-tag.inner { color: var(--accent2); background: #f9ede8; }
+.phone-tag.email-tag {
+color: var(--ink3); background: var(--border2);
+max-width: 160px; overflow: hidden; text-overflow: ellipsis;
+}
+a.phone-tag.email-tag {
+cursor: pointer;
+}
+a.phone-tag.email-tag:hover { opacity: 0.8; }
+
+/* Мобільна іконка email */
+.email-icon-mobile {
+display: none;
+align-items: center;
+gap: 3px;
+font-size: 10px;
+color: var(--ink3);
+background: var(--border2);
+padding: 2px 6px;
+border-radius: 99px;
+cursor: pointer;
+text-decoration: none;
+font-family: 'IBM Plex Sans', sans-serif;
+}
+.email-icon-mobile:hover { opacity: 0.8; }
+.email-icon-mobile svg {
+width: 12px;
+height: 12px;
+}
+
+.section-head {
+display: flex; align-items: center; gap: 10px;
+margin: 1.25rem 0 .6rem;
+}
+.section-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+.section-label {
+font-family: 'Playfair Display', serif;
+font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink2);
+}
+.section-line { flex: 1; height: 1px; background: var(--border); }
+.empty { text-align: center; padding: 4rem 2rem; color: var(--ink3); }
+.empty-glyph { font-size: 3rem; margin-bottom: .5rem; opacity: .4; }
+.empty p { font-size: 14px; }
+.admin-actions { display: none; gap: 4px; flex-shrink: 0; }
+body.admin-mode .admin-actions { display: flex; }
+.btn-icon {
+width: 28px; height: 28px; border-radius: 6px; border: none;
+cursor: pointer; display: flex; align-items: center; justify-content: center;
+font-size: 13px; transition: background .15s;
+}
+.btn-edit { background: #eff6ff; color: var(--admin-accent); }
+.btn-edit:hover { background: #dbeafe; }
+.btn-del { background: #fef2f2; color: var(--admin-danger); }
+.btn-del:hover { background: #fee2e2; }
+.btn-add-person {
+display: none; width: 100%; margin-top: 4px;
+padding: 7px; border: 1px dashed var(--border);
+background: transparent; border-radius: var(--radius);
+color: var(--ink3); font-size: 12px; cursor: pointer;
+transition: all .15s; font-family: 'IBM Plex Sans', sans-serif;
+}
+.btn-add-person:hover { background: var(--tag-bg); color: var(--accent); border-color: var(--accent); }
+body.admin-mode .btn-add-person { display: block; }
+.dept-admin-actions {
+display: none; position: absolute; top: .6rem; right: .75rem; gap: 4px;
+}
+body.admin-mode .dept-admin-actions { display: flex; }
+.move-btn {
+width: 22px; height: 22px; border-radius: 4px; border: none;
+background: var(--admin-move); color: #fff; font-size: 11px;
+cursor: pointer; display: flex; align-items: center; justify-content: center;
+opacity: 0.85; transition: opacity .15s, background .15s;
+padding: 0; line-height: 1;
+}
+.move-btn:hover { opacity: 1; background: #047857; }
+.move-btn:disabled { opacity: 0.3; cursor: not-allowed; background: var(--admin-move); }
+.modal-overlay {
+display: none; position: fixed; inset: 0;
+background: rgba(0,0,0,0.45); z-index: 1000;
+align-items: center; justify-content: center; padding: 1rem;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+background: var(--surface); border-radius: 12px;
+padding: 1.75rem; width: 100%; max-width: 480px;
+box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+animation: fadeUp .25s ease;
+max-height: 90vh; overflow-y: auto;
+}
+.modal h2 {
+font-family: 'Playfair Display', serif;
+font-size: 18px; font-weight: 600; margin-bottom: 1.25rem;
+color: var(--accent);
+}
+.form-group { margin-bottom: 1rem; }
+.form-group label {
+display: block; font-size: 12px; font-weight: 500;
+color: var(--ink3); margin-bottom: 4px; letter-spacing: .03em;
+text-transform: uppercase;
+}
+.form-group input, .form-group select {
+width: 100%; padding: 9px 12px;
+border: 1px solid var(--border); border-radius: var(--radius);
+background: var(--card); color: var(--ink);
+font-size: 14px; font-family: 'IBM Plex Sans', sans-serif;
+outline: none; transition: border-color .2s;
+}
+.form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+.modal-actions { display: flex; gap: .75rem; margin-top: 1.5rem; justify-content: flex-end; }
+.btn-primary {
+padding: 9px 20px; background: var(--accent); color: #fff;
+border: none; border-radius: var(--radius); font-size: 14px;
+font-family: 'IBM Plex Sans', sans-serif; cursor: pointer;
+font-weight: 500; transition: opacity .15s;
+}
+.btn-primary:hover { opacity: .88; }
+.btn-secondary {
+padding: 9px 20px; background: transparent; color: var(--ink3);
+border: 1px solid var(--border); border-radius: var(--radius);
+font-size: 14px; font-family: 'IBM Plex Sans', sans-serif;
+cursor: pointer; transition: background .15s;
+}
+.btn-secondary:hover { background: var(--border2); }
+.btn-danger {
+padding: 9px 20px; background: var(--admin-danger); color: #fff;
+border: none; border-radius: var(--radius); font-size: 14px;
+font-family: 'IBM Plex Sans', sans-serif; cursor: pointer;
+margin-right: auto; transition: opacity .15s;
+}
+.btn-danger:hover { opacity: .85; }
+.login-modal { max-width: 340px; text-align: center; }
+.login-modal .lock-icon { font-size: 2.5rem; margin-bottom: .75rem; }
+.login-modal h2 { margin-bottom: .25rem; }
+.login-sub { font-size: 13px; color: var(--ink3); margin-bottom: 1.25rem; }
+.error-msg {
+background: #fef2f2; color: var(--admin-danger);
+border: 1px solid #fecaca; border-radius: var(--radius);
+padding: 8px 12px; font-size: 13px; display: none; margin-top: .5rem;
+}
+.admin-banner {
+display: none; background: var(--admin-accent); color: #fff;
+text-align: center; padding: 7px; font-size: 12px; letter-spacing: .04em;
+}
+body.admin-mode .admin-banner { display: block; }
+footer {
+background: var(--ink); color: rgba(255,255,255,0.6);
+padding: 1.5rem; text-align: center; font-size: 12px; line-height: 1.7;
+}
+footer strong { color: rgba(255,255,255,0.9); display: block; margin-bottom: 4px; font-family: 'Playfair Display', serif; font-size: 14px; }
+footer a { color: rgba(255,255,255,0.8); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(8px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+
+/* МЕДІА ЗАПИТИ */
+@media (max-width: 560px) {
+.phone-tag.email-tag { display: none; }
+.desktop-email { display: none !important; }
+.email-icon-mobile {
+display: inline-flex !important;
+}
+header { padding: 1rem; }
+.header-top { gap: .75rem; }
+main { padding: 1rem .75rem 2rem; }
+.header-controls { flex-direction: column; }
+.search-wrap { max-width: 100%; }
+}
+@media (min-width: 561px) {
+.email-icon-mobile { display: none !important; }
+}
+@media print {
+@page { margin: 25mm 10mm 20mm 10mm; size: A4; }
+body {
+background: #fff !important; color: #000 !important;
+font-size: 11pt !important; line-height: 1.4 !important;
+margin: 0 !important; padding: 0 !important;
+}
+header, .tabs-wrap, .admin-banner, .admin-actions, .dept-admin-actions,
+.btn-add-person, .btn-icon, #adminBtn, #exportBtn, #printBtn, #csvBtn,
+.search-wrap, .modal-overlay, footer, body::before,
+.tab-move-btns, .move-btn, .email-icon-mobile { display: none !important; }
+.avatar { display: none !important; }
+.contact-card {
+border: none !important; padding: 2pt 0 !important; margin: 0 !important;
+box-shadow: none !important; background: transparent !important;
+display: block !important; page-break-inside: avoid;
+}
+.contact-info { display: block !important; margin-bottom: 2pt !important; }
+.contact-name { font-weight: 600 !important; font-size: 10pt !important; color: #000 !important; }
+.contact-role { font-size: 9pt !important; color: #333 !important; margin: 1pt 0 !important; }
+.contact-phones {
+display: block !important;
+text-align: left !important;
+margin-top: 2pt !important;
+font-size: 9pt !important;
+color: #000 !important;
+}
+.contact-phones a, .contact-phones span {
+display: inline !important;
+margin-right: 12pt !important;
+font-size: 9pt !important;
+color: #000 !important;
+background: none !important;
+padding: 0 !important;
+text-decoration: none !important;
+}
+.phone-tag.inner {
+color: #333 !important;
+background: none !important;
+}
+.phone-tag.email-tag {
+display: inline !important;
+background: none !important;
+color: #000 !important;
+font-size: 9pt !important;
+padding: 0 !important;
+max-width: none !important;
+}
+.dept-header {
+border: none !important; border-left: none !important;
+padding: 6pt 0 3pt !important; margin: 10pt 0 3pt !important;
+page-break-after: avoid; page-break-inside: avoid; background: transparent !important;
+}
+.dept-header h3 {
+font-size: 11pt !important; font-weight: 700 !important; color: #000 !important;
+border: none !important; padding: 0 !important; margin: 0 !important; display: block !important;
+}
+.dept-meta {
+display: block !important;
+margin-top: 2pt !important;
+font-size: 9pt !important;
+color: #333 !important;
+margin-bottom: 4pt !important;
+}
+.dept-meta span, .dept-meta a {
+margin-right: 15pt !important;
+display: inline-block !important;
+color: #333 !important;
+text-decoration: none !important;
+}
+.section-head {
+display: block !important; margin: 18pt 0 6pt !important;
+page-break-before: always; page-break-after: avoid;
+}
+.section-head:first-child { page-break-before: auto !important; }
+.section-label {
+display: block !important; font-size: 12pt !important; font-weight: 700 !important;
+color: #000 !important; text-transform: none !important; letter-spacing: 0 !important;
+margin: 0 !important; padding: 0 !important; border: none !important;
+}
+.section-dot, .section-line { display: none !important; }
+body::after {
+content: "Сторінка " counter(page) " з " counter(pages) " | www.pdau.edu.ua";
+display: block; font-size: 8pt; text-align: center;
+position: fixed; bottom: 0; left: 0; right: 0;
+border: none !important; padding: 0 !important; margin: 10pt 0 0 0 !important;
+}
+.dept-section { page-break-inside: avoid; margin-bottom: 6pt !important; }
+* { color: #000 !important; background: transparent !important; }
+a { text-decoration: none !important; color: #000 !important; }
+}
+</style>
 </head>
 <body class="">
 <div class="admin-banner">⚙ Режим адміністратора — редагування увімкнено - Created by Віталій Грек, 2026</div>
 <header>
-  <div class="header-inner">
-    <div class="header-top">
-      <div class="logo-emblem">П</div>
-      <div class="header-titles">
-        <h1>Полтавський державний аграрний університет</h1>
-        <div class="header-sub">Телефонний довідник</div>
-      </div>
-    </div>
-    <div class="header-controls">
-      <div class="search-wrap">
-        <span class="search-icon">⌕</span>
-        <input type="text" id="searchInput" placeholder="Пошук за ім'ям, посадою, телефоном, назвою підрозділу…" oninput="doSearch()">
-      </div>
-      <div class="header-right">
-        <span id="resCount">0 осіб</span>
-        <button id="adminBtn" onclick="toggleAdminPanel()" class="">🔒 Адмін</button>
-        <button id="exportBtn" onclick="exportToFile()" title="Зберегти зміни у файл" style="display: none; margin-left: 8px;">💾 Експорт</button>
-        <button id="printBtn" onclick="window.print()" title="Друкувати довідник" style="display:inline-block;margin-left:8px;">🖨️ Друк</button>
-        <button id="csvBtn" onclick="exportToCSV()" title="Експорт у CSV для Excel" style="display: none; margin-left: 8px;">📊 CSV</button>
-      </div>
-    </div>
-  </div>
+<div class="header-inner">
+<div class="header-top">
+<div class="logo-emblem">П</div>
+<div class="header-titles">
+<h1>Полтавський державний аграрний університет</h1>
+<div class="header-sub">Телефонний довідник</div>
+</div>
+</div>
+<div class="header-controls">
+<div class="search-wrap">
+<span class="search-icon">⌕</span>
+<input type="text" id="searchInput" placeholder="Пошук за ім'ям, посадою, телефоном, назвою підрозділу…" oninput="doSearch()">
+</div>
+<div class="header-right">
+<span id="resCount">4 осіб</span>
+<button id="adminBtn" onclick="toggleAdminPanel()" class="">🔒 Адмін</button>
+<button id="exportBtn" onclick="exportToFile()" title="Зберегти зміни у файл" style="display: none; margin-left: 8px;">💾 Експорт</button>
+<button id="printBtn" onclick="window.print()" title="Друкувати довідник" style="display:inline-block;margin-left:8px;">🖨️ Друк</button>
+<button id="csvBtn" onclick="exportToCSV()" title="Експорт у CSV для Excel" style="display: none; margin-left: 8px;">📊 CSV</button>
+</div>
+</div>
+</div>
 </header>
 <div class="tabs-wrap">
-  <div class="tabs" id="tabsRow"><div class="tab" onclick="setTab('management')">
-      КЕРІВНИЦТВО
-      <span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('management')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
-    </div><div class="tab" onclick="setTab('administration')">
-      АДМІНІСТРАЦІЯ
-      <span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('administration')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
-    </div><div class="tab" onclick="setTab('infrastructure')">
-      ІНФРАСТРУКТУРА
-      <span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('infrastructure')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
-    </div><div class="tab" onclick="setTab('faculties')">
-      ІНСТИТУТИ ТА ФАКУЛЬТЕТИ
-      <span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('faculties')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
-    </div><div class="tab" onclick="setTab('colleges')">
-      КОЛЕДЖІ
-      <span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('colleges')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
-    </div><div class="tab active" onclick="setTab('tab_1777358716801')">
-      .,
-      <span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('tab_1777358716801')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
-    </div><div class="tab-add" onclick="openAddTab()" title="Додати вкладку">＋</div></div>
+<div class="tabs" id="tabsRow"><div class="tab" onclick="setTab('management')">
+КЕРІВНИЦТВО
+<span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('management')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
+</div><div class="tab active" onclick="setTab('administration')">
+АДМІНІСТРАЦІЯ
+<span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('administration')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
+</div><div class="tab" onclick="setTab('infrastructure')">
+ІНФРАСТРУКТУРА
+<span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('infrastructure')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
+</div><div class="tab" onclick="setTab('faculties')">
+ІНСТИТУТИ ТА ФАКУЛЬТЕТИ
+<span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('faculties')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
+</div><div class="tab" onclick="setTab('colleges')">
+КОЛЕДЖІ
+<span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('colleges')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
+</div><div class="tab" onclick="setTab('tab_1777358716801')">
+.
+<span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('tab_1777358716801')" style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
+</div><div class="tab-add" onclick="openAddTab()" title="Додати вкладку">＋</div></div>
 </div>
-<main id="mainContent"><div class="empty"><div class="empty-glyph">📖</div><p>Довідник порожній. Увійдіть в режим адміністратора, щоб додати підрозділи та контакти.</p></div></main>
+<main id="mainContent"><div class="dept-section"><div class="dept-header" style="animation-delay:0s">
+<h3>Бухгалтерія</h3><div class="dept-meta"><span class="dept-phone"><a href="tel:0532608229" class="phone-tag">60-82-29</a></span> · <span class="dept-phone"><a href="tel:544">вн. 5-44</a> <a href="tel:375">вн. 3-75</a></span></div><div class="dept-admin-actions">
+
+<button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('administration',0)">✎</button>
+<button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('administration',0)">✕</button>
+</div></div><div class="contact-card" style="animation-delay:0.02s">
+<div class="avatar" style="background:#E1F5EE;color:#0F6E56">ЛС</div>
+<div class="contact-info">
+<div class="contact-name">Лінська Світлана Павлівна</div>
+<div class="contact-role">Головний бухгалтер</div>
+</div>
+<div class="contact-phones"><a href="tel:0532573245" class="phone-tag">57-32-45</a></div>
+<div class="admin-actions">
+
+<button class="btn-icon btn-edit" title="Редагувати" onclick="openEditPerson('administration',0,0)">✎</button>
+<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('administration',0,0)">✕</button>
+</div>
+</div><div class="contact-card" style="animation-delay:0.045s">
+<div class="avatar" style="background:#FAECE7;color:#993C1D">ПН</div>
+<div class="contact-info">
+<div class="contact-name">Палій Наталія Миколаївна</div>
+<div class="contact-role">Заступник головного бухгалтера</div>
+</div>
+<div class="contact-phones"><a href="tel:0532607467" class="phone-tag">60-74-67</a><a href="tel:375" class="phone-tag inner">вн.&nbsp;3-75</a><a href="mailto:paliy@pdau.edu.ua" class="phone-tag email-tag">paliy@pdau.edu.ua</a><a href="mailto:paliy@pdau.edu.ua" class="email-icon-mobile" title="paliy@pdau.edu.ua"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> e-mail</a></div>
+<div class="admin-actions">
+
+<button class="btn-icon btn-edit" title="Редагувати" onclick="openEditPerson('administration',0,1)">✎</button>
+<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('administration',0,1)">✕</button>
+</div>
+</div><div class="contact-card" style="animation-delay:0.07s">
+<div class="avatar" style="background:#FAECE7;color:#993C1D">ГІ</div>
+<div class="contact-info">
+<div class="contact-name">Горбунова Ірина Володимирівна</div>
+<div class="contact-role">Заступник головного бухгалтера з економічної роботи</div>
+</div>
+<div class="contact-phones"><a href="tel:0532565219" class="phone-tag">56-52-19</a><a href="tel:544" class="phone-tag inner">вн.&nbsp;5-44</a></div>
+<div class="admin-actions">
+
+<button class="btn-icon btn-edit" title="Редагувати" onclick="openEditPerson('administration',0,2)">✎</button>
+<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('administration',0,2)">✕</button>
+</div>
+</div><button class="btn-add-person" onclick="openAddPerson('administration',0)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.05s">
+<h3>Відділ кадрів</h3><div class="dept-meta"><span class="dept-phone"><a href="tel:0532569509" class="phone-tag">56-95-09</a></span> · <span class="dept-phone"><a href="tel:524">вн. 5-24</a></span><span class="dept-email">
+<a href="mailto:kadry@pdau.edu.ua" class="desktop-email">✉ kadry@pdau.edu.ua</a>
+<a href="mailto:kadry@pdau.edu.ua" class="email-icon-mobile" title="kadry@pdau.edu.ua"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> e-mail</a>
+</span></div><div class="dept-admin-actions">
+
+<button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('administration',1)">✎</button>
+<button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('administration',1)">✕</button>
+</div></div><button class="btn-add-person" onclick="openAddPerson('administration',1)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.1s">
+<h3>Канцелярія</h3><div class="dept-meta"><span class="dept-phone"><a href="tel:0532569839" class="phone-tag">56-98-39</a></span> · <span class="dept-phone"><a href="tel:372">вн. 3-72</a></span></div><div class="dept-admin-actions">
+
+<button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('administration',2)">✎</button>
+<button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('administration',2)">✕</button>
+</div></div><button class="btn-add-person" onclick="openAddPerson('administration',2)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.15000000000000002s">
+<h3>Відділ міжнародних зв'язків</h3><div class="dept-meta"><span class="dept-phone"><a href="tel:0532565414" class="phone-tag">56-54-14</a></span></div><div class="dept-admin-actions">
+
+<button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('administration',3)">✎</button>
+<button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('administration',3)">✕</button>
+</div></div><button class="btn-add-person" onclick="openAddPerson('administration',3)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.2s">
+<h3>Юридичний відділ</h3><div class="dept-meta"><span class="dept-phone"><a href="tel:0532569923" class="phone-tag">56-99-23</a></span></div><div class="dept-admin-actions">
+
+<button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('administration',4)">✎</button>
+<button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('administration',4)">✕</button>
+</div></div><button class="btn-add-person" onclick="openAddPerson('administration',4)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.25s">
+<h3>Навчальний відділ</h3><div class="dept-meta"><span class="dept-phone"><a href="tel:0532569591" class="phone-tag">56-95-91</a></span> · <span class="dept-phone"><a href="tel:386">вн. 3-86</a></span></div><div class="dept-admin-actions">
+
+<button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('administration',5)">✎</button>
+<button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('administration',5)">✕</button>
+</div></div><button class="btn-add-person" onclick="openAddPerson('administration',5)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.3s">
+<h3>Приймальна комісія</h3><div class="dept-meta"><span class="dept-phone"><a href="tel:0532607394" class="phone-tag">60-73-94</a> <a href="tel:0950594439" class="phone-tag">(095) 059-44-39</a> <a href="tel:0961756321" class="phone-tag">(096) 175-63-21</a></span><span class="dept-email">
+<a href="mailto:vstup@pdau.edu.ua" class="desktop-email">✉ vstup@pdau.edu.ua</a>
+<a href="mailto:vstup@pdau.edu.ua" class="email-icon-mobile" title="vstup@pdau.edu.ua"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> e-mail</a>
+</span></div><div class="dept-admin-actions">
+
+<button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('administration',6)">✎</button>
+<button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('administration',6)">✕</button>
+</div></div><button class="btn-add-person" onclick="openAddPerson('administration',6)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.35s">
+<h3>Адміністративно-господарська частина</h3><div class="dept-meta"><span class="dept-phone"><a href="tel:0532608230" class="phone-tag">60-82-30</a></span> · <span class="dept-phone"><a href="tel:566">вн. 5-66</a></span></div><div class="dept-admin-actions">
+
+<button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('administration',7)">✎</button>
+<button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('administration',7)">✕</button>
+</div></div><div class="contact-card" style="animation-delay:0.37s">
+<div class="avatar" style="background:#E1F5EE;color:#0F6E56">СМ</div>
+<div class="contact-info">
+<div class="contact-name">Студентське містечко</div>
+<div class="contact-role"></div>
+</div>
+<div class="contact-phones"><a href="tel:0532569409" class="phone-tag">56-94-09</a></div>
+<div class="admin-actions">
+
+<button class="btn-icon btn-edit" title="Редагувати" onclick="openEditPerson('administration',7,0)">✎</button>
+<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('administration',7,0)">✕</button>
+</div>
+</div><button class="btn-add-person" onclick="openAddPerson('administration',7)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.39999999999999997s">
+<h3>Профком</h3><div class="dept-meta"><span class="dept-phone"><a href="tel:0532502514" class="phone-tag">50-25-14</a></span></div><div class="dept-admin-actions">
+
+<button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('administration',8)">✎</button>
+<button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('administration',8)">✕</button>
+</div></div><button class="btn-add-person" onclick="openAddPerson('administration',8)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.44999999999999996s">
+<h3>Наукова частина</h3><div class="dept-meta"><span class="dept-phone"><a href="tel:0532500374" class="phone-tag">50-03-74</a></span> · <span class="dept-phone"><a href="tel:546">вн. 5-46</a></span></div><div class="dept-admin-actions">
+
+<button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('administration',9)">✎</button>
+<button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('administration',9)">✕</button>
+</div></div><button class="btn-add-person" onclick="openAddPerson('administration',9)">＋ Додати працівника</button></div></main>
 <footer>
-  <strong>Полтавський державний аграрний університет</strong>
-  вул. Сковороди, 1/3, м. Полтава, 36003, Україна<br>
-  📞 (0532) 50-02-73 &nbsp;|&nbsp; ✉ pdau@pdau.edu.ua &nbsp;|&nbsp; 🌐 www.pdau.edu.ua<br>
-  <em style="opacity:.7">Останнє оновлення: <span id="lastUpdated">19.05.2026</span></em>
+<strong>Полтавський державний аграрний університет</strong>
+вул. Сковороди, 1/3, м. Полтава, 36003, Україна<br>
+<a href="tel:0532500273">📞 (0532) 50-02-73</a> &nbsp;|&nbsp; <a href="mailto:pdau@pdau.edu.ua">✉ pdau@pdau.edu.ua</a> &nbsp;|&nbsp; <a href="https://www.pdau.edu.ua" target="_blank">🌐 www.pdau.edu.ua</a><br>
+<em style="opacity:.7">Останнє оновлення: <span id="lastUpdated">18.06.2026</span></em>
 </footer>
 
 <!-- MODALS -->
 <div class="modal-overlay" id="loginModal">
-  <div class="modal login-modal">
-    <div class="lock-icon">🔐</div>
-    <h2>Вхід для адміністратора</h2>
-    <p class="login-sub">Введіть пароль для доступу до режиму редагування</p>
-    <div class="form-group">
-      <label>Пароль</label>
-      <input type="password" id="loginPassword" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <div class="error-msg" id="loginError" style="display: none;">Невірний пароль. Спробуйте ще раз.</div>
-    <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal('loginModal')">Скасувати</button>
-      <button class="btn-primary" onclick="doLogin()">Увійти</button>
-    </div>
-  </div>
+<div class="modal login-modal">
+<div class="lock-icon">🔐</div>
+<h2>Вхід для адміністратора</h2>
+<p class="login-sub">Введіть пароль для доступу до режиму редагування</p>
+<div class="form-group">
+<label>Пароль</label>
+<input type="password" id="loginPassword" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()">
+</div>
+<div class="error-msg" id="loginError" style="display: none;">Невірний пароль. Спробуйте ще раз.</div>
+<div class="modal-actions">
+<button class="btn-secondary" onclick="closeModal('loginModal')">Скасувати</button>
+<button class="btn-primary" onclick="doLogin()">Увійти</button>
+</div>
+</div>
 </div>
 <div class="modal-overlay" id="personModal">
-  <div class="modal">
-    <h2 id="personModalTitle">Редагувати працівника</h2>
-    <input type="hidden" id="pTabId" value="management"><input type="hidden" id="pSecIdx" value="0"><input type="hidden" id="pPersonIdx" value="5">
-    <div class="form-group"><label>ПІБ</label><input type="text" id="pName" placeholder="Прізвище Ім'я По-батькові"></div>
-    <div class="form-group"><label>Посада</label><input type="text" id="pRole" placeholder="Посада"></div>
-    <div class="form-group"><label>Міський / мобільний телефон</label><input type="text" id="pCity" placeholder="(0532) 50-02-73"></div>
-    <div class="form-group"><label>Внутрішній телефон</label><input type="text" id="pInner" placeholder="5-80"></div>
-    <div class="form-group"><label>E-mail</label><input type="email" id="pEmail" placeholder="example@pdau.edu.ua"></div>
-    <div class="modal-actions" id="personModalActions"><button class="btn-danger">Видалити</button>
-      <button class="btn-secondary" onclick="closeModal('personModal')">Скасувати</button>
-      <button class="btn-primary" onclick="savePerson()">Зберегти</button>
-    </div>
-  </div>
+<div class="modal">
+<h2 id="personModalTitle">Редагувати працівника</h2>
+<input type="hidden" id="pTabId" value="management"><input type="hidden" id="pSecIdx" value="0"><input type="hidden" id="pPersonIdx" value="5">
+<div class="form-group"><label>ПІБ</label><input type="text" id="pName" placeholder="Прізвище Ім'я По-батькові"></div>
+<div class="form-group"><label>Посада</label><input type="text" id="pRole" placeholder="Посада"></div>
+<div class="form-group"><label>Міський / мобільний телефон</label><input type="text" id="pCity" placeholder="(0532) 50-02-73"></div>
+<div class="form-group"><label>Внутрішній телефон</label><input type="text" id="pInner" placeholder="5-80, 5-81"></div>
+<div class="form-group"><label>E-mail</label><input type="email" id="pEmail" placeholder="example@pdau.edu.ua"></div>
+<div class="modal-actions" id="personModalActions"><button class="btn-danger">Видалити</button>
+<button class="btn-secondary" onclick="closeModal('personModal')">Скасувати</button>
+<button class="btn-primary" onclick="savePerson()">Зберегти</button>
+</div>
+</div>
 </div>
 <div class="modal-overlay" id="sectionModal">
-  <div class="modal">
-    <h2 id="sectionModalTitle">Редагувати підрозділ</h2>
-    <input type="hidden" id="sTabId" value="faculties"><input type="hidden" id="sSecIdx" value="6">
-    <div class="form-group"><label>Назва підрозділу / кафедри</label><input type="text" id="sTitle" placeholder="Назва підрозділу"></div>
-    <div class="form-group"><label>Телефон підрозділу</label><input type="text" id="sDeptPhone" placeholder="(0532) 50-XX-XX"></div>
-    <div class="form-group"><label>Внутрішній телефон підрозділу</label><input type="text" id="sDeptInner" placeholder="5-XX"></div>
-    <div class="form-group"><label>E-mail підрозділу</label><input type="email" id="sDeptEmail" placeholder="dept@pdau.edu.ua"></div>
-    <div class="modal-actions" id="sectionModalActions"><button class="btn-danger">Видалити</button>
-      <button class="btn-secondary" onclick="closeModal('sectionModal')">Скасувати</button>
-      <button class="btn-primary" onclick="saveSection()">Зберегти</button>
-    </div>
-  </div>
+<div class="modal">
+<h2 id="sectionModalTitle">Редагувати підрозділ</h2>
+<input type="hidden" id="sTabId" value="management"><input type="hidden" id="sSecIdx" value="0">
+<div class="form-group"><label>Назва підрозділу / кафедри</label><input type="text" id="sTitle" placeholder="Назва підрозділу"></div>
+<div class="form-group"><label>Телефон підрозділу</label><input type="text" id="sDeptPhone" placeholder="(0532) 50-XX-XX"></div>
+<div class="form-group"><label>Внутрішній телефон підрозділу</label><input type="text" id="sDeptInner" placeholder="5-XX, 5-YY"></div>
+<div class="form-group"><label>E-mail підрозділу</label><input type="email" id="sDeptEmail" placeholder="dept@pdau.edu.ua"></div>
+<div class="modal-actions" id="sectionModalActions"><button class="btn-danger">Видалити</button>
+<button class="btn-secondary" onclick="closeModal('sectionModal')">Скасувати</button>
+<button class="btn-primary" onclick="saveSection()">Зберегти</button>
+</div>
+</div>
 </div>
 <div class="modal-overlay" id="tabModal">
-  <div class="modal" style="max-width:360px">
-    <h2 id="tabModalTitle">Редагувати вкладку</h2>
-    <input type="hidden" id="tTabId" value="tab_1777358716801">
-    <div class="form-group"><label>Назва вкладки</label><input type="text" id="tTabName" placeholder="Назва вкладки / підрозділу"></div>
-    <div class="modal-actions" id="tabModalActions"><button class="btn-danger">Видалити</button>
-      <button class="btn-secondary" onclick="closeModal('tabModal')">Скасувати</button>
-      <button class="btn-primary" onclick="saveTab()">Зберегти</button>
-    </div>
-  </div>
+<div class="modal" style="max-width:360px">
+<h2 id="tabModalTitle">Редагувати вкладку</h2>
+<input type="hidden" id="tTabId" value="tab_1777358716801">
+<div class="form-group"><label>Назва вкладки</label><input type="text" id="tTabName" placeholder="Назва вкладки / підрозділу"></div>
+<div class="modal-actions" id="tabModalActions"><button class="btn-danger">Видалити</button>
+<button class="btn-secondary" onclick="closeModal('tabModal')">Скасувати</button>
+<button class="btn-primary" onclick="saveTab()">Зберегти</button>
+</div>
+</div>
 </div>
 <div class="modal-overlay" id="confirmModal">
-  <div class="modal" style="max-width:360px;text-align:center">
-    <h2 style="color:var(--admin-danger)">Підтвердіть видалення</h2>
-    <p style="font-size:14px;color:var(--ink3);margin:.75rem 0 1.5rem" id="confirmText">Видалити «Шевніков Микола Янаєвич»?</p>
-    <div class="modal-actions" style="justify-content:center;gap:1rem">
-      <button class="btn-secondary" onclick="closeModal('confirmModal')">Скасувати</button>
-      <button class="btn-primary" style="background:var(--admin-danger)" id="confirmOk">Видалити</button>
-    </div>
-  </div>
+<div class="modal" style="max-width:360px;text-align:center">
+<h2 style="color:var(--admin-danger)">Підтвердіть видалення</h2>
+<p style="font-size:14px;color:var(--ink3);margin:.75rem 0 1.5rem" id="confirmText">Видалити «Шевніков Микола Янаєвич»?</p>
+<div class="modal-actions" style="justify-content:center;gap:1rem">
+<button class="btn-secondary" onclick="closeModal('confirmModal')">Скасувати</button>
+<button class="btn-primary" style="background:var(--admin-danger)" id="confirmOk">Видалити</button>
+</div>
+</div>
 </div>
 
 <script>
-/* ══════════════════════════════════════════
-   DATA — СТРУКТУРОВАНИЙ ДОВІДНИК
-   ══════════════════════════════════════════ */
 let DATA = {
-  "lastUpdated": "19.05.2026",
+  "lastUpdated": "18.06.2026",
   "sections": [
     {
       "id": "management",
@@ -490,20 +707,21 @@ let DATA = {
         {
           "title": "Керівництво університету",
           "deptPhone": "(0532) 50-02-73",
+          "deptInner": "5-30",
           "deptEmail": "pdau@pdau.edu.ua",
           "people": [
             {
               "name": "Галич Олександр Анатолійович",
               "role": "Ректор",
               "city": "50-02-73",
-              "inner": "5-80",
+              "inner": "5-90",
               "email": "galych@pdau.edu.ua"
             },
             {
               "name": "Аранчій Валентина Іванівна",
               "role": "Перший проректор",
               "city": "60-74-24",
-              "inner": "5-90",
+              "inner": "5-80",
               "email": "valentyna.aranchii@pdau.edu.ua"
             },
             {
@@ -529,6 +747,7 @@ let DATA = {
               "name": "Вовк Вячеслав Олексійович",
               "role": "проректор з економіки та інфраструктури",
               "city": "60-82-30",
+              "inner": "5-34",
               "email": "viacheslav.vovk@pdau.edu.ua"
             }
           ]
@@ -542,7 +761,7 @@ let DATA = {
         {
           "title": "Бухгалтерія",
           "deptPhone": "60-82-29",
-          "deptInner": "5-44; 3-75",
+          "deptInner": "5-44, 3-75",
           "people": [
             {
               "name": "Лінська Світлана Павлівна",
@@ -799,573 +1018,473 @@ let DATA = {
     },
     {
       "id": "tab_1777358716801",
-      "tab": ".,",
+      "tab": ".",
       "sections": []
     }
   ]
 };
 
-/* ══════════════════════════════════════════
-   STATE
-   ══════════════════════════════════════════ */
 let activeTab = DATA.sections[0].id;
 let query = '';
 let isAdmin = false;
 const ADMIN_PASS = '123456';
 let dataChanged = false;
 
-/* ══════════════════════════════════════════
-   AVATAR COLORS
-   ══════════════════════════════════════════ */
 const colors = [
-  {bg:'#E6F1FB', c:'#185FA5'},
-  {bg:'#E1F5EE', c:'#0F6E56'},
-  {bg:'#FAEEDA', c:'#854F0B'},
-  {bg:'#FBEAF0', c:'#993556'},
-  {bg:'#EEEDFE', c:'#534AB7'},
-  {bg:'#FAECE7', c:'#993C1D'},
+{bg:'#E6F1FB', c:'#185FA5'}, {bg:'#E1F5EE', c:'#0F6E56'}, {bg:'#FAEEDA', c:'#854F0B'},
+{bg:'#FBEAF0', c:'#993556'}, {bg:'#EEEDFE', c:'#534AB7'}, {bg:'#FAECE7', c:'#993C1D'},
 ];
 function colorFor(name) { return colors[name.charCodeAt(0) % colors.length]; }
 function initials(name) {
-  const p = name.trim().split(' ');
-  return ((p[0]||'')[0]||'') + ((p[1]||'')[0]||'');
+const p = name.trim().split(' ');
+return ((p[0]||'')[0]||'') + ((p[1]||'')[0]||'');
 }
 
-/* ══════════════════════════════════════════
-   RENDER
-   ══════════════════════════════════════════ */
+function cleanPhoneForTel(str) {
+if (!str) return '';
+return str.replace(/[^\d]/g, '');
+}
+function getTelLink(phone) {
+if (!phone) return '';
+const clean = phone.replace(/[^\d]/g, '');
+if (clean.length >= 10) {
+return 'tel:' + clean;
+}
+return 'tel:0532' + clean;
+}
+function splitPhones(phoneStr) {
+if (!phoneStr) return [];
+return phoneStr.split(',').map(p => p.trim()).filter(p => p.length > 0);
+}
+function createPhoneLink(phone, className = 'phone-tag') {
+const telLink = getTelLink(phone);
+return `<a href="${telLink}" class="${className}">${phone}</a>`;
+}
+function createPhonesHTML(phoneStr, className = 'phone-tag') {
+const phones = splitPhones(phoneStr);
+if (phones.length === 0) return '';
+if (phones.length === 1) return createPhoneLink(phones[0], className);
+return phones.map(p => createPhoneLink(p, className)).join(' ');
+}
+function getEmailLink(email) {
+if (!email) return '';
+return 'mailto:' + email;
+}
+
+function moveTab(tabId, direction) {
+const idx = DATA.sections.findIndex(g => g.id === tabId);
+if(idx === -1) return;
+const newIdx = direction === 'up' ? idx - 1 : idx + 1;
+if(newIdx < 0 || newIdx >= DATA.sections.length) return;
+[DATA.sections[idx], DATA.sections[newIdx]] = [DATA.sections[newIdx], DATA.sections[idx]];
+dataChanged = true;
+buildTabs();
+if(!query) render();
+}
+function moveSection(tabId, secIdx, direction) {
+const group = DATA.sections.find(g => g.id === tabId);
+if(!group) return;
+const newIdx = direction === 'up' ? secIdx - 1 : secIdx + 1;
+if(newIdx < 0 || newIdx >= group.sections.length) return;
+[group.sections[secIdx], group.sections[newIdx]] = [group.sections[newIdx], group.sections[secIdx]];
+dataChanged = true;
+if(query) doSearch(); else render();
+}
+function movePerson(tabId, secIdx, personIdx, direction) {
+const group = DATA.sections.find(g => g.id === tabId);
+if(!group) return;
+const people = group.sections[secIdx].people;
+const newIdx = direction === 'up' ? personIdx - 1 : personIdx + 1;
+if(newIdx < 0 || newIdx >= people.length) return;
+[people[personIdx], people[newIdx]] = [people[newIdx], people[personIdx]];
+dataChanged = true;
+if(query) doSearch(); else render();
+}
+
 function buildTabs() {
-  const row = document.getElementById('tabsRow');
-  let html = DATA.sections.map(g =>
-    `<div class="tab${g.id===activeTab?' active':''}" onclick="setTab('${g.id}')">
-      ${g.tab}
-      <span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('${g.id}')" 
-        style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
-    </div>`
-  ).join('');
-  html += `<div class="tab-add" onclick="openAddTab()" title="Додати вкладку">＋</div>`;
-  row.innerHTML = html;
-  if(isAdmin) {
-    row.querySelectorAll('.tab-edit-btn').forEach(el => el.style.display = 'inline');
-  }
+const row = document.getElementById('tabsRow');
+let html = DATA.sections.map((g, idx) => {
+const moveBtns = isAdmin ? `
+<span class="tab-move-btns">
+<button class="tab-move-btn" onclick="event.stopPropagation();moveTab('${g.id}','up')" ${idx===0?'disabled':''}>↑</button>
+<button class="tab-move-btn" onclick="event.stopPropagation();moveTab('${g.id}','down')" ${idx===DATA.sections.length-1?'disabled':''}>↓</button>
+</span>` : '';
+return `<div class="tab${g.id===activeTab?' active':''}" onclick="setTab('${g.id}')">
+${g.tab}${moveBtns}
+<span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('${g.id}')"
+style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
+</div>`;
+}).join('');
+html += `<div class="tab-add" onclick="openAddTab()" title="Додати вкладку">＋</div>`;
+row.innerHTML = html;
+if(isAdmin) {
+row.querySelectorAll('.tab-edit-btn').forEach(el => el.style.display = 'inline');
 }
-
+}
 function setTab(id) {
-  activeTab = id; query = '';
-  document.getElementById('searchInput').value = '';
-  buildTabs(); render();
+activeTab = id; query = '';
+document.getElementById('searchInput').value = '';
+buildTabs(); render();
 }
 
 function renderPerson(p, tabId, secIdx, personIdx, delay) {
-  const col = colorFor(p.name);
-  const ini = initials(p.name).toUpperCase();
-  const phones = [
-    p.city  ? `<span class="phone-tag">${p.city}</span>` : '',
-    p.inner ? `<span class="phone-tag inner">вн.&nbsp;${p.inner}</span>` : '',
-    p.email ? `<span class="phone-tag email-tag">${p.email}</span>` : ''
-  ].filter(Boolean).join('');
-  const adminAct = `<div class="admin-actions">
-    <button class="btn-icon btn-edit" title="Редагувати" onclick="openEditPerson('${tabId}',${secIdx},${personIdx})">✎</button>
-    <button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('${tabId}',${secIdx},${personIdx})">✕</button>
-  </div>`;
-  return `<div class="contact-card" style="animation-delay:${delay}s">
-    <div class="avatar" style="background:${col.bg};color:${col.c}">${ini}</div>
-    <div class="contact-info">
-      <div class="contact-name">${p.name}</div>
-      <div class="contact-role">${p.role}</div>
-    </div>
-    <div class="contact-phones">${phones}</div>
-    ${adminAct}
-  </div>`;
+const col = colorFor(p.name);
+const ini = initials(p.name).toUpperCase();
+const cityPhones = createPhonesHTML(p.city, 'phone-tag');
+
+// Розбиття внутрішніх номерів через кому
+const innerPhones = p.inner ? p.inner.split(',').map(num => num.trim()).filter(Boolean).map(num =>
+`<a href="tel:${cleanPhoneForTel(num)}" class="phone-tag inner">вн.&nbsp;${num}</a>`
+).join(' ') : '';
+
+const emailLink = p.email ? `<a href="${getEmailLink(p.email)}" class="phone-tag email-tag">${p.email}</a>` : '';
+const emailIcon = p.email ? `<a href="${getEmailLink(p.email)}" class="email-icon-mobile" title="${p.email}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> e-mail</a>` : '';
+
+const phones = [cityPhones, innerPhones, emailLink, emailIcon].filter(Boolean).join('');
+const moveBtns = isAdmin ? `
+<button class="move-btn" onclick="event.stopPropagation();movePerson('${tabId}',${secIdx},${personIdx},'up')" ${personIdx===0?'disabled':''}>↑</button>
+<button class="move-btn" onclick="event.stopPropagation();movePerson('${tabId}',${secIdx},${personIdx},'down')" ${personIdx===(DATA.sections.find(g=>g.id===tabId).sections[secIdx].people.length-1)?'disabled':''}>↓</button>
+` : '';
+const adminAct = `<div class="admin-actions">
+${moveBtns}
+<button class="btn-icon btn-edit" title="Редагувати" onclick="openEditPerson('${tabId}',${secIdx},${personIdx})">✎</button>
+<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('${tabId}',${secIdx},${personIdx})">✕</button>
+</div>`;
+return `<div class="contact-card" style="animation-delay:${delay}s">
+<div class="avatar" style="background:${col.bg};color:${col.c}">${ini}</div>
+<div class="contact-info">
+<div class="contact-name">${p.name}</div>
+<div class="contact-role">${p.role}</div>
+</div>
+<div class="contact-phones">${phones}</div>
+${adminAct}
+</div>`;
 }
 
 function renderSection(sec, tabId, secIdx, baseDelay) {
-  const adminActSec = `<div class="dept-admin-actions">
-    <button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('${tabId}',${secIdx})">✎</button>
-    <button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('${tabId}',${secIdx})">✕</button>
-  </div>`;
-  let html = `<div class="dept-section"><div class="dept-header" style="animation-delay:${baseDelay}s">
-    <h3>${sec.title}</h3>`;
-  const metaParts = [];
-  if(sec.deptPhone) metaParts.push(`📞 ${sec.deptPhone}`);
-  if(sec.deptInner) metaParts.push(`вн. ${sec.deptInner}`);
-  if(metaParts.length || sec.deptEmail) {
-    html += `<div class="dept-meta">`;
-    if(metaParts.length) html += `<span class="dept-phone">${metaParts.join(' · ')}</span>`;
-    if(sec.deptEmail) html += `<span class="dept-email">✉ ${sec.deptEmail}</span>`;
-    html += `</div>`;
-  }
-  html += adminActSec + `</div>`;
-  (sec.people||[]).forEach((p, i) => {
-    html += renderPerson(p, tabId, secIdx, i, baseDelay + 0.02 + i * 0.025);
-  });
-  html += `<button class="btn-add-person" onclick="openAddPerson('${tabId}',${secIdx})">＋ Додати працівника</button>`;
-  html += `</div>`;
-  return html;
+const moveBtns = isAdmin ? `
+<button class="move-btn" onclick="event.stopPropagation();moveSection('${tabId}',${secIdx},'up')" ${secIdx===0?'disabled':''}>↑</button>
+<button class="move-btn" onclick="event.stopPropagation();moveSection('${tabId}',${secIdx},'down')" ${secIdx===(DATA.sections.find(g=>g.id===tabId).sections.length-1)?'disabled':''}>↓</button>
+` : '';
+const adminActSec = `<div class="dept-admin-actions">
+${moveBtns}
+<button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('${tabId}',${secIdx})">✎</button>
+<button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('${tabId}',${secIdx})">✕</button>
+</div>`;
+let html = `<div class="dept-section"><div class="dept-header" style="animation-delay:${baseDelay}s">
+<h3>${sec.title}</h3>`;
+const metaParts = [];
+if(sec.deptPhone) metaParts.push(`<span class="dept-phone">${createPhonesHTML(sec.deptPhone)}</span>`);
+
+// Розбиття внутрішніх номерів підрозділу через кому
+if(sec.deptInner) {
+const innerNums = sec.deptInner.split(',').map(num => num.trim()).filter(Boolean);
+const innerLinks = innerNums.map(num => `<a href="tel:${cleanPhoneForTel(num)}">вн. ${num}</a>`).join(' ');
+metaParts.push(`<span class="dept-phone">${innerLinks}</span>`);
+}
+
+if(metaParts.length || sec.deptEmail) {
+html += `<div class="dept-meta">`;
+if(metaParts.length) html += metaParts.join(' · ');
+if(sec.deptEmail) {
+html += `<span class="dept-email">
+<a href="${getEmailLink(sec.deptEmail)}" class="desktop-email">✉ ${sec.deptEmail}</a>
+<a href="${getEmailLink(sec.deptEmail)}" class="email-icon-mobile" title="${sec.deptEmail}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> e-mail</a>
+</span>`;
+}
+html += `</div>`;
+}
+html += adminActSec + `</div>`;
+(sec.people||[]).forEach((p, i) => {
+html += renderPerson(p, tabId, secIdx, i, baseDelay + 0.02 + i * 0.025);
+});
+html += `<button class="btn-add-person" onclick="openAddPerson('${tabId}',${secIdx})">＋ Додати працівника</button>`;
+html += `</div>`;
+return html;
 }
 
 function render() {
-  const group = DATA.sections.find(g => g.id === activeTab);
-  if(!group) return;
-  let html = '', delay = 0;
-  if(group.sections.length === 0) {
-    html = `<div class="empty"><div class="empty-glyph">📖</div><p>Довідник порожній. Увійдіть в режим адміністратора, щоб додати підрозділи та контакти.</p></div>`;
-  } else {
-    group.sections.forEach((sec, i) => {
-      html += renderSection(sec, group.id, i, delay);
-      delay += 0.05;
-    });
-  }
-  if(isAdmin) {
-    html += `<button onclick="openAddSection('${group.id}')" style="
-      display:block;width:100%;margin-top:1rem;padding:10px;
-      border:1px dashed var(--gold);background:transparent;
-      border-radius:var(--radius);color:var(--gold);font-size:13px;
-      cursor:pointer;font-family:'IBM Plex Sans',sans-serif;
-      transition:all .15s;" 
-      onmouseover="this.style.background='#fdf6e3'" 
-      onmouseout="this.style.background='transparent'">
-      ＋ Додати підрозділ
-    </button>`;
-  }
-  document.getElementById('mainContent').innerHTML = html;
-  const total = group.sections.reduce((a,s) => a+(s.people||[]).length, 0);
-  document.getElementById('resCount').textContent = `${total} осіб`;
+const group = DATA.sections.find(g => g.id === activeTab);
+if(!group) return;
+let html = '', delay = 0;
+if(group.sections.length === 0) {
+html = `<div class="empty"><div class="empty-glyph">📖</div><p>Довідник порожній. Увійдіть в режим адміністратора, щоб додати підрозділи та контакти.</p></div>`;
+} else {
+group.sections.forEach((sec, i) => {
+html += renderSection(sec, group.id, i, delay);
+delay += 0.05;
+});
+}
+if(isAdmin) {
+html += `<button onclick="openAddSection('${group.id}')" style="
+display:block;width:100%;margin-top:1rem;padding:10px;
+border:1px dashed var(--gold);background:transparent;
+border-radius:var(--radius);color:var(--gold);font-size:13px;
+cursor:pointer;font-family:'IBM Plex Sans',sans-serif;
+transition:all .15s;"
+onmouseover="this.style.background='#fdf6e3'"
+onmouseout="this.style.background='transparent'">
+＋ Додати підрозділ
+</button>`;
+}
+document.getElementById('mainContent').innerHTML = html;
+const total = group.sections.reduce((a,s) => a+(s.people||[]).length, 0);
+document.getElementById('resCount').textContent = `${total} осіб`;
 }
 
-/* ═════════════════════════════════════════
-   SEARCH — ВИПРАВЛЕНО: по всьому довіднику + нормалізація телефонів
-   ══════════════════════════════════════════ */
 function doSearch() {
-  const rawQuery = document.getElementById('searchInput').value.trim();
-  if (!rawQuery) {
-    query = '';
-    render();
-    buildTabs();
-    return;
-  }
-  query = rawQuery.toLowerCase();
+const rawQuery = document.getElementById('searchInput').value.trim();
+if (!rawQuery) { query = ''; render(); buildTabs(); return; }
+query = rawQuery.toLowerCase();
+const normalize = str => String(str || '').replace(/[\s\-\(\)\+\.\/\\;,]/g, '').toLowerCase();
+const normQuery = normalize(rawQuery);
+let html = '', total = 0, delay = 0;
+DATA.sections.forEach(group => {
+let tabHtml = '';
+let tabHasResults = false;
+group.sections.forEach((sec, si) => {
+const secText = normalize([sec.title, sec.deptPhone, sec.deptInner, sec.deptEmail, ...(sec.people || []).map(p => [p.name, p.role, p.city, p.inner, p.email].filter(Boolean).join(' '))].join(' '));
+if (!secText.includes(normQuery)) return;
+tabHasResults = true;
+const titleMatches = normalize(sec.title).includes(normQuery);
+const peopleToShow = titleMatches ? (sec.people||[]) : (sec.people||[]).filter(p => normalize([p.name, p.role, p.city, p.inner, p.email].filter(Boolean).join(' ')).includes(normQuery));
 
-  // Нормалізація: видаляє форматування телефонів та спецсимволи для порівняння
-  const normalize = str => String(str || '').replace(/[\s\-\(\)\+\.\/\\;,]/g, '').toLowerCase();
-  const normQuery = normalize(rawQuery);
-
-  let html = '', total = 0, delay = 0;
-
-  DATA.sections.forEach(group => {
-    let tabHtml = '';
-    let tabHasResults = false;
-
-    group.sections.forEach((sec, si) => {
-      // Збираємо ВСЮ текстову інформацію підрозділу для пошуку (включно з deptPhone/deptInner)
-      const secText = normalize([
-        sec.title,
-        sec.deptPhone,
-        sec.deptInner,
-        sec.deptEmail,
-        ...(sec.people || []).map(p => [p.name, p.role, p.city, p.inner, p.email].filter(Boolean).join(' '))
-      ].join(' '));
-
-      if (!secText.includes(normQuery)) return;
-
-      tabHasResults = true;
-
-      // Якщо збіг по назві підрозділу — показуємо всіх співробітників
-      // Якщо збіг тільки по людям — показуємо тільки тих, хто збігається
-      const titleMatches = normalize(sec.title).includes(normQuery);
-      const peopleToShow = titleMatches
-        ? (sec.people || [])
-        : (sec.people || []).filter(p =>
-            normalize([p.name, p.role, p.city, p.inner, p.email].filter(Boolean).join(' ')).includes(normQuery)
-          );
-
-      tabHtml += `<div class="dept-section" style="margin-top:1.5rem; border-top:1px solid var(--border); padding-top:1rem;">
-        <div class="dept-header">
-          <h3>${sec.title}</h3>
-          ${sec.deptPhone || sec.deptInner || sec.deptEmail ? `<div class="dept-meta">${sec.deptPhone ? `<span class="dept-phone">📞 ${sec.deptPhone}</span>` : ''}${sec.deptInner ? `<span class="dept-phone">вн. ${sec.deptInner}</span>` : ''}${sec.deptEmail ? `<span class="dept-email">✉ ${sec.deptEmail}</span>` : ''}</div>` : ''}
-        </div>`;
-
-      peopleToShow.forEach((p, i) => {
-        const pi = (sec.people || []).indexOf(p);
-        tabHtml += renderPerson(p, group.id, si, pi, delay + 0.02 + i * 0.02);
-        total++;
-      });
-      tabHtml += `</div>`;
-      delay += 0.05;
-    });
-
-    if (tabHasResults) {
-      html += `<div class="section-head" style="margin-top:2rem;">
-        <span class="section-dot"></span>
-        <span class="section-label">${group.tab}</span>
-        <span class="section-line"></span>
-      </div>${tabHtml}`;
-    }
-  });
-
-  if (!html) {
-    html = `<div class="empty"><div class="empty-glyph">⌕</div><p>Нічого не знайдено за запитом «${rawQuery}»</p></div>`;
-  }
-
-  document.getElementById('mainContent').innerHTML = html;
-  document.getElementById('resCount').textContent = `${total} результатів`;
+// Розбиття внутрішніх номерів через кому в результатах пошуку
+let deptInnerHTML = '';
+if(sec.deptInner) {
+const innerNums = sec.deptInner.split(',').map(num => num.trim()).filter(Boolean);
+deptInnerHTML = innerNums.map(num => `<a href="tel:${cleanPhoneForTel(num)}">вн. ${num}</a>`).join(' ');
 }
 
-/* ══════════════════════════════════════════
-   ADMIN AUTH
-   ══════════════════════════════════════════ */
+tabHtml += `<div class="dept-section" style="margin-top:1.5rem; border-top:1px solid var(--border); padding-top:1rem;">
+<div class="dept-header">
+<h3>${sec.title}</h3>
+${sec.deptPhone || sec.deptInner || sec.deptEmail ? `<div class="dept-meta">${sec.deptPhone ? `<span class="dept-phone">${createPhonesHTML(sec.deptPhone)}</span>` : ''}${sec.deptInner ? `<span class="dept-phone">${deptInnerHTML}</span>` : ''}${sec.deptEmail ? `<span class="dept-email"><a href="${getEmailLink(sec.deptEmail)}">✉ ${sec.deptEmail}</a></span>` : ''}</div>` : ''}
+</div>`;
+peopleToShow.forEach((p, i) => {
+const pi = (sec.people||[]).indexOf(p);
+tabHtml += renderPerson(p, group.id, si, pi, delay + 0.02 + i * 0.02);
+total++;
+});
+tabHtml += `</div>`;
+delay += 0.05;
+});
+if(tabHasResults) {
+html += `<div class="section-head" style="margin-top:2rem;">
+<span class="section-dot"></span><span class="section-label">${group.tab}</span><span class="section-line"></span>
+</div>${tabHtml}`;
+}
+});
+if (!html) html = `<div class="empty"><div class="empty-glyph">⌕</div><p>Нічого не знайдено за запитом «${rawQuery}»</p></div>`;
+document.getElementById('mainContent').innerHTML = html;
+document.getElementById('resCount').textContent = `${total} результатів`;
+}
+
 function toggleAdminPanel() {
-  if(isAdmin) {
-    if(dataChanged && !confirm('⚠️ У вас є незбережені зміни!\nНатисніть «💾 Експорт», щоб зберегти їх у файл.\nПродовжити без збереження?')) {
-      return;
-    }
-    isAdmin = false;
-    document.body.classList.remove('admin-mode');
-    document.getElementById('adminBtn').textContent = '🔒 Адмін';
-    document.getElementById('adminBtn').classList.remove('active');
-    document.getElementById('exportBtn').style.display = 'inline-block';
-    document.getElementById('csvBtn').style.display = 'none';
-    dataChanged = false;
-    buildTabs(); render();
-  } else {
-    document.getElementById('exportBtn').style.display = 'none';
-    document.getElementById('csvBtn').style.display = 'none';
-    document.getElementById('loginPassword').value = '';
-    document.getElementById('loginError').style.display = 'none';
-    openModal('loginModal');
-  }
+if(isAdmin) {
+if(dataChanged && !confirm('⚠️ У вас є незбережені зміни!\nНатисніть «💾 Експорт», щоб зберегти їх у файл.\nПродовжити без збереження?')) return;
+isAdmin = false;
+document.body.classList.remove('admin-mode');
+document.getElementById('adminBtn').textContent = '🔒 Адмін';
+document.getElementById('adminBtn').classList.remove('active');
+document.getElementById('exportBtn').style.display = 'inline-block';
+document.getElementById('csvBtn').style.display = 'none';
+dataChanged = false;
+buildTabs(); render();
+} else {
+document.getElementById('exportBtn').style.display = 'none';
+document.getElementById('csvBtn').style.display = 'none';
+document.getElementById('loginPassword').value = '';
+document.getElementById('loginError').style.display = 'none';
+openModal('loginModal');
 }
-
+}
 function doLogin() {
-  const pw = document.getElementById('loginPassword').value;
-  if(pw === ADMIN_PASS) {
-    closeModal('loginModal');
-    isAdmin = true;
-    document.body.classList.add('admin-mode');
-    document.getElementById('adminBtn').textContent = '🔓 Вийти';
-    document.getElementById('adminBtn').classList.add('active');
-    document.getElementById('exportBtn').style.display = 'inline-block';
-    document.getElementById('csvBtn').style.display = 'inline-block';
-    buildTabs(); render();
-  } else {
-    document.getElementById('loginError').style.display = 'block';
-    document.getElementById('loginPassword').value = '';
-    document.getElementById('loginPassword').focus();
-  }
+if(document.getElementById('loginPassword').value === ADMIN_PASS) {
+closeModal('loginModal'); isAdmin = true;
+document.body.classList.add('admin-mode');
+document.getElementById('adminBtn').textContent = '🔓 Вийти';
+document.getElementById('adminBtn').classList.add('active');
+document.getElementById('exportBtn').style.display = 'none';
+document.getElementById('csvBtn').style.display = 'inline-block';
+buildTabs(); render();
+} else {
+document.getElementById('loginError').style.display = 'block';
+document.getElementById('loginPassword').value = '';
+document.getElementById('loginPassword').focus();
 }
-
-/* ══════════════════════════════════════════
-   MODAL HELPERS
-   ══════════════════════════════════════════ */
+}
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.modal-overlay').forEach(el => {
-  el.addEventListener('click', e => { if(e.target===el) el.classList.remove('open'); });
-});
+document.querySelectorAll('.modal-overlay').forEach(el => el.addEventListener('click', e => { if(e.target===el) el.classList.remove('open'); }));
 
-/* ══════════════════════════════════════════
-   PERSON CRUD
-   ══════════════════════════════════════════ */
 function openAddPerson(tabId, secIdx) {
-  document.getElementById('personModalTitle').textContent = 'Додати працівника';
-  document.getElementById('pTabId').value = tabId;
-  document.getElementById('pSecIdx').value = secIdx;
-  document.getElementById('pPersonIdx').value = '-1';
-  ['pName','pRole','pCity','pInner','pEmail'].forEach(id => document.getElementById(id).value = '');
-  const acts = document.getElementById('personModalActions');
-  const delBtn = acts.querySelector('.btn-danger');
-  if(delBtn) delBtn.remove();
-  openModal('personModal');
-  setTimeout(() => document.getElementById('pName').focus(), 100);
+document.getElementById('personModalTitle').textContent='Додати працівника';
+document.getElementById('pTabId').value=tabId; document.getElementById('pSecIdx').value=secIdx; document.getElementById('pPersonIdx').value='-1';
+['pName','pRole','pCity','pInner','pEmail'].forEach(id=>document.getElementById(id).value='');
+const acts=document.getElementById('personModalActions'); const delBtn=acts.querySelector('.btn-danger'); if(delBtn)delBtn.remove();
+openModal('personModal'); setTimeout(()=>document.getElementById('pName').focus(),100);
 }
-
-function openEditPerson(tabId, secIdx, personIdx) {
-  const group = DATA.sections.find(g => g.id===tabId);
-  const p = group.sections[secIdx].people[personIdx];
-  document.getElementById('personModalTitle').textContent = 'Редагувати працівника';
-  document.getElementById('pTabId').value = tabId;
-  document.getElementById('pSecIdx').value = secIdx;
-  document.getElementById('pPersonIdx').value = personIdx;
-  document.getElementById('pName').value = p.name||'';
-  document.getElementById('pRole').value = p.role||'';
-  document.getElementById('pCity').value = p.city||'';
-  document.getElementById('pInner').value = p.inner||'';
-  document.getElementById('pEmail').value = p.email||'';
-  const acts = document.getElementById('personModalActions');
-  if(!acts.querySelector('.btn-danger')) {
-    const delBtn = document.createElement('button');
-    delBtn.className = 'btn-danger';
-    delBtn.textContent = 'Видалити';
-    delBtn.onclick = () => { closeModal('personModal'); confirmDeletePerson(tabId, +secIdx, +personIdx); };
-    acts.insertBefore(delBtn, acts.firstChild);
-  }
-  openModal('personModal');
+function openEditPerson(tabId,secIdx,personIdx) {
+const group=DATA.sections.find(g=>g.id===tabId), p=group.sections[secIdx].people[personIdx];
+document.getElementById('personModalTitle').textContent='Редагувати працівника';
+document.getElementById('pTabId').value=tabId; document.getElementById('pSecIdx').value=secIdx; document.getElementById('pPersonIdx').value=personIdx;
+document.getElementById('pName').value=p.name||''; document.getElementById('pRole').value=p.role||'';
+document.getElementById('pCity').value=p.city||''; document.getElementById('pInner').value=p.inner||''; document.getElementById('pEmail').value=p.email||'';
+const acts=document.getElementById('personModalActions');
+if(!acts.querySelector('.btn-danger')){const delBtn=document.createElement('button');delBtn.className='btn-danger';delBtn.textContent='Видалити';delBtn.onclick=()=>{closeModal('personModal');confirmDeletePerson(tabId,+secIdx,+personIdx);};acts.insertBefore(delBtn,acts.firstChild);}
+openModal('personModal');
 }
-
 function savePerson() {
-  const tabId = document.getElementById('pTabId').value;
-  const secIdx = +document.getElementById('pSecIdx').value;
-  const personIdx = +document.getElementById('pPersonIdx').value;
-  const name = document.getElementById('pName').value.trim();
-  if(!name) { document.getElementById('pName').focus(); return; }
-  const person = {
-    name,
-    role: document.getElementById('pRole').value.trim(),
-    city: document.getElementById('pCity').value.trim() || undefined,
-    inner: document.getElementById('pInner').value.trim() || undefined,
-    email: document.getElementById('pEmail').value.trim() || undefined
-  };
-  Object.keys(person).forEach(k => person[k]===undefined && delete person[k]);
-  const group = DATA.sections.find(g => g.id===tabId);
-  if(personIdx === -1) {
-    group.sections[secIdx].people.push(person);
-  } else {
-    group.sections[secIdx].people[personIdx] = person;
-  }
-  closeModal('personModal');
-  if(query) doSearch(); else render();
-  dataChanged = true;
+const tabId=document.getElementById('pTabId').value, secIdx=+document.getElementById('pSecIdx').value, personIdx=+document.getElementById('pPersonIdx').value;
+const name=document.getElementById('pName').value.trim(); if(!name){document.getElementById('pName').focus();return;}
+const person={name,role:document.getElementById('pRole').value.trim(),city:document.getElementById('pCity').value.trim()||undefined,inner:document.getElementById('pInner').value.trim()||undefined,email:document.getElementById('pEmail').value.trim()||undefined};
+Object.keys(person).forEach(k=>person[k]===undefined&&delete person[k]);
+const group=DATA.sections.find(g=>g.id===tabId);
+if(personIdx===-1) group.sections[secIdx].people.push(person); else group.sections[secIdx].people[personIdx]=person;
+closeModal('personModal'); if(query)doSearch();else render(); dataChanged=true;
 }
-
-function confirmDeletePerson(tabId, secIdx, personIdx) {
-  const group = DATA.sections.find(g => g.id===tabId);
-  const p = group.sections[secIdx].people[personIdx];
-  document.getElementById('confirmText').textContent = `Видалити «${p.name}»?`;
-  document.getElementById('confirmOk').onclick = () => {
-    group.sections[secIdx].people.splice(personIdx, 1);
-    closeModal('confirmModal');
-    if(query) doSearch(); else render();
-    dataChanged = true;
-  };
-  openModal('confirmModal');
+function confirmDeletePerson(tabId,secIdx,personIdx) {
+const group=DATA.sections.find(g=>g.id===tabId), p=group.sections[secIdx].people[personIdx];
+document.getElementById('confirmText').textContent=`Видалити «${p.name}»?`;
+document.getElementById('confirmOk').onclick=()=>{group.sections[secIdx].people.splice(personIdx,1);closeModal('confirmModal');if(query)doSearch();else render();dataChanged=true;};
+openModal('confirmModal');
 }
-
-/* ══════════════════════════════════════════
-   SECTION CRUD
-   ══════════════════════════════════════════ */
 function openAddSection(tabId) {
-  document.getElementById('sectionModalTitle').textContent = 'Додати підрозділ';
-  document.getElementById('sTabId').value = tabId;
-  document.getElementById('sSecIdx').value = '-1';
-  ['sTitle','sDeptPhone','sDeptInner','sDeptEmail'].forEach(id => document.getElementById(id).value='');
-  const acts = document.getElementById('sectionModalActions');
-  const delBtn = acts.querySelector('.btn-danger');
-  if(delBtn) delBtn.remove();
-  openModal('sectionModal');
-  setTimeout(() => document.getElementById('sTitle').focus(), 100);
+document.getElementById('sectionModalTitle').textContent='Додати підрозділ';
+document.getElementById('sTabId').value=tabId; document.getElementById('sSecIdx').value='-1';
+['sTitle','sDeptPhone','sDeptInner','sDeptEmail'].forEach(id=>document.getElementById(id).value='');
+const acts=document.getElementById('sectionModalActions'); const delBtn=acts.querySelector('.btn-danger'); if(delBtn)delBtn.remove();
+openModal('sectionModal'); setTimeout(()=>document.getElementById('sTitle').focus(),100);
 }
-
-function openEditSection(tabId, secIdx) {
-  const group = DATA.sections.find(g => g.id===tabId);
-  const sec = group.sections[secIdx];
-  document.getElementById('sectionModalTitle').textContent = 'Редагувати підрозділ';
-  document.getElementById('sTabId').value = tabId;
-  document.getElementById('sSecIdx').value = secIdx;
-  document.getElementById('sTitle').value = sec.title||'';
-  document.getElementById('sDeptPhone').value = sec.deptPhone||'';
-  document.getElementById('sDeptInner').value = sec.deptInner||'';
-  document.getElementById('sDeptEmail').value = sec.deptEmail||'';
-  const acts = document.getElementById('sectionModalActions');
-  if(!acts.querySelector('.btn-danger')) {
-    const delBtn = document.createElement('button');
-    delBtn.className = 'btn-danger';
-    delBtn.textContent = 'Видалити';
-    delBtn.onclick = () => { closeModal('sectionModal'); confirmDeleteSection(tabId, +secIdx); };
-    acts.insertBefore(delBtn, acts.firstChild);
-  }
-  openModal('sectionModal');
+function openEditSection(tabId,secIdx) {
+const group=DATA.sections.find(g=>g.id===tabId), sec=group.sections[secIdx];
+document.getElementById('sectionModalTitle').textContent='Редагувати підрозділ';
+document.getElementById('sTabId').value=tabId; document.getElementById('sSecIdx').value=secIdx;
+document.getElementById('sTitle').value=sec.title||''; document.getElementById('sDeptPhone').value=sec.deptPhone||'';
+document.getElementById('sDeptInner').value=sec.deptInner||''; document.getElementById('sDeptEmail').value=sec.deptEmail||'';
+const acts=document.getElementById('sectionModalActions');
+if(!acts.querySelector('.btn-danger')){const delBtn=document.createElement('button');delBtn.className='btn-danger';delBtn.textContent='Видалити';delBtn.onclick=()=>{closeModal('sectionModal');confirmDeleteSection(tabId,+secIdx);};acts.insertBefore(delBtn,acts.firstChild);}
+openModal('sectionModal');
 }
-
 function saveSection() {
-  const tabId = document.getElementById('sTabId').value;
-  const secIdx = +document.getElementById('sSecIdx').value;
-  const title = document.getElementById('sTitle').value.trim();
-  if(!title) { document.getElementById('sTitle').focus(); return; }
-  const sec = {
-    title,
-    deptPhone: document.getElementById('sDeptPhone').value.trim() || undefined,
-    deptInner: document.getElementById('sDeptInner').value.trim() || undefined,
-    deptEmail: document.getElementById('sDeptEmail').value.trim() || undefined,
-    people: []
-  };
-  Object.keys(sec).forEach(k => sec[k]===undefined && delete sec[k]);
-  const group = DATA.sections.find(g => g.id===tabId);
-  if(secIdx === -1) {
-    if(!sec.people) sec.people = [];
-    group.sections.push(sec);
-  } else {
-    sec.people = group.sections[secIdx].people || [];
-    group.sections[secIdx] = sec;
-  }
-  closeModal('sectionModal');
-  render();
-  dataChanged = true;
+const tabId=document.getElementById('sTabId').value, secIdx=+document.getElementById('sSecIdx').value;
+const title=document.getElementById('sTitle').value.trim(); if(!title){document.getElementById('sTitle').focus();return;}
+const sec={title,deptPhone:document.getElementById('sDeptPhone').value.trim()||undefined,deptInner:document.getElementById('sDeptInner').value.trim()||undefined,deptEmail:document.getElementById('sDeptEmail').value.trim()||undefined,people:[]};
+Object.keys(sec).forEach(k=>sec[k]===undefined&&delete sec[k]);
+const group=DATA.sections.find(g=>g.id===tabId);
+if(secIdx===-1){if(!sec.people)sec.people=[];group.sections.push(sec);}else{sec.people=group.sections[secIdx].people||[];group.sections[secIdx]=sec;}
+closeModal('sectionModal'); render(); dataChanged=true;
 }
-
-function confirmDeleteSection(tabId, secIdx) {
-  const group = DATA.sections.find(g => g.id===tabId);
-  const sec = group.sections[secIdx];
-  document.getElementById('confirmText').textContent = `Видалити підрозділ «${sec.title}»? Усіх (${(sec.people||[]).length}) працівників буде видалено.`;
-  document.getElementById('confirmOk').onclick = () => {
-    group.sections.splice(secIdx, 1);
-    closeModal('confirmModal');
-    render();
-    dataChanged = true;
-  };
-  openModal('confirmModal');
+function confirmDeleteSection(tabId,secIdx) {
+const group=DATA.sections.find(g=>g.id===tabId), sec=group.sections[secIdx];
+document.getElementById('confirmText').textContent=`Видалити підрозділ «${sec.title}»? Усіх (${(sec.people||[]).length}) працівників буде видалено.`;
+document.getElementById('confirmOk').onclick=()=>{group.sections.splice(secIdx,1);closeModal('confirmModal');render();dataChanged=true;};
+openModal('confirmModal');
 }
-
-/* ══════════════════════════════════════════
-   TAB CRUD
-   ══════════════════════════════════════════ */
 function openAddTab() {
-  document.getElementById('tabModalTitle').textContent = 'Додати вкладку';
-  document.getElementById('tTabId').value = '';
-  document.getElementById('tTabName').value = '';
-  const acts = document.getElementById('tabModalActions');
-  const delBtn = acts.querySelector('.btn-danger');
-  if(delBtn) delBtn.remove();
-  openModal('tabModal');
-  setTimeout(() => document.getElementById('tTabName').focus(), 100);
+document.getElementById('tabModalTitle').textContent='Додати вкладку';
+document.getElementById('tTabId').value=''; document.getElementById('tTabName').value='';
+const acts=document.getElementById('tabModalActions'); const delBtn=acts.querySelector('.btn-danger'); if(delBtn)delBtn.remove();
+openModal('tabModal'); setTimeout(()=>document.getElementById('tTabName').focus(),100);
 }
-
 function openEditTab(tabId) {
-  const group = DATA.sections.find(g => g.id===tabId);
-  document.getElementById('tabModalTitle').textContent = 'Редагувати вкладку';
-  document.getElementById('tTabId').value = tabId;
-  document.getElementById('tTabName').value = group.tab;
-  const acts = document.getElementById('tabModalActions');
-  if(!acts.querySelector('.btn-danger')) {
-    const delBtn = document.createElement('button');
-    delBtn.className = 'btn-danger';
-    delBtn.textContent = 'Видалити';
-    delBtn.onclick = () => { closeModal('tabModal'); confirmDeleteTab(tabId); };
-    acts.insertBefore(delBtn, acts.firstChild);
-  }
-  openModal('tabModal');
+const group=DATA.sections.find(g=>g.id===tabId);
+document.getElementById('tabModalTitle').textContent='Редагувати вкладку';
+document.getElementById('tTabId').value=tabId; document.getElementById('tTabName').value=group.tab;
+const acts=document.getElementById('tabModalActions');
+if(!acts.querySelector('.btn-danger')){const delBtn=document.createElement('button');delBtn.className='btn-danger';delBtn.textContent='Видалити';delBtn.onclick=()=>{closeModal('tabModal');confirmDeleteTab(tabId);};acts.insertBefore(delBtn,acts.firstChild);}
+openModal('tabModal');
 }
-
 function saveTab() {
-  const tabId = document.getElementById('tTabId').value;
-  const name = document.getElementById('tTabName').value.trim();
-  if(!name) { document.getElementById('tTabName').focus(); return; }
-  if(!tabId) {
-    const newId = 'tab_' + Date.now();
-    DATA.sections.push({ id: newId, tab: name, sections: [] });
-    activeTab = newId;
-  } else {
-    const group = DATA.sections.find(g => g.id===tabId);
-    group.tab = name;
-  }
-  closeModal('tabModal');
-  buildTabs(); render();
-  dataChanged = true;
+const tabId=document.getElementById('tTabId').value, name=document.getElementById('tTabName').value.trim();
+if(!name){document.getElementById('tTabName').focus();return;}
+if(!tabId){const newId='tab_'+Date.now();DATA.sections.push({id:newId,tab:name,sections:[]});activeTab=newId;}
+else{const group=DATA.sections.find(g=>g.id===tabId);group.tab=name;}
+closeModal('tabModal'); buildTabs(); render(); dataChanged=true;
 }
-
 function confirmDeleteTab(tabId) {
-  const group = DATA.sections.find(g => g.id===tabId);
-  const count = group.sections.reduce((a,s)=>a+(s.people||[]).length,0);
-  document.getElementById('confirmText').textContent = `Видалити вкладку «${group.tab}»? У ній ${group.sections.length} підрозділів та ${count} працівників.`;
-  document.getElementById('confirmOk').onclick = () => {
-    const idx = DATA.sections.findIndex(g => g.id===tabId);
-    DATA.sections.splice(idx, 1);
-    activeTab = DATA.sections[0]?.id || '';
-    closeModal('confirmModal');
-    buildTabs(); render();
-    dataChanged = true;
-  };
-  openModal('confirmModal');
+const group=DATA.sections.find(g=>g.id===tabId), count=group.sections.reduce((a,s)=>a+(s.people||[]).length,0);
+document.getElementById('confirmText').textContent=`Видалити вкладку «${group.tab}»? У ній ${group.sections.length} підрозділів та ${count} працівників.`;
+document.getElementById('confirmOk').onclick=()=>{const idx=DATA.sections.findIndex(g=>g.id===tabId);DATA.sections.splice(idx,1);activeTab=DATA.sections[0]?.id||'';closeModal('confirmModal');buildTabs();render();dataChanged=true;};
+openModal('confirmModal');
 }
 
-/* ══════════════════════════════════════════
-   KEYBOARD SHORTCUTS
-   ══════════════════════════════════════════ */
 document.addEventListener('keydown', e => {
-  if(e.key === 'Escape') {
-    document.querySelectorAll('.modal-overlay.open').forEach(el => el.classList.remove('open'));
-  }
-  if((e.ctrlKey||e.metaKey) && e.key==='f') {
-    e.preventDefault();
-    document.getElementById('searchInput').focus();
-    document.getElementById('searchInput').select();
-  }
+if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(el=>el.classList.remove('open'));
+if((e.ctrlKey||e.metaKey)&&e.key==='f'){e.preventDefault();document.getElementById('searchInput').focus();document.getElementById('searchInput').select();}
 });
 
-/* ══════════════════════════════════════════
-   EXPORT
-   ══════════════════════════════════════════ */
 function exportToFile() {
-  DATA.lastUpdated = new Date().toLocaleDateString('uk-UA');
-  document.getElementById('lastUpdated').textContent = DATA.lastUpdated;
-  const wasAdmin = document.body.classList.contains('admin-mode');
-  const exportBtn = document.getElementById('exportBtn');
-  const wasBtnVisible = exportBtn.style.display;
-  if (wasAdmin) document.body.classList.remove('admin-mode');
-  exportBtn.style.display = 'none';
-  const dataJSON = JSON.stringify(DATA, null, 2).replace(/<\/script>/g, '<\\/script>');
-  let html = document.documentElement.outerHTML;
-  if (wasAdmin) document.body.classList.add('admin-mode');
-  exportBtn.style.display = wasBtnVisible;
-  const dataStart = html.indexOf('let DATA = {');
-  const dataEnd = html.indexOf('};', dataStart) + 2;
-  if(dataStart !== -1 && dataEnd !== -1) {
-    const before = html.substring(0, dataStart);
-    const after = html.substring(dataEnd);
-    html = before + `let DATA = ${dataJSON};` + after;
-  }
-  const blob = new Blob([html], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'Довідник_ПДАУ.html';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-  alert('✅ Файл завантажено!\n\nЗамініть старий файл на Довідник_ПДАУ.html — і всі зміни збережуться.');
-  dataChanged = false;
+DATA.lastUpdated=new Date().toLocaleDateString('uk-UA');
+document.getElementById('lastUpdated').textContent=DATA.lastUpdated;
+const wasAdmin=document.body.classList.contains('admin-mode'), exportBtn=document.getElementById('exportBtn'), wasBtnVisible=exportBtn.style.display;
+if(wasAdmin)document.body.classList.remove('admin-mode'); exportBtn.style.display='none';
+const dataJSON=JSON.stringify(DATA,null,2).replace(/<\/script>/g,'<\\/script>');
+let html=document.documentElement.outerHTML;
+if(wasAdmin)document.body.classList.add('admin-mode'); exportBtn.style.display=wasBtnVisible;
+const dataStart=html.indexOf('let DATA = {'), dataEnd=html.indexOf('};',dataStart)+2;
+if(dataStart!==-1&&dataEnd!==-1){const before=html.substring(0,dataStart), after=html.substring(dataEnd); html=before+`let DATA = ${dataJSON};`+after;}
+const blob=new Blob([html],{type:'text/html'}), url=URL.createObjectURL(blob), a=document.createElement('a');
+a.href=url; a.download='Довідник_ПДАУ.html'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+alert('✅ Файл завантажено!\nЗамініть старий файл на Довідник_ПДАУ.html — і всі зміни збережуться.');
+dataChanged=false;
 }
-
 function exportToCSV() {
-  const headers = ['ПІБ', 'Посада', 'Міський телефон', 'Внутрішній', 'E-mail', 'Підрозділ', 'Вкладка'];
-  const rows = [headers.join(',')];
-  DATA.sections.forEach(tab => {
-    tab.sections.forEach(sec => {
-      sec.people.forEach(p => {
-        const row = [
-          `"${(p.name||'').replace(/"/g,'""')}"`,
-          `"${(p.role||'').replace(/"/g,'""')}"`,
-          `"${(p.city||'').replace(/"/g,'""')}"`,
-          `"${(p.inner||'').replace(/"/g,'""')}"`,
-          `"${(p.email||'').replace(/"/g,'""')}"`,
-          `"${(sec.title||'').replace(/"/g,'""')}"`,
-          `"${(tab.tab||'').replace(/"/g,'""')}"`
-        ];
-        rows.push(row.join(','));
-      });
-    });
-  });
-  const csv = '\uFEFF' + rows.join('\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `Довідник_ПДАУ_${new Date().toISOString().slice(0,10)}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+const headers=['ПІБ','Посада','Міський телефон','Внутрішній','E-mail','Підрозділ','Вкладка'], rows=[headers.join(',')];
+DATA.sections.forEach(tab=>{tab.sections.forEach(sec=>{sec.people.forEach(p=>{
+const row=[`"${(p.name||'').replace(/"/g,'""')}"`,`"${(p.role||'').replace(/"/g,'""')}"`,`"${(p.city||'').replace(/"/g,'""')}"`,`"${(p.inner||'').replace(/"/g,'""')}"`,`"${(p.email||'').replace(/"/g,'""')}"`,`"${(sec.title||'').replace(/"/g,'""')}"`,`"${(tab.tab||'').replace(/"/g,'""')}"`];
+rows.push(row.join(','));
+});});});
+const csv='\uFEFF'+rows.join('\n'), blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}), url=URL.createObjectURL(blob), a=document.createElement('a');
+a.href=url; a.download=`Довідник_ПДАУ_${new Date().toISOString().slice(0,10)}.csv`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 }
 
-/* ══════════════════════════════════════════
-   INIT
-   ══════════════════════════════════════════ */
-document.getElementById('lastUpdated').textContent = DATA.lastUpdated || new Date().toLocaleDateString('uk-UA');
-buildTabs();
-render();
+// ══════════════════════════════════════════
+// SWIPE NAVIGATION (МОБІЛЬНА ВЕРСІЯ)
+// ══════════════════════════════════════════
+let touchStartX = 0;
+let touchStartY = 0;
+let isSwiping = false;
+
+document.addEventListener('touchstart', function(e) {
+if (document.querySelector('.modal-overlay.open')) return;
+if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+touchStartX = e.touches[0].clientX;
+touchStartY = e.touches[0].clientY;
+isSwiping = true;
+}, { passive: true });
+
+document.addEventListener('touchend', function(e) {
+if (!isSwiping) return;
+isSwiping = false;
+const touchEndX = e.changedTouches[0].clientX;
+const touchEndY = e.changedTouches[0].clientY;
+const deltaX = touchEndX - touchStartX;
+const deltaY = touchEndY - touchStartY;
+const minSwipeDistance = 50;
+
+if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+const currentIndex = DATA.sections.findIndex(g => g.id === activeTab);
+const totalTabs = DATA.sections.length;
+if (totalTabs <= 1) return;
+let newIndex;
+if (deltaX < 0) {
+newIndex = (currentIndex + 1) % totalTabs;
+} else {
+newIndex = (currentIndex - 1 + totalTabs) % totalTabs;
+}
+setTab(DATA.sections[newIndex].id);
+window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+}, { passive: true });
+// ══════════════════════════════════════════
+// END SWIPE NAVIGATION
+// ══════════════════════════════════════════
+
+document.getElementById('lastUpdated').textContent=DATA.lastUpdated||new Date().toLocaleDateString('uk-UA');
+buildTabs(); render();
 </script>
-
-
 <div class="addGrpSpan addGrpSpan_hidden" style="display: none;">
             <div class="addContentWrapper">
                 <div class="GRP-icon-close addGrpClose"></div>
@@ -1434,7 +1553,7 @@ render();
                                 </div>
                             </div>
                             <div class="addGrp_btn">
-                                <button class="addGrp_call">Дзвінок</button>
+                                <button class="addGrp_call">呼叫</button>
                             </div>
                         </div>
                     </div>
