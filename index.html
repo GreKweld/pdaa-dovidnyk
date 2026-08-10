@@ -2,6 +2,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Телефонний довідник — ПДАУ</title>
+<script>
+(function(){
+try {
+var saved = localStorage.getItem('pdauTheme');
+if(saved === 'dark' || saved === 'light') document.documentElement.setAttribute('data-theme', saved);
+} catch(e) {}
+})();
+</script>
 
 <!-- ══════════════════════════════════════════ -->
 <!-- PWA ICONS & MOBILE APP  -->
@@ -31,6 +39,7 @@
 --ink2: #4a4640;
 --ink3: #8a8480;
 --accent: #2d5016;
+--accent-text: #2d5016;
 --accent2: #8b3a0f;
 --gold: #b8922a;
 --border: #d8d4ce;
@@ -43,7 +52,69 @@
 --admin-accent: #1e40af;
 --admin-danger: #b91c1c;
 --admin-move: #059669;
+--tag-inner-bg: #f9ede8;
+--btn-edit-bg: #eff6ff;
+--btn-edit-bg-hover: #dbeafe;
+--btn-del-bg: #fef2f2;
+--btn-del-bg-hover: #fee2e2;
+--error-bg: #fef2f2;
+--error-border: #fecaca;
 }
+@media (prefers-color-scheme: dark) {
+:root:not([data-theme="light"]) {
+--bg: #171915;
+--surface: #1f221c;
+--ink: #ece8e0;
+--ink2: #c2bcae;
+--ink3: #a39d8f;
+--accent: #223913;
+--accent-text: #86c765;
+--accent2: #b8551a;
+--gold: #d4af53;
+--border: #383b32;
+--border2: #2b2e26;
+--card: #23261f;
+--tag-bg: #24301f;
+--tag-c: #9ad477;
+--admin-accent: #6fa1ff;
+--admin-danger: #f87171;
+--admin-move: #4ade80;
+--tag-inner-bg: #33241d;
+--btn-edit-bg: #1c2c42;
+--btn-edit-bg-hover: #24384f;
+--btn-del-bg: #3a2020;
+--btn-del-bg-hover: #482727;
+--error-bg: #3a2020;
+--error-border: #6b3030;
+}
+}
+:root[data-theme="dark"] {
+--bg: #171915;
+--surface: #1f221c;
+--ink: #ece8e0;
+--ink2: #c2bcae;
+--ink3: #a39d8f;
+--accent: #223913;
+--accent-text: #86c765;
+--accent2: #b8551a;
+--gold: #d4af53;
+--border: #383b32;
+--border2: #2b2e26;
+--card: #23261f;
+--tag-bg: #24301f;
+--tag-c: #9ad477;
+--admin-accent: #6fa1ff;
+--admin-danger: #f87171;
+--admin-move: #4ade80;
+--tag-inner-bg: #33241d;
+--btn-edit-bg: #1c2c42;
+--btn-edit-bg-hover: #24384f;
+--btn-del-bg: #3a2020;
+--btn-del-bg-hover: #482727;
+--error-bg: #3a2020;
+--error-border: #6b3030;
+}
+body { transition: background-color .2s, color .2s; }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
 font-family: 'IBM Plex Sans', sans-serif;
@@ -55,9 +126,6 @@ header {
 background: var(--accent);
 color: #fff;
 padding: 1.5rem 1.5rem 1rem;
-position: sticky;
-top: 0;
-z-index: 100;
 border-bottom: 3px solid var(--gold);
 }
 .header-inner { max-width: 960px; margin: 0 auto; text-align: center; }
@@ -79,8 +147,16 @@ text-transform: uppercase; letter-spacing: .07em; margin-top: 4px;
 position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
 font-size: 15px; opacity: .6; pointer-events: none;
 }
+.search-wrap .search-clear {
+position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+width: 22px; height: 22px; border-radius: 50%; border: none;
+background: rgba(255,255,255,0.18); color: #fff; font-size: 12px;
+line-height: 1; cursor: pointer; display: none;
+align-items: center; justify-content: center;
+}
+.search-wrap .search-clear:hover { background: rgba(255,255,255,0.3); }
 #searchInput {
-width: 100%; padding: 8px 12px 8px 36px;
+width: 100%; padding: 8px 34px 8px 36px;
 background: rgba(255,255,255,0.13);
 border: 1px solid rgba(255,255,255,0.22);
 border-radius: 20px;
@@ -91,18 +167,13 @@ outline: none; transition: background .2s, border-color .2s;
 #searchInput::placeholder { color: rgba(255,255,255,0.5); }
 #searchInput:focus { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.4); }
 .header-right { display: flex; align-items: center; gap: .75rem; }
-#resCount {
-font-family: 'IBM Plex Mono', monospace;
-font-size: 11px; color: rgba(255,255,255,0.55);
-white-space: nowrap;
-}
-#adminBtn, #exportBtn, #printBtn, #csvBtn {
+#adminBtn, #exportBtn, #printBtn, #csvBtn, #themeBtn {
 padding: 5px 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.35);
 background: rgba(255,255,255,0.12); color: #fff; font-size: 11px;
 font-family: 'IBM Plex Sans', sans-serif; cursor: pointer; white-space: nowrap;
 transition: background .2s;
 }
-#adminBtn:hover, #exportBtn:hover, #printBtn:hover { background: rgba(255,255,255,0.22); }
+#adminBtn:hover, #exportBtn:hover, #printBtn:hover, #themeBtn:hover { background: rgba(255,255,255,0.22); }
 #adminBtn.active {
 background: var(--gold); border-color: var(--gold); color: #1a1814; font-weight: 600;
 }
@@ -126,8 +197,8 @@ transition: color .2s, border-color .2s;
 letter-spacing: .02em; display: flex; align-items: center; gap: 6px;
 position: relative;
 }
-.tab:hover { color: var(--accent); }
-.tab.active { color: var(--accent); border-bottom-color: var(--gold); }
+.tab:hover { color: var(--accent-text); }
+.tab.active { color: var(--accent-text); border-bottom-color: var(--gold); }
 .tab-move-btns {
 display: none;
 gap: 2px;
@@ -152,7 +223,7 @@ main { max-width: 960px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
 .dept-header {
 background: var(--surface);
 border: 1px solid var(--border);
-border-left: 3px solid var(--accent);
+border-left: 3px solid var(--accent-text);
 border-radius: var(--radius);
 padding: .75rem 1rem;
 margin-bottom: .5rem;
@@ -161,7 +232,7 @@ position: relative;
 }
 .dept-header h3 {
 font-family: 'Playfair Display', serif;
-font-size: 15px; font-weight: 600; color: var(--accent);
+font-size: 15px; font-weight: 600; color: var(--accent-text);
 }
 .dept-meta { display: flex; gap: 1rem; margin-top: 4px; flex-wrap: wrap; }
 .dept-phone a, .dept-email a {
@@ -204,6 +275,9 @@ font-size: 12px; font-weight: 500;
 font-size: 14px; font-weight: 500; color: var(--ink);
 white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+mark.search-hl {
+background: #fde68a; color: #1a1814; border-radius: 2px; padding: 0 1px;
+}
 .contact-role {
 font-size: 12px; color: var(--ink3);
 white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -224,7 +298,7 @@ transition: opacity .15s, transform .1s;
 }
 a.phone-tag:hover { opacity: 0.8; }
 a.phone-tag:active { transform: scale(0.98); }
-.phone-tag.inner { color: var(--accent2); background: #f9ede8; }
+.phone-tag.inner { color: var(--accent2); background: var(--tag-inner-bg); }
 .phone-tag.email-tag {
 color: var(--ink3); background: var(--border2);
 max-width: 160px; overflow: hidden; text-overflow: ellipsis;
@@ -276,7 +350,7 @@ animation: fadeUp .35s ease both;
 font-family: 'Playfair Display', serif;
 font-size: 18px;
 font-weight: 600;
-color: var(--accent);
+color: var(--accent-text);
 margin-bottom: 1rem;
 }
 .feedback-block p {
@@ -303,7 +377,7 @@ position: relative;
 content: "✓";
 position: absolute;
 left: 0;
-color: var(--accent);
+color: var(--accent-text);
 font-weight: bold;
 }
 .feedback-contacts {
@@ -321,7 +395,7 @@ display: inline-flex;
 align-items: center;
 gap: 6px;
 font-size: 14px;
-color: var(--accent);
+color: var(--accent-text);
 text-decoration: none;
 padding: 8px 16px;
 margin: 4px 8px;
@@ -361,10 +435,10 @@ width: 28px; height: 28px; border-radius: 6px; border: none;
 cursor: pointer; display: flex; align-items: center; justify-content: center;
 font-size: 13px; transition: background .15s;
 }
-.btn-edit { background: #eff6ff; color: var(--admin-accent); }
-.btn-edit:hover { background: #dbeafe; }
-.btn-del { background: #fef2f2; color: var(--admin-danger); }
-.btn-del:hover { background: #fee2e2; }
+.btn-edit { background: var(--btn-edit-bg); color: var(--admin-accent); }
+.btn-edit:hover { background: var(--btn-edit-bg-hover); }
+.btn-del { background: var(--btn-del-bg); color: var(--admin-danger); }
+.btn-del:hover { background: var(--btn-del-bg-hover); }
 .btn-add-person {
 display: none; width: 100%; margin-top: 4px;
 padding: 7px; border: 1px dashed var(--border);
@@ -372,7 +446,7 @@ background: transparent; border-radius: var(--radius);
 color: var(--ink3); font-size: 12px; cursor: pointer;
 transition: all .15s; font-family: 'IBM Plex Sans', sans-serif;
 }
-.btn-add-person:hover { background: var(--tag-bg); color: var(--accent); border-color: var(--accent); }
+.btn-add-person:hover { background: var(--tag-bg); color: var(--accent-text); border-color: var(--accent-text); }
 body.admin-mode .btn-add-person { display: block; }
 .dept-admin-actions {
 display: none; position: absolute; top: .6rem; right: .75rem; gap: 4px;
@@ -403,7 +477,7 @@ max-height: 90vh; overflow-y: auto;
 .modal h2 {
 font-family: 'Playfair Display', serif;
 font-size: 18px; font-weight: 600; margin-bottom: 1.25rem;
-color: var(--accent);
+color: var(--accent-text);
 }
 .form-group { margin-bottom: 1rem; }
 .form-group label {
@@ -418,7 +492,7 @@ background: var(--card); color: var(--ink);
 font-size: 14px; font-family: 'IBM Plex Sans', sans-serif;
 outline: none; transition: border-color .2s;
 }
-.form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+.form-group input:focus, .form-group select:focus { border-color: var(--accent-text); }
 .modal-actions { display: flex; gap: .75rem; margin-top: 1.5rem; justify-content: flex-end; }
 .btn-primary {
 padding: 9px 20px; background: var(--accent); color: #fff;
@@ -446,8 +520,8 @@ margin-right: auto; transition: opacity .15s;
 .login-modal h2 { margin-bottom: .25rem; }
 .login-sub { font-size: 13px; color: var(--ink3); margin-bottom: 1.25rem; }
 .error-msg {
-background: #fef2f2; color: var(--admin-danger);
-border: 1px solid #fecaca; border-radius: var(--radius);
+background: var(--error-bg); color: var(--admin-danger);
+border: 1px solid var(--error-border); border-radius: var(--radius);
 padding: 8px 12px; font-size: 13px; display: none; margin-top: .5rem;
 }
 .admin-banner {
@@ -456,7 +530,7 @@ text-align: center; padding: 7px; font-size: 12px; letter-spacing: .04em;
 }
 body.admin-mode .admin-banner { display: block; }
 footer {
-background: var(--ink); color: rgba(255,255,255,0.6);
+background: var(--accent); color: rgba(255,255,255,0.6);
 padding: 1.5rem; text-align: center; font-size: 12px; line-height: 1.7;
 }
 footer strong { color: rgba(255,255,255,0.9); display: block; margin-bottom: 4px; font-family: 'Playfair Display', serif; font-size: 14px; }
@@ -505,7 +579,7 @@ font-size: 11pt !important; line-height: 1.4 !important;
 margin: 0 !important; padding: 0 !important;
 }
 header, .tabs-wrap, .admin-banner, .admin-actions, .dept-admin-actions,
-.btn-add-person, .btn-icon, #adminBtn, #exportBtn, #printBtn, #csvBtn,
+.btn-add-person, .btn-icon, #adminBtn, #exportBtn, #printBtn, #csvBtn, #themeBtn,
 .search-wrap, .modal-overlay, footer, body::before,
 .tab-move-btns, .move-btn, .email-icon-mobile, .qr-code { display: none !important; }
 .avatar { display: none !important; }
@@ -513,6 +587,7 @@ header, .tabs-wrap, .admin-banner, .admin-actions, .dept-admin-actions,
 border: none !important; padding: 2pt 0 !important; margin: 0 !important;
 box-shadow: none !important; background: transparent !important;
 display: block !important; page-break-inside: avoid;
+animation: none !important; opacity: 1 !important; transform: none !important;
 }
 .contact-info { display: block !important; margin-bottom: 2pt !important; }
 .contact-name { font-weight: 600 !important; font-size: 10pt !important; color: #000 !important; }
@@ -549,6 +624,7 @@ max-width: none !important;
 border: none !important; border-left: none !important;
 padding: 6pt 0 3pt !important; margin: 10pt 0 3pt !important;
 page-break-after: avoid; page-break-inside: avoid; background: transparent !important;
+animation: none !important; opacity: 1 !important; transform: none !important;
 }
 .dept-header h3 {
 font-size: 11pt !important; font-weight: 700 !important; color: #000 !important;
@@ -569,9 +645,8 @@ text-decoration: none !important;
 }
 .section-head {
 display: block !important; margin: 18pt 0 6pt !important;
-page-break-before: always; page-break-after: avoid;
+page-break-after: avoid;
 }
-.section-head:first-child { page-break-before: auto !important; }
 .section-label {
 display: block !important; font-size: 12pt !important; font-weight: 700 !important;
 color: #000 !important; text-transform: none !important; letter-spacing: 0 !important;
@@ -585,13 +660,26 @@ position: fixed; bottom: 0; left: 0; right: 0;
 border: none !important; padding: 0 !important; margin: 10pt 0 0 0 !important;
 }
 .dept-section { page-break-inside: avoid; margin-bottom: 6pt !important; }
-* { color: #000 !important; background: transparent !important; }
+* { color: #000 !important; background: transparent !important; animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; }
 a { text-decoration: none !important; color: #000 !important; }
+body::before {
+content: "Полтавський державний аграрний університет · Телефонний довідник";
+display: block; font-size: 8pt; text-align: center; letter-spacing: .04em;
+text-transform: uppercase; color: #666 !important;
+position: fixed; top: 0; left: 0; right: 0;
+padding-bottom: 6pt; margin-bottom: 14pt; border-bottom: 0.5pt solid #999 !important;
+}
+.dept-line {
+font-size: 9.5pt !important; margin: 3pt 0 !important; padding: 0 !important;
+page-break-inside: avoid; color: #000 !important;
+}
+.dept-line-title { font-weight: 700 !important; margin-right: 8pt; }
+.dept-line a { color: #000 !important; text-decoration: none !important; margin-right: 8pt; }
 }
 </style>
 </head>
 <body class="">
-<div class="admin-banner">⚙ Режим адміністратора — редагування увімкнено - Created by Віталій Грек, 2026</div>
+<div class="admin-banner">⚙ Режим адміністратора — редагування увімкнено · <span id="adminStats"></span> - Created by Віталій Грек, 2026</div>
 <header>
 <div class="header-inner">
 <div class="header-top">
@@ -605,12 +693,13 @@ a { text-decoration: none !important; color: #000 !important; }
 <div class="search-wrap">
 <span class="search-icon">⌕</span>
 <input type="text" id="searchInput" placeholder="Пошук за ім'ям, посадою, телефоном, назвою підрозділу…" oninput="doSearch()">
+<button type="button" id="searchClearBtn" class="search-clear" title="Очистити" onclick="clearSearch()">✕</button>
 </div>
 <div class="header-right">
-<span id="resCount">5 осіб</span>
 <button id="adminBtn" onclick="toggleAdminPanel()" class=""> Адмін</button>
 <button id="exportBtn" onclick="exportToFile()" title="Зберегти зміни у файл" style="display: none; margin-left: 8px;">💾 Експорт</button>
-<button id="printBtn" onclick="window.print()" title="Друкувати довідник" style="display:inline-block;margin-left:8px;">🖨️ Друк</button>
+<button id="printBtn" onclick="printDirectory()" title="Друкувати довідник" style="display:inline-block;margin-left:8px;">🖨️ Друк</button>
+<button id="themeBtn" onclick="toggleTheme()" title="Перемкнути тему" style="margin-left:8px;">🌙</button>
 <button id="csvBtn" onclick="exportToCSV()" title="Експорт у CSV для Excel" style="display: none; margin-left: 8px;">📊 CSV</button>
 </div>
 </div>
@@ -652,7 +741,7 @@ a { text-decoration: none !important; color: #000 !important; }
 <div class="admin-actions">
 
 <button class="btn-icon btn-edit" title="Редагувати" onclick="openEditPerson('faculties',0,0)">✎</button>
-<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('faculties',0,0)"></button>
+<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('faculties',0,0)">✕</button>
 </div>
 </div><div class="contact-card" style="animation-delay:0.045s">
 <div class="avatar" style="background:#E6F1FB;color:#185FA5">КЗ</div>
@@ -664,7 +753,7 @@ a { text-decoration: none !important; color: #000 !important; }
 <div class="admin-actions">
 
 <button class="btn-icon btn-edit" title="Редагувати" onclick="openEditPerson('faculties',0,1)">✎</button>
-<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('faculties',0,1)"></button>
+<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('faculties',0,1)">✕</button>
 </div>
 </div><button class="btn-add-person" onclick="openAddPerson('faculties',0)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.05s">
 <h3>Факультет ветеринарної медицини</h3><div class="dept-meta"><span class="dept-phone"><a href="tel:0532569608" class="phone-tag">56-96-08</a></span> · <span class="dept-phone"><a href="tel:333">вн. 3-33</a></span><span class="dept-email"><a href="mailto:dekvetmed@pdaa.edu.ua">✉ dekvetmed@pdaa.edu.ua</a></span></div><div class="dept-admin-actions">
@@ -681,7 +770,7 @@ a { text-decoration: none !important; color: #000 !important; }
 <div class="admin-actions">
 
 <button class="btn-icon btn-edit" title="Редагувати" onclick="openEditPerson('faculties',1,0)">✎</button>
-<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('faculties',1,0)"></button>
+<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('faculties',1,0)">✕</button>
 </div>
 </div><div class="contact-card" style="animation-delay:0.095s">
 <div class="avatar" style="background:#E6F1FB;color:#185FA5">КІ</div>
@@ -693,7 +782,7 @@ a { text-decoration: none !important; color: #000 !important; }
 <div class="admin-actions">
 
 <button class="btn-icon btn-edit" title="Редагувати" onclick="openEditPerson('faculties',1,1)">✎</button>
-<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('faculties',1,1)"></button>
+<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('faculties',1,1)">✕</button>
 </div>
 </div><button class="btn-add-person" onclick="openAddPerson('faculties',1)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.1s">
 <h3>Інженерно-технологічний факультет</h3><div class="dept-meta"><span class="dept-phone"><a href="tel:0532569687" class="phone-tag">56-96-87</a></span> · <span class="dept-phone"><a href="tel:367">вн. 3-67</a></span><span class="dept-email"><a href="mailto:dekmex@pdau.edu.ua">✉ dekmex@pdau.edu.ua</a></span></div><div class="dept-admin-actions">
@@ -710,7 +799,7 @@ a { text-decoration: none !important; color: #000 !important; }
 <div class="admin-actions">
 
 <button class="btn-icon btn-edit" title="Редагувати" onclick="openEditPerson('faculties',2,0)">✎</button>
-<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('faculties',2,0)"></button>
+<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('faculties',2,0)">✕</button>
 </div>
 </div><button class="btn-add-person" onclick="openAddPerson('faculties',2)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.15000000000000002s">
 <h3>Факультет технологій тваринництва та продовольства</h3><div class="dept-meta"><span class="dept-phone"><a href="tel:0532565187" class="phone-tag">56-51-87</a></span> · <span class="dept-phone"><a href="tel:549">вн. 5-49</a></span><span class="dept-email"><a href="mailto:dektvppt@pdau.edu.ua">✉ dektvppt@pdau.edu.ua</a></span></div><div class="dept-admin-actions">
@@ -718,12 +807,12 @@ a { text-decoration: none !important; color: #000 !important; }
 <button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('faculties',3)">✎</button>
 <button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('faculties',3)">✕</button>
 </div></div><button class="btn-add-person" onclick="openAddPerson('faculties',3)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.2s">
-<h3>ННІ економіки, управління, права та ІТ</h3><div class="dept-meta"><span class="dept-phone"><a href="tel:0532569614" class="phone-tag">56-96-14</a></span> · <span class="dept-phone"><a href="tel:531">вн. 5-31</a></span><span class="dept-email"><a href="mailto:dekeconom@pdau.edu.ua">✉ dekeconom@pdau.edu.ua</a></span></div><div class="dept-admin-actions">
+<h3>Факультет обліку та фінансів</h3><div class="dept-meta"><span class="dept-phone"><a href="tel:0532502479" class="phone-tag">50-24-79</a></span> · <span class="dept-phone"><a href="tel:588">вн. 5-88</a></span><span class="dept-email"><a href="mailto:dekfof@pdau.edu.ua">✉ dekfof@pdau.edu.ua</a></span></div><div class="dept-admin-actions">
 
 <button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('faculties',4)">✎</button>
 <button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('faculties',4)">✕</button>
 </div></div><button class="btn-add-person" onclick="openAddPerson('faculties',4)">＋ Додати працівника</button></div><div class="dept-section"><div class="dept-header" style="animation-delay:0.25s">
-<h3>Факультет обліку та фінансів</h3><div class="dept-meta"><span class="dept-phone"><a href="tel:0532502479" class="phone-tag">50-24-79</a></span> · <span class="dept-phone"><a href="tel:588">вн. 5-88</a></span><span class="dept-email"><a href="mailto:dekfof@pdau.edu.ua">✉ dekfof@pdau.edu.ua</a></span></div><div class="dept-admin-actions">
+<h3>ННІ економіки, управління, права та ІТ</h3><div class="dept-meta"><span class="dept-phone"><a href="tel:0532569614" class="phone-tag">56-96-14</a></span> · <span class="dept-phone"><a href="tel:531">вн. 5-31</a></span><span class="dept-email"><a href="mailto:dekeconom@pdau.edu.ua">✉ dekeconom@pdau.edu.ua</a></span></div><div class="dept-admin-actions">
 
 <button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('faculties',5)">✎</button>
 <button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('faculties',5)">✕</button>
@@ -737,7 +826,7 @@ a { text-decoration: none !important; color: #000 !important; }
 <strong>Полтавський державний аграрний університет</strong>
 вул. Сковороди, 1/3, м. Полтава, 36003, Україна<br>
 <a href="tel:0532500273">📞 (0532) 50-02-73</a> &nbsp;|&nbsp; <a href="mailto:pdau@pdau.edu.ua">✉ pdau@pdau.edu.ua</a> &nbsp;|&nbsp; <a href="https://www.pdau.edu.ua" target="_blank">🌐 www.pdau.edu.ua</a><br>
-<em style="opacity:.7">Останнє оновлення: <span id="lastUpdated">22.06.2026</span></em>
+<em style="opacity:.7">Останнє оновлення: <span id="lastUpdated">07.08.2026</span></em>
 </footer>
 <div class="modal-overlay" id="loginModal">
 <div class="modal login-modal">
@@ -807,7 +896,7 @@ a { text-decoration: none !important; color: #000 !important; }
 </div>
 <script>
 let DATA = {
-  "lastUpdated": "22.06.2026",
+  "lastUpdated": "07.08.2026",
   "sections": [
     {
       "id": "management",
@@ -1074,17 +1163,17 @@ let DATA = {
           "people": []
         },
         {
-          "title": "ННІ економіки, управління, права та ІТ",
-          "deptPhone": "56-96-14",
-          "deptInner": "5-31",
-          "deptEmail": "dekeconom@pdau.edu.ua",
-          "people": []
-        },
-        {
           "title": "Факультет обліку та фінансів",
           "deptPhone": "50-24-79",
           "deptInner": "5-88",
           "deptEmail": "dekfof@pdau.edu.ua",
+          "people": []
+        },
+        {
+          "title": "ННІ економіки, управління, права та ІТ",
+          "deptPhone": "56-96-14",
+          "deptInner": "5-31",
+          "deptEmail": "dekeconom@pdau.edu.ua",
           "people": []
         },
         {
@@ -1165,10 +1254,70 @@ let query = '';
 let isAdmin = false;
 const ADMIN_PASS = '123456';
 let dataChanged = false;
+let lastUndo = null;
+function pushUndo(fn) { lastUndo = fn; }
+function undoLast() {
+if(!isAdmin || !lastUndo) return;
+const fn = lastUndo; lastUndo = null;
+fn();
+dataChanged = true;
+showToast('↺ Відновлено');
+}
+function showToast(text) {
+let toast = document.getElementById('toastMsg');
+if(!toast) {
+toast = document.createElement('div');
+toast.id = 'toastMsg';
+toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1814;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:2000;box-shadow:0 4px 16px rgba(0,0,0,0.3);transition:opacity .3s;';
+document.body.appendChild(toast);
+}
+toast.textContent = text;
+toast.style.opacity = '1';
+clearTimeout(toast._hideTimer);
+toast._hideTimer = setTimeout(() => { toast.style.opacity = '0'; }, 1800);
+}
+function isDarkActive() {
+const explicit = document.documentElement.getAttribute('data-theme');
+if(explicit === 'dark') return true;
+if(explicit === 'light') return false;
+return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+function updateThemeBtn() {
+const btn = document.getElementById('themeBtn');
+if(!btn) return;
+btn.textContent = isDarkActive() ? '☀️' : '🌙';
+}
+function initTheme() {
+updateThemeBtn();
+if(window.matchMedia) {
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+if(!document.documentElement.getAttribute('data-theme')) updateThemeBtn();
+});
+}
+}
+function toggleTheme() {
+const next = isDarkActive() ? 'light' : 'dark';
+document.documentElement.setAttribute('data-theme', next);
+try { localStorage.setItem('pdauTheme', next); } catch(e) {}
+updateThemeBtn();
+}
 const colors = [
 {bg:'#E6F1FB', c:'#185FA5'}, {bg:'#E1F5EE', c:'#0F6E56'}, {bg:'#FAEEDA', c:'#854F0B'},
 {bg:'#FBEAF0', c:'#993556'}, {bg:'#EEEDFE', c:'#534AB7'}, {bg:'#FAECE7', c:'#993C1D'},
 ];
+function escapeHtml(str) {
+return String(str == null ? '' : str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function escapeRegExp(str) {
+return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+function highlightMatch(text, rawQuery) {
+const escaped = escapeHtml(text);
+const q = rawQuery ? escapeHtml(rawQuery).trim() : '';
+if (!q) return escaped;
+const re = new RegExp('(' + escapeRegExp(q) + ')', 'ig');
+return escaped.replace(re, '<mark class="search-hl">$1</mark>');
+}
 function colorFor(name) { return colors[name.charCodeAt(0) % colors.length]; }
 function initials(name) {
 const p = name.trim().split(' ');
@@ -1192,7 +1341,7 @@ return phoneStr.split(',').map(p => p.trim()).filter(p => p.length > 0);
 }
 function createPhoneLink(phone, className = 'phone-tag') {
 const telLink = getTelLink(phone);
-return `<a href="${telLink}" class="${className}">${phone}</a>`;
+return `<a href="${telLink}" class="${className}">${escapeHtml(phone)}</a>`;
 }
 function createPhonesHTML(phoneStr, className = 'phone-tag') {
 const phones = splitPhones(phoneStr);
@@ -1202,7 +1351,7 @@ return phones.map(p => createPhoneLink(p, className)).join(' ');
 }
 function getEmailLink(email) {
 if (!email) return '';
-return 'mailto:' + email;
+return 'mailto:' + escapeHtml(email);
 }
 function moveTab(tabId, direction) {
 const idx = DATA.sections.findIndex(g => g.id === tabId);
@@ -1242,7 +1391,7 @@ const moveBtns = isAdmin ? `
 <button class="tab-move-btn" onclick="event.stopPropagation();moveTab('${g.id}','down')" ${idx===DATA.sections.length-1?'disabled':''}>↓</button>
 </span>` : '';
 return `<div class="tab${g.id===activeTab?' active':''}" onclick="setTab('${g.id}')">
-${g.tab}${moveBtns}
+${escapeHtml(g.tab)}${moveBtns}
 <span class="tab-edit-btn" onclick="event.stopPropagation();openEditTab('${g.id}')"
 style="display:none;font-size:11px;color:var(--gold);margin-left:2px">✎</span>
 </div>`;
@@ -1252,21 +1401,42 @@ row.innerHTML = html;
 if(isAdmin) {
 row.querySelectorAll('.tab-edit-btn').forEach(el => el.style.display = 'inline');
 }
+const activeEl = row.querySelector('.tab.active');
+if(activeEl) activeEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+updateAdminStats();
+}
+function updateAdminStats() {
+const statsEl = document.getElementById('adminStats');
+if(!statsEl) return;
+let deptCount = 0, peopleCount = 0;
+DATA.sections.forEach(g => { deptCount += g.sections.length; g.sections.forEach(s => peopleCount += (s.people||[]).length); });
+statsEl.textContent = `вкладок: ${DATA.sections.length}, підрозділів: ${deptCount}, співробітників: ${peopleCount}`;
 }
 function setTab(id) {
 activeTab = id; query = '';
 document.getElementById('searchInput').value = '';
+updateSearchClearBtn();
 buildTabs(); render();
 }
-function renderPerson(p, tabId, secIdx, personIdx, delay) {
+function updateSearchClearBtn() {
+document.getElementById('searchClearBtn').style.display = document.getElementById('searchInput').value ? 'flex' : 'none';
+}
+function clearSearch() {
+document.getElementById('searchInput').value = '';
+updateSearchClearBtn();
+query = '';
+render(); buildTabs();
+document.getElementById('searchInput').focus();
+}
+function renderPerson(p, tabId, secIdx, personIdx, delay, highlightQuery) {
 const col = colorFor(p.name);
 const ini = initials(p.name).toUpperCase();
 const cityPhones = createPhonesHTML(p.city, 'phone-tag');
 const innerPhones = p.inner ? p.inner.split(',').map(num => num.trim()).filter(Boolean).map(num =>
-`<a href="tel:${cleanPhoneForTel(num)}" class="phone-tag inner">вн.&nbsp;${num}</a>`
+`<a href="tel:${cleanPhoneForTel(num)}" class="phone-tag inner">вн.&nbsp;${escapeHtml(num)}</a>`
 ).join(' ') : '';
-const emailLink = p.email ? `<a href="${getEmailLink(p.email)}" class="phone-tag email-tag">${p.email}</a>` : '';
-const emailIcon = p.email ? `<a href="${getEmailLink(p.email)}" class="email-icon-mobile" title="${p.email}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> e-mail</a>` : '';
+const emailLink = p.email ? `<a href="${getEmailLink(p.email)}" class="phone-tag email-tag">${highlightMatch(p.email, highlightQuery)}</a>` : '';
+const emailIcon = p.email ? `<a href="${getEmailLink(p.email)}" class="email-icon-mobile" title="${escapeHtml(p.email)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> e-mail</a>` : '';
 const phones = [cityPhones, innerPhones, emailLink, emailIcon].filter(Boolean).join('');
 const moveBtns = isAdmin ? `
 <button class="move-btn" onclick="event.stopPropagation();movePerson('${tabId}',${secIdx},${personIdx},'up')" ${personIdx===0?'disabled':''}>↑</button>
@@ -1275,13 +1445,13 @@ const moveBtns = isAdmin ? `
 const adminAct = `<div class="admin-actions">
 ${moveBtns}
 <button class="btn-icon btn-edit" title="Редагувати" onclick="openEditPerson('${tabId}',${secIdx},${personIdx})">✎</button>
-<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('${tabId}',${secIdx},${personIdx})"></button>
+<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('${tabId}',${secIdx},${personIdx})">✕</button>
 </div>`;
 return `<div class="contact-card" style="animation-delay:${delay}s">
-<div class="avatar" style="background:${col.bg};color:${col.c}">${ini}</div>
+<div class="avatar" style="background:${col.bg};color:${col.c}">${escapeHtml(ini)}</div>
 <div class="contact-info">
-<div class="contact-name">${p.name}</div>
-<div class="contact-role">${p.role}</div>
+<div class="contact-name">${highlightMatch(p.name, highlightQuery)}</div>
+<div class="contact-role">${highlightMatch(p.role, highlightQuery)}</div>
 </div>
 <div class="contact-phones">${phones}</div>
 ${adminAct}
@@ -1298,18 +1468,18 @@ ${moveBtns}
 <button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('${tabId}',${secIdx})">✕</button>
 </div>`;
 let html = `<div class="dept-section"><div class="dept-header" style="animation-delay:${baseDelay}s">
-<h3>${sec.title}</h3>`;
+<h3>${escapeHtml(sec.title)}</h3>`;
 const metaParts = [];
 if(sec.deptPhone) metaParts.push(`<span class="dept-phone">${createPhonesHTML(sec.deptPhone)}</span>`);
 if(sec.deptInner) {
 const innerNums = sec.deptInner.split(',').map(num => num.trim()).filter(Boolean);
-const innerLinks = innerNums.map(num => `<a href="tel:${cleanPhoneForTel(num)}">вн. ${num}</a>`).join(' ');
+const innerLinks = innerNums.map(num => `<a href="tel:${cleanPhoneForTel(num)}">вн. ${escapeHtml(num)}</a>`).join(' ');
 metaParts.push(`<span class="dept-phone">${innerLinks}</span>`);
 }
 if(metaParts.length || sec.deptEmail) {
 html += `<div class="dept-meta">`;
 if(metaParts.length) html += metaParts.join(' · ');
-if(sec.deptEmail) html += `<span class="dept-email"><a href="${getEmailLink(sec.deptEmail)}">✉ ${sec.deptEmail}</a></span>`;
+if(sec.deptEmail) html += `<span class="dept-email"><a href="${getEmailLink(sec.deptEmail)}">✉ ${escapeHtml(sec.deptEmail)}</a></span>`;
 html += `</div>`;
 }
 html += adminActSec + `</div>`;
@@ -1321,6 +1491,7 @@ html += `</div>`;
 return html;
 }
 function render() {
+updateAdminStats();
 const group = DATA.sections.find(g => g.id === activeTab);
 if(!group) return;
 let html = '', delay = 0;
@@ -1369,16 +1540,16 @@ onmouseout="this.style.background='transparent'">
 </button>`;
 }
 document.getElementById('mainContent').innerHTML = html;
-const total = group.sections.reduce((a,s) => a+(s.people||[]).length, 0);
-document.getElementById('resCount').textContent = `${total} осіб`;
 }
 function doSearch() {
+updateSearchClearBtn();
+updateAdminStats();
 const rawQuery = document.getElementById('searchInput').value.trim();
 if (!rawQuery) { query = ''; render(); buildTabs(); return; }
 query = rawQuery.toLowerCase();
 const normalize = str => String(str || '').replace(/[\s\-\(\)\+\.\/\\;,]/g, '').toLowerCase();
 const normQuery = normalize(rawQuery);
-let html = '', total = 0, delay = 0;
+let html = '', delay = 0;
 DATA.sections.forEach(group => {
 let tabHtml = '';
 let tabHasResults = false;
@@ -1391,30 +1562,28 @@ const peopleToShow = titleMatches ? (sec.people||[]) : (sec.people||[]).filter(p
 let deptInnerHTML = '';
 if(sec.deptInner) {
 const innerNums = sec.deptInner.split(',').map(num => num.trim()).filter(Boolean);
-deptInnerHTML = innerNums.map(num => `<a href="tel:${cleanPhoneForTel(num)}">вн. ${num}</a>`).join(' ');
+deptInnerHTML = innerNums.map(num => `<a href="tel:${cleanPhoneForTel(num)}">вн. ${escapeHtml(num)}</a>`).join(' ');
 }
 tabHtml += `<div class="dept-section" style="margin-top:1.5rem; border-top:1px solid var(--border); padding-top:1rem;">
 <div class="dept-header">
-<h3>${sec.title}</h3>
-${sec.deptPhone || sec.deptInner || sec.deptEmail ? `<div class="dept-meta">${sec.deptPhone ? `<span class="dept-phone">${createPhonesHTML(sec.deptPhone)}</span>` : ''}${sec.deptInner ? `<span class="dept-phone">${deptInnerHTML}</span>` : ''}${sec.deptEmail ? `<span class="dept-email"><a href="${getEmailLink(sec.deptEmail)}">✉ ${sec.deptEmail}</a></span>` : ''}</div>` : ''}
+<h3>${highlightMatch(sec.title, rawQuery)}</h3>
+${sec.deptPhone || sec.deptInner || sec.deptEmail ? `<div class="dept-meta">${sec.deptPhone ? `<span class="dept-phone">${createPhonesHTML(sec.deptPhone)}</span>` : ''}${sec.deptInner ? `<span class="dept-phone">${deptInnerHTML}</span>` : ''}${sec.deptEmail ? `<span class="dept-email"><a href="${getEmailLink(sec.deptEmail)}">✉ ${escapeHtml(sec.deptEmail)}</a></span>` : ''}</div>` : ''}
 </div>`;
 peopleToShow.forEach((p, i) => {
 const pi = (sec.people||[]).indexOf(p);
-tabHtml += renderPerson(p, group.id, si, pi, delay + 0.02 + i * 0.02);
-total++;
+tabHtml += renderPerson(p, group.id, si, pi, delay + 0.02 + i * 0.02, rawQuery);
 });
 tabHtml += `</div>`;
 delay += 0.05;
 });
 if(tabHasResults) {
 html += `<div class="section-head" style="margin-top:2rem;">
-<span class="section-dot"></span><span class="section-label">${group.tab}</span><span class="section-line"></span>
+<span class="section-dot"></span><span class="section-label">${escapeHtml(group.tab)}</span><span class="section-line"></span>
 </div>${tabHtml}`;
 }
 });
-if (!html) html = `<div class="empty"><div class="empty-glyph">⌕</div><p>Нічого не знайдено за запитом «${rawQuery}»</p></div>`;
+if (!html) html = `<div class="empty"><div class="empty-glyph">⌕</div><p>Нічого не знайдено за запитом «${escapeHtml(rawQuery)}»</p></div>`;
 document.getElementById('mainContent').innerHTML = html;
-document.getElementById('resCount').textContent = `${total} результатів`;
 }
 function toggleAdminPanel() {
 if(isAdmin) {
@@ -1482,7 +1651,11 @@ closeModal('personModal'); if(query)doSearch();else render(); dataChanged=true;
 function confirmDeletePerson(tabId,secIdx,personIdx) {
 const group=DATA.sections.find(g=>g.id===tabId), p=group.sections[secIdx].people[personIdx];
 document.getElementById('confirmText').textContent=`Видалити «${p.name}»?`;
-document.getElementById('confirmOk').onclick=()=>{group.sections[secIdx].people.splice(personIdx,1);closeModal('confirmModal');if(query)doSearch();else render();dataChanged=true;};
+document.getElementById('confirmOk').onclick=()=>{
+const removed=group.sections[secIdx].people.splice(personIdx,1)[0];
+pushUndo(()=>{ group.sections[secIdx].people.splice(personIdx,0,removed); if(query)doSearch();else render(); });
+closeModal('confirmModal');if(query)doSearch();else render();dataChanged=true;
+};
 openModal('confirmModal');
 }
 function openAddSection(tabId) {
@@ -1514,7 +1687,11 @@ closeModal('sectionModal'); render(); dataChanged=true;
 function confirmDeleteSection(tabId,secIdx) {
 const group=DATA.sections.find(g=>g.id===tabId), sec=group.sections[secIdx];
 document.getElementById('confirmText').textContent=`Видалити підрозділ «${sec.title}»? Усіх (${(sec.people||[]).length}) працівників буде видалено.`;
-document.getElementById('confirmOk').onclick=()=>{group.sections.splice(secIdx,1);closeModal('confirmModal');render();dataChanged=true;};
+document.getElementById('confirmOk').onclick=()=>{
+const removed=group.sections.splice(secIdx,1)[0];
+pushUndo(()=>{ group.sections.splice(secIdx,0,removed); render(); });
+closeModal('confirmModal');render();dataChanged=true;
+};
 openModal('confirmModal');
 }
 function openAddTab() {
@@ -1541,22 +1718,61 @@ closeModal('tabModal'); buildTabs(); render(); dataChanged=true;
 function confirmDeleteTab(tabId) {
 const group=DATA.sections.find(g=>g.id===tabId), count=group.sections.reduce((a,s)=>a+(s.people||[]).length,0);
 document.getElementById('confirmText').textContent=`Видалити вкладку «${group.tab}»? У ній ${group.sections.length} підрозділів та ${count} працівників.`;
-document.getElementById('confirmOk').onclick=()=>{const idx=DATA.sections.findIndex(g=>g.id===tabId);DATA.sections.splice(idx,1);activeTab=DATA.sections[0]?.id||'';closeModal('confirmModal');buildTabs();render();dataChanged=true;};
+document.getElementById('confirmOk').onclick=()=>{
+const idx=DATA.sections.findIndex(g=>g.id===tabId);
+const removed=DATA.sections.splice(idx,1)[0];
+const wasActiveTab=activeTab;
+activeTab=DATA.sections[0]?.id||'';
+pushUndo(()=>{ DATA.sections.splice(idx,0,removed); activeTab=wasActiveTab; buildTabs(); render(); });
+closeModal('confirmModal');buildTabs();render();dataChanged=true;
+};
 openModal('confirmModal');
 }
 document.addEventListener('keydown', e => {
 if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(el=>el.classList.remove('open'));
 if((e.ctrlKey||e.metaKey)&&e.key==='f'){e.preventDefault();document.getElementById('searchInput').focus();document.getElementById('searchInput').select();}
+if((e.ctrlKey||e.metaKey)&&e.key==='z'&&!['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)){e.preventDefault();undoLast();}
 });
+function findMatchingBraceEnd(str, openIdx) {
+if(str[openIdx] !== '{') return -1;
+let depth = 0, inStr = false, strCh = '';
+for (let i = openIdx; i < str.length; i++) {
+const c = str[i];
+if (inStr) {
+if (c === '\\') { i++; continue; }
+if (c === strCh) inStr = false;
+continue;
+}
+if (c === '"' || c === "'" || c === '`') { inStr = true; strCh = c; continue; }
+if (c === '{') depth++;
+else if (c === '}') { depth--; if (depth === 0) return i + 1; }
+}
+return -1;
+}
+function getCleanExportHtml() {
+const clone=document.documentElement.cloneNode(true);
+const scriptEl=clone.querySelector('body > script');
+if(scriptEl){
+let sib=scriptEl.nextSibling;
+while(sib){ const next=sib.nextSibling; sib.parentNode.removeChild(sib); sib=next; }
+}
+return clone.outerHTML;
+}
 function exportToFile() {
 DATA.lastUpdated=new Date().toLocaleDateString('uk-UA');
 document.getElementById('lastUpdated').textContent=DATA.lastUpdated;
 const wasAdmin=document.body.classList.contains('admin-mode'), exportBtn=document.getElementById('exportBtn'), wasBtnVisible=exportBtn.style.display;
 if(wasAdmin)document.body.classList.remove('admin-mode'); exportBtn.style.display='none';
 const dataJSON=JSON.stringify(DATA,null,2).replace(/<\/script>/g,'<\\/script>');
-let html=document.documentElement.outerHTML;
+let html=getCleanExportHtml();
 if(wasAdmin)document.body.classList.add('admin-mode'); exportBtn.style.display=wasBtnVisible;
-const dataStart=html.indexOf('let DATA = {'), dataEnd=html.indexOf('};',dataStart)+2;
+const dataStart=html.indexOf('let DATA = {');
+let dataEnd=-1;
+if(dataStart!==-1){
+const braceIdx=dataStart+'let DATA = '.length;
+const braceEnd=findMatchingBraceEnd(html,braceIdx);
+if(braceEnd!==-1){ dataEnd=braceEnd; if(html[dataEnd]===';') dataEnd++; }
+}
 if(dataStart!==-1&&dataEnd!==-1){const before=html.substring(0,dataStart), after=html.substring(dataEnd); html=before+`let DATA = ${dataJSON};`+after;}
 const blob=new Blob([html],{type:'text/html'}), url=URL.createObjectURL(blob), a=document.createElement('a');
 a.href=url; a.download='Довідник_ПДАУ.html'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
@@ -1571,6 +1787,43 @@ rows.push(row.join(','));
 });});});
 const csv='\uFEFF'+rows.join('\n'), blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}), url=URL.createObjectURL(blob), a=document.createElement('a');
 a.href=url; a.download=`Довідник_ПДАУ_${new Date().toISOString().slice(0,10)}.csv`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+function renderDeptLineForPrint(sec) {
+const parts = [];
+if(sec.deptPhone) parts.push(createPhonesHTML(sec.deptPhone));
+if(sec.deptInner) {
+const innerNums = sec.deptInner.split(',').map(num => num.trim()).filter(Boolean);
+parts.push(innerNums.map(num => `<a href="tel:${cleanPhoneForTel(num)}">вн. ${escapeHtml(num)}</a>`).join(' '));
+}
+if(sec.deptEmail) parts.push(`<a href="${getEmailLink(sec.deptEmail)}">✉ ${escapeHtml(sec.deptEmail)}</a>`);
+return `<div class="dept-line"><span class="dept-line-title">${escapeHtml(sec.title)}</span>${parts.length ? ' — ' + parts.join(' · ') : ''}</div>`;
+}
+function buildPrintHTML() {
+let html = '';
+DATA.sections.forEach(group => {
+if (!group.sections || !group.sections.length) return;
+html += `<div class="section-head"><span class="section-dot"></span><span class="section-label">${escapeHtml(group.tab)}</span><span class="section-line"></span></div>`;
+group.sections.forEach((sec, si) => {
+if (!(sec.people && sec.people.length)) {
+html += renderDeptLineForPrint(sec);
+} else {
+html += renderSection(sec, group.id, si, 0);
+}
+});
+});
+return html;
+}
+function printDirectory() {
+const mainContent = document.getElementById('mainContent');
+const savedHTML = mainContent.innerHTML;
+mainContent.innerHTML = buildPrintHTML();
+function restore() {
+mainContent.innerHTML = savedHTML;
+window.removeEventListener('afterprint', restore);
+}
+window.addEventListener('afterprint', restore);
+setTimeout(restore, 8000);
+window.print();
 }
 
 // ══════════════════════════════════════════
@@ -1616,80 +1869,8 @@ window.scrollTo({ top: 0, behavior: 'smooth' });
 // ══════════════════════════════════════════
 
 document.getElementById('lastUpdated').textContent=DATA.lastUpdated||new Date().toLocaleDateString('uk-UA');
+initTheme();
 buildTabs(); render();
 </script>
 
-<div class="addGrpSpan addGrpSpan_hidden" style="display: none;">
-            <div class="addContentWrapper">
-                <div class="GRP-icon-close addGrpClose"></div>
-                <div class="addGrpTop">
-                    <div class="addGrpLeft">
-                        <span class="addGrpIcon GRP-icon-icon_left"></span>
-                    </div>
-                    <div class="addGrpCenter">
-                        <div class="addGrpCenter_icon">
-                            <span class="addGrp_iconText GRP-icon-icon_meeting"> </span>
-                        </div>
-                        <div class="addGrpCenter_content"></div>
-                    </div>
-                    <div class="addGrpRight">
-                        <span class="addGrpIcon GRP-icon-icon_right "></span>
-                    </div>
-                </div>
-
-                <div class="addGrpBottom">
-                    <div class="addGrpContent">
-                        <div class="addGrpShow">
-                            <span class="addGrp_email"></span>
-                        </div>
-
-                        <div id="addGrpTipsContent" class="addGrpTips">
-                            <div class="addGrp_tips_content addGrp_tips_number">
-                                <span class="addGrp_tip_number_txt"></span>
-                                <span class="addGrp_tip_number"></span>
-                            </div>
-                            <div class="addGrp_tips_content addGrp_tips_name">
-                                <span class="addGrp_tip_name_txt"></span>
-                                <span class="addGrp_tip_name"></span>
-                            </div>
-                            <div class="addGrp_tips_content addGrp_tips_email">
-                                <span class="addGrp_tip_email_txt"></span>
-                                <span class="addGrp_tip_email"></span>
-                            </div>
-                            <div class="addGrp_tips_content addGrp_tips_company">
-                                <span class="addGrp_tip_company_txt"></span>
-                                <span class="addGrp_tip_company"></span>
-                            </div>
-                            <div class="addGrp_tips_content addGrp_tips_department">
-                                <span class="addGrp_tip_department_txt"></span>
-                                <span class="addGrp_tip_department"></span>
-                            </div>
-                            <div class="addGrp_tips_content addGrp_tips_jobTitle">
-                                <span class="addGrp_tip_jobTitle_txt"></span>
-                                <span class="addGrp_tip_jobTitle"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="userAccount"> 
-                        <div class="addGrp_showSelectOption">
-                            <ul class="addGrp_ul"></ul>
-                        </div>
-                        <div class="addGrp_wrapper">
-                            <div class="addGrp_selectContent">
-                                <div class="addGrp-icon-parent GRP-icon-person">
-                                    <div class="addGrp-icon-floater"></div>
-                                </div>
-                                <div class="addGrp_getContent_wrapper">
-                                  <div class="addGrp_getContent addGrp_container_words "></div>
-                                </div>                              
-                                <div class="addGrp_iconBtn">
-                                     <span class="addGrp_icon GRP-icon-down"></span>
-                                </div>
-                            </div>
-                            <div class="addGrp_btn">
-                                <button class="addGrp_call">呼叫</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div></div></body></html>
+</body></html>
