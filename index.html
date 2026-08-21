@@ -1,6 +1,7 @@
-<html lang="uk"><head>
+<html lang="uk" data-theme="light"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
 <title>Телефонний довідник — ПДАУ</title>
 <script>
 (function(){
@@ -114,7 +115,12 @@ if(saved === 'dark' || saved === 'light') document.documentElement.setAttribute(
 --error-bg: #3a2020;
 --error-border: #6b3030;
 }
-body { transition: background-color .2s, color .2s; }
+body.theme-transitioning, body.theme-transitioning * {
+transition: background-color 2s ease, color 2s ease, border-color 2s ease !important;
+}
+@media (prefers-reduced-motion: reduce) {
+body.theme-transitioning, body.theme-transitioning * { transition: none !important; }
+}
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
 font-family: 'IBM Plex Sans', sans-serif;
@@ -679,7 +685,7 @@ page-break-inside: avoid; color: #000 !important;
 </style>
 </head>
 <body class="">
-<div class="admin-banner">⚙ Режим адміністратора — редагування увімкнено · <span id="adminStats"></span> - Created by Віталій Грек, 2026</div>
+<div class="admin-banner">⚙ Режим адміністратора — редагування увімкнено · <span id="adminStats">вкладок: 6, підрозділів: 24, співробітників: 29</span> - Created by Віталій Грек, 2026</div>
 <header>
 <div class="header-inner">
 <div class="header-top">
@@ -693,7 +699,7 @@ page-break-inside: avoid; color: #000 !important;
 <div class="search-wrap">
 <span class="search-icon">⌕</span>
 <input type="text" id="searchInput" placeholder="Пошук за ім'ям, посадою, телефоном, назвою підрозділу…" oninput="doSearch()">
-<button type="button" id="searchClearBtn" class="search-clear" title="Очистити" onclick="clearSearch()">✕</button>
+<button type="button" id="searchClearBtn" class="search-clear" title="Очистити" onclick="clearSearch()" style="display: none;">✕</button>
 </div>
 <div class="header-right">
 <button id="adminBtn" onclick="toggleAdminPanel()" class=""> Адмін</button>
@@ -761,24 +767,24 @@ page-break-inside: avoid; color: #000 !important;
 <button class="btn-icon btn-edit" title="Редагувати підрозділ" onclick="openEditSection('faculties',1)">✎</button>
 <button class="btn-icon btn-del" title="Видалити підрозділ" onclick="confirmDeleteSection('faculties',1)">✕</button>
 </div></div><div class="contact-card" style="animation-delay:0.07s">
-<div class="avatar" style="background:#E6F1FB;color:#185FA5">КН</div>
-<div class="contact-info">
-<div class="contact-name">Кафедра нормальної і патологічної анатомії та фізіології тварин</div>
-<div class="contact-role"></div>
-</div>
-<div class="contact-phones"><a href="tel:316" class="phone-tag inner">вн.&nbsp;3-16</a> <a href="tel:371" class="phone-tag inner">вн.&nbsp;3-71</a></div>
-<div class="admin-actions">
-
-<button class="btn-icon btn-edit" title="Редагувати" onclick="openEditPerson('faculties',1,0)">✎</button>
-<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('faculties',1,0)">✕</button>
-</div>
-</div><div class="contact-card" style="animation-delay:0.095s">
 <div class="avatar" style="background:#E6F1FB;color:#185FA5">КІ</div>
 <div class="contact-info">
 <div class="contact-name">Кафедра інфекційної патології, гігієни, санітарії та біобезпеки</div>
 <div class="contact-role"></div>
 </div>
 <div class="contact-phones"><a href="tel:340" class="phone-tag inner">вн.&nbsp;3-40</a> <a href="tel:343" class="phone-tag inner">вн.&nbsp;3-43</a></div>
+<div class="admin-actions">
+
+<button class="btn-icon btn-edit" title="Редагувати" onclick="openEditPerson('faculties',1,0)">✎</button>
+<button class="btn-icon btn-del" title="Видалити" onclick="confirmDeletePerson('faculties',1,0)">✕</button>
+</div>
+</div><div class="contact-card" style="animation-delay:0.095s">
+<div class="avatar" style="background:#E6F1FB;color:#185FA5">КН</div>
+<div class="contact-info">
+<div class="contact-name">Кафедра нормальної і патологічної анатомії та фізіології тварин</div>
+<div class="contact-role"></div>
+</div>
+<div class="contact-phones"><a href="tel:316" class="phone-tag inner">вн.&nbsp;3-16</a> <a href="tel:371" class="phone-tag inner">вн.&nbsp;3-71</a></div>
 <div class="admin-actions">
 
 <button class="btn-icon btn-edit" title="Редагувати" onclick="openEditPerson('faculties',1,1)">✎</button>
@@ -826,7 +832,7 @@ page-break-inside: avoid; color: #000 !important;
 <strong>Полтавський державний аграрний університет</strong>
 вул. Сковороди, 1/3, м. Полтава, 36003, Україна<br>
 <a href="tel:0532500273">📞 (0532) 50-02-73</a> &nbsp;|&nbsp; <a href="mailto:pdau@pdau.edu.ua">✉ pdau@pdau.edu.ua</a> &nbsp;|&nbsp; <a href="https://www.pdau.edu.ua" target="_blank">🌐 www.pdau.edu.ua</a><br>
-<em style="opacity:.7">Останнє оновлення: <span id="lastUpdated">07.08.2026</span></em>
+<em style="opacity:.7">Останнє оновлення: <span id="lastUpdated">21.08.2026</span></em>
 </footer>
 <div class="modal-overlay" id="loginModal">
 <div class="modal login-modal">
@@ -896,7 +902,7 @@ page-break-inside: avoid; color: #000 !important;
 </div>
 <script>
 let DATA = {
-  "lastUpdated": "07.08.2026",
+  "lastUpdated": "21.08.2026",
   "sections": [
     {
       "id": "management",
@@ -1131,14 +1137,14 @@ let DATA = {
           "deptEmail": "dekvetmed@pdaa.edu.ua",
           "people": [
             {
-              "name": "Кафедра нормальної і патологічної анатомії та фізіології тварин",
-              "role": "",
-              "inner": "3-16, 3-71"
-            },
-            {
               "name": "Кафедра інфекційної патології, гігієни, санітарії та біобезпеки",
               "role": "",
               "inner": "3-40, 3-43"
+            },
+            {
+              "name": "Кафедра нормальної і патологічної анатомії та фізіології тварин",
+              "role": "",
+              "inner": "3-16, 3-71"
             }
           ]
         },
@@ -1296,6 +1302,9 @@ if(!document.documentElement.getAttribute('data-theme')) updateThemeBtn();
 }
 }
 function toggleTheme() {
+document.body.classList.add('theme-transitioning');
+clearTimeout(window._themeTransTimer);
+window._themeTransTimer = setTimeout(() => { document.body.classList.remove('theme-transitioning'); }, 2100);
 const next = isDarkActive() ? 'light' : 'dark';
 document.documentElement.setAttribute('data-theme', next);
 try { localStorage.setItem('pdauTheme', next); } catch(e) {}
@@ -1871,6 +1880,4 @@ window.scrollTo({ top: 0, behavior: 'smooth' });
 document.getElementById('lastUpdated').textContent=DATA.lastUpdated||new Date().toLocaleDateString('uk-UA');
 initTheme();
 buildTabs(); render();
-</script>
-
-</body></html>
+</script></body></html>
